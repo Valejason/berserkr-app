@@ -260,6 +260,24 @@
   @keyframes fadein{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
 
   ::-webkit-scrollbar{ display:none; }
+
+  /* Rest timer pill */
+  .rest-timer{
+    position:fixed; left:50%; bottom:calc(78px + env(safe-area-inset-bottom));
+    transform:translateX(-50%) translateY(20px);
+    background:linear-gradient(160deg, var(--red), var(--red-dim));
+    color:#fff; border-radius:30px; padding:10px 10px 10px 18px;
+    display:flex; align-items:center; gap:12px;
+    box-shadow:0 8px 22px rgba(255,59,48,0.4);
+    z-index:20; opacity:0; pointer-events:none;
+    transition:all 0.25s ease;
+  }
+  .rest-timer.active{ opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+  .rest-timer .rt-label{ font-family:'Bebas Neue'; font-size:18px; letter-spacing:0.02em; }
+  .rest-timer .rt-skip{
+    background:rgba(255,255,255,0.2); border:none; color:#fff; font-family:'Inter'; font-weight:700;
+    font-size:11.5px; padding:7px 14px; border-radius:20px; cursor:pointer; text-transform:uppercase;
+  }
 </style>
 </head>
 <body>
@@ -332,6 +350,11 @@
   </section>
 
 </main>
+
+<div class="rest-timer" id="restTimer">
+  <div class="rt-label">Rest: <span id="restTimerText">60s</span></div>
+  <button class="rt-skip" onclick="skipRestTimer()">Skip</button>
+</div>
 
 <nav class="bottom">
   <div class="wrap">
@@ -576,10 +599,37 @@ function updateWeight(day, exIdx, val){
   renderExercises();
 }
 function toggleSet(key){
-  state.sets[key] = !state.sets[key];
+  const wasDone = !!state.sets[key];
+  state.sets[key] = !wasDone;
   persist();
   renderExercises();
   updateRing();
+  if(!wasDone) startRestTimer(60); // just marked complete -> start rest
+}
+
+/* ---------- REST TIMER ---------- */
+let restInterval = null;
+function startRestTimer(seconds){
+  clearInterval(restInterval);
+  let remaining = seconds;
+  const pill = document.getElementById('restTimer');
+  const text = document.getElementById('restTimerText');
+  pill.classList.add('active');
+  text.textContent = remaining + 's';
+  restInterval = setInterval(()=>{
+    remaining--;
+    if(remaining <= 0){
+      clearInterval(restInterval);
+      pill.classList.remove('active');
+      if(navigator.vibrate) navigator.vibrate([200,100,200]);
+      return;
+    }
+    text.textContent = remaining + 's';
+  }, 1000);
+}
+function skipRestTimer(){
+  clearInterval(restInterval);
+  document.getElementById('restTimer').classList.remove('active');
 }
 
 /* ---------- FUEL TAB ---------- */
