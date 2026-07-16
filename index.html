@@ -410,18 +410,26 @@ const WORKOUT_PLAN = {
 const GOAL_DEFAULTS = ["Writing session", "House chores"];
 
 
-const DAILY_TARGET = { cal:2050, p:180, c:190, f:60 };
+const DAILY_TARGET = { cal:1800, p:180, c:160, f:50 };
 const MEAL_PLAN = [
   { id:'bfast-egg',   meal:'Breakfast', food:'1 whole egg + 2/3 cup egg whites', cal:155, p:23, c:2,  f:5 },
   { id:'bfast-shake', meal:'Breakfast', food:'Protein shake (Ascent vanilla, 2 scoops) + mixed berries', cal:280, p:51, c:18, f:5 },
   { id:'lunch',       meal:'Lunch',     food:'Non-fat Greek yogurt (individual cup) with honey', cal:150, p:15, c:23, f:0 },
-  { id:'afternoon',   meal:'3PM',       food:'Himalayan pink salt popcorn (individual bag, Costco)', cal:130, p:2,  c:19, f:6 },
+  { id:'afternoon',   meal:'3PM',       food:'Himalayan pink salt popcorn (individual bag, Costco)', cal:80, p:1,  c:9, f:4 },
   { id:'dinner',      meal:'Dinner',    food:'10oz meat (sirloin / 97% lean beef / salmon) + steamed veggies', cal:450, p:63, c:10, f:14 },
-  { id:'dinner-shake',meal:'Dinner',    food:'Protein shake (Ascent vanilla, 2 scoops) + mixed berries', cal:280, p:51, c:18, f:5 },
+  { id:'dinner-potato',meal:'Dinner',   food:'Baked sweet potato (large)', cal:270, p:6, c:62, f:0 },
+  { id:'dinner-shake', meal:'Dinner',   food:'Protein shake (Ascent vanilla, 2 scoops) + mixed berries', cal:280, p:51, c:18, f:5 },
+  { id:'snack-popcorn',meal:'Snack',    food:'Himalayan pink salt popcorn (extra individual bag)', cal:80, p:1, c:9, f:4 },
 ];
 
 /* ---------- STATE / STORAGE ---------- */
-const todayKey = () => new Date().toISOString().slice(0,10);
+const todayKey = () => {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`; // uses local time, not UTC, so the day rolls over at local midnight
+};
 let _memoryStore = {}; // in-memory fallback if localStorage is unavailable/blocked
 const load = (k, fallback) => {
   try{
@@ -463,9 +471,6 @@ function persist(){ save('berserkr_day_' + todayKey(), state); }
 (function checkStreak(){
   const today = todayKey();
   if(meta.lastDate !== today){
-    const y = new Date(); y.setDate(y.getDate()-1);
-    const yesterday = y.toISOString().slice(0,10);
-    // if yesterday had any activity, keep streak counting logic simple: just track distinct active days
     meta.lastDate = today;
     save('berserkr_meta', meta);
   }
