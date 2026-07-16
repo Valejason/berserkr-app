@@ -347,7 +347,7 @@
   </div>
 
   <!-- TRAIN -->
-  <section class="tab-panel active" id="panel-train">
+  <section class="tab-panel" id="panel-train">
     <div class="section-title"><span class="bar"></span>PICK YOUR DAY</div>
     <div class="day-tabs" id="dayTabs"></div>
 
@@ -381,15 +381,6 @@
 
     <div class="section-title"><span class="bar"></span>MEDICATION</div>
     <div id="medList"></div>
-
-    <div class="section-title"><span class="bar"></span>WOW CLASS TUNING</div>
-    <a class="weather-card" href="https://us.forums.blizzard.com/en/wow/c/class-development/" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
-      <div class="w-icon">🔥</div>
-      <div class="w-body">
-        <div class="w-temp">Blizzard Class Development Forum</div>
-        <div class="w-sub">Official blue posts — retail tuning &amp; changes</div>
-      </div>
-    </a>
   </section>
 
   <!-- HABITS -->
@@ -402,6 +393,45 @@
 
     <div class="section-title"><span class="bar"></span>PERSONAL — PROFESSIONAL & WRITER</div>
     <div id="habitList-personal"></div>
+  </section>
+
+  <!-- RESEARCH -->
+  <section class="tab-panel" id="panel-research">
+    <div class="section-title"><span class="bar"></span>ANXIETY</div>
+    <a class="weather-card" href="https://adaa.org" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+      <div class="w-icon">🧠</div>
+      <div class="w-body">
+        <div class="w-temp">Anxiety &amp; Depression Association of America</div>
+        <div class="w-sub">adaa.org — clinician resources &amp; current research</div>
+      </div>
+    </a>
+
+    <div class="section-title"><span class="bar"></span>COUPLES WORK</div>
+    <a class="weather-card" href="https://www.gottman.com/blog/" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+      <div class="w-icon">💞</div>
+      <div class="w-body">
+        <div class="w-temp">The Gottman Institute — Research Blog</div>
+        <div class="w-sub">gottman.com — evidence-based relationship research</div>
+      </div>
+    </a>
+
+    <div class="section-title"><span class="bar"></span>SPORTS PERFORMANCE</div>
+    <a class="weather-card" href="https://appliedsportpsych.org/blog/" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+      <div class="w-icon">🏆</div>
+      <div class="w-body">
+        <div class="w-temp">Association for Applied Sport Psychology</div>
+        <div class="w-sub">appliedsportpsych.org/blog — latest articles</div>
+      </div>
+    </a>
+
+    <div class="section-title"><span class="bar"></span>GENERAL PSYCHOLOGY</div>
+    <a class="weather-card" href="https://www.apa.org/monitor" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+      <div class="w-icon">📰</div>
+      <div class="w-body">
+        <div class="w-temp">APA Monitor on Psychology</div>
+        <div class="w-sub">apa.org/monitor — broad field updates &amp; new findings</div>
+      </div>
+    </a>
   </section>
 
 </main>
@@ -419,11 +449,14 @@
     <button class="nav-btn" data-tab="fuel" onclick="switchTab('fuel')">
       <span class="ic">🍽️</span>FUEL
     </button>
-    <button class="nav-btn active" data-tab="train" onclick="switchTab('train')">
-      <span class="ic">🏋️</span>TRAIN
-    </button>
     <button class="nav-btn" data-tab="habits" onclick="switchTab('habits')">
       <span class="ic">🧭</span>HABITS
+    </button>
+    <button class="nav-btn" data-tab="research" onclick="switchTab('research')">
+      <span class="ic">📚</span>RESEARCH
+    </button>
+    <button class="nav-btn" data-tab="train" onclick="switchTab('train')">
+      <span class="ic">🏋️</span>TRAIN
     </button>
   </div>
 </nav>
@@ -882,8 +915,8 @@ function renderAll(){
   updateRing();
 }
 renderAll();
+switchTab('goals'); // VAKT is the default landing tab
 loadWeather();
-document.getElementById('weatherCard').style.display = 'none'; // Train is default tab; weather only shows on VAKT (goals)
 </script>
 </body>
 </html>
