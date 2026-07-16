@@ -66,7 +66,7 @@
   }
   .datepill b{color:var(--text); font-size:13px;}
 
-  main{flex:1; padding:0 16px 100px; max-width:520px; width:100%; margin:0 auto;}
+  main{flex:1; padding:0 16px 160px; max-width:520px; width:100%; margin:0 auto;}
 
   .ring-card{
     background:var(--panel);
@@ -358,12 +358,44 @@
     <div class="section-title"><span class="bar"></span>MEDICATION</div>
     <div id="medList"></div>
 
-    <div class="section-title"><span class="bar"></span>TODAY'S GOALS</div>
-    <div class="goal-add">
-      <input type="text" id="goalInput" placeholder="Add a goal or chore…" onkeydown="if(event.key==='Enter')addGoal()">
-      <button onclick="addGoal()">+</button>
+    <div class="section-title"><span class="bar"></span>AIR QUALITY</div>
+    <div class="weather-card" id="aqiCard" style="cursor:default;">
+      <div class="w-icon" id="aqiIcon">—</div>
+      <div class="w-body">
+        <div class="w-temp" id="aqiTemp">AQI —</div>
+        <div class="w-sub" id="aqiSub">Loads with weather</div>
+      </div>
     </div>
-    <div id="goalList"></div>
+
+    <div class="section-title"><span class="bar"></span>WOW CLASS TUNING</div>
+    <a class="weather-card" href="https://us.forums.blizzard.com/en/wow/c/class-development/" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+      <div class="w-icon">🔥</div>
+      <div class="w-body">
+        <div class="w-temp">Blizzard Class Development Forum</div>
+        <div class="w-sub">Official blue posts — retail tuning &amp; changes</div>
+      </div>
+    </a>
+
+    <div class="section-title"><span class="bar"></span>DAILY GRIT</div>
+    <div class="weather-card" id="quoteCard" style="cursor:default;">
+      <div class="w-icon">🛡️</div>
+      <div class="w-body">
+        <div class="w-temp" id="quoteText">Loading...</div>
+        <div class="w-sub">Original — in the spirit of a steadfast protector</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HABITS -->
+  <section class="tab-panel" id="panel-habits">
+    <div class="section-title"><span class="bar"></span>PERSONAL — PROFESSIONAL & WRITER</div>
+    <div id="habitList-personal"></div>
+
+    <div class="section-title"><span class="bar"></span>PARTNER & MARRIAGE</div>
+    <div id="habitList-partner"></div>
+
+    <div class="section-title"><span class="bar"></span>FATHERHOOD</div>
+    <div id="habitList-father"></div>
   </section>
 
 </main>
@@ -375,14 +407,17 @@
 
 <nav class="bottom">
   <div class="wrap">
-    <button class="nav-btn active" data-tab="train" onclick="switchTab('train')">
-      <span class="ic">🏋️</span>TRAIN
+    <button class="nav-btn" data-tab="goals" onclick="switchTab('goals')">
+      <span class="ic">🛡️</span>VAKT
     </button>
     <button class="nav-btn" data-tab="fuel" onclick="switchTab('fuel')">
       <span class="ic">🍽️</span>FUEL
     </button>
-    <button class="nav-btn" data-tab="goals" onclick="switchTab('goals')">
-      <span class="ic">✅</span>GOALS
+    <button class="nav-btn active" data-tab="train" onclick="switchTab('train')">
+      <span class="ic">🏋️</span>TRAIN
+    </button>
+    <button class="nav-btn" data-tab="habits" onclick="switchTab('habits')">
+      <span class="ic">🧭</span>HABITS
     </button>
   </div>
 </nav>
@@ -424,7 +459,26 @@ const WORKOUT_PLAN = {
         {name:"Barbell RDL", target:"3 sets x 8-10, light-moderate", inc:5},
       ]},
 };
-const GOAL_DEFAULTS = ["Writing session", "House chores"];
+
+const HABITS_PLAN = [
+  // Personal — professional & writer
+  { id:'p1', cat:'personal', text:'Write down the 1-3 priorities that actually move the business/writing forward before opening email' },
+  { id:'p2', cat:'personal', text:'Protect one distraction-free block of deep work or writing time' },
+  { id:'p3', cat:'personal', text:'Do one thing today that "sharpens the saw" — training, reading, or real rest' },
+  { id:'p4', cat:'personal', text:'Review the day for 2 minutes: what worked, what to adjust tomorrow' },
+  // Partner & marriage
+  { id:'m1', cat:'partner', text:'Kiss her and say one genuine thing you appreciate — morning or night' },
+  { id:'m2', cat:'partner', text:'Ten minutes of real conversation, phones away, just checking in' },
+  { id:'m3', cat:'partner', text:'Notice and say thank you for one specific thing she did today' },
+  { id:'m4', cat:'partner', text:'Handle any friction directly and calmly instead of letting it sit' },
+  { id:'m5', cat:'partner', text:'Do one small unprompted thing that makes her day easier' },
+  // Fatherhood
+  { id:'f1', cat:'father', text:'One-on-one check-in with each kid — ask about their day and actually listen' },
+  { id:'f2', cat:'father', text:'Give specific praise for effort or character, not just results' },
+  { id:'f3', cat:'father', text:'Be fully present (no phone) for at least one shared moment today' },
+  { id:'f4', cat:'father', text:'Follow through on a promise or plan made to a kid — reliability builds trust' },
+  { id:'f5', cat:'father', text:'Model the behavior you want them to copy — they watch more than they listen' },
+];
 
 
 const DAILY_TARGET = { cal:1800, p:180, c:160, f:50 };
@@ -470,8 +524,8 @@ let state = load('berserkr_day_' + todayKey(), {
   sets: {},          // "day-exIndex-setIndex": true
   mealChecks: {},     // mealPlanId: true
   meds: { morning:false, night:false },
+  habitChecks: {}, // habitId: true
   streakCounted: {},  // "day-exIndex": true (guards against double-counting weight progression same day)
-  goals: GOAL_DEFAULTS.map((t,i)=>({id:'d'+i, text:t, done:false})),
 });
 let meta = load('berserkr_meta', { lastDate:null, streak:0 });
 let weights = load('berserkr_weights', {}); // "day-exIndex": { weight:'', streak:0 }
@@ -508,16 +562,15 @@ function updateRing(){
   for(let e=0;e<totalExercises;e++) for(let s=0;s<3;s++) if(state.sets[`${state.activeDay}-${e}-${s}`]) doneSets++;
   const mealsChecked = MEAL_PLAN.filter(m => state.mealChecks[m.id]).length;
   const mealsLogged = mealsChecked / MEAL_PLAN.length;
-  const goalsTotal = state.goals.length || 1;
-  const goalsDone = state.goals.filter(g=>g.done).length;
   const medsDone = (state.meds.morning?1:0) + (state.meds.night?1:0);
+  const habitsDone = HABITS_PLAN.filter(h => state.habitChecks[h.id]).length;
 
   const parts = [
     { w:1, v: doneSets/totalSets },
     { w:1, v: mealsLogged },
-    { w:1, v: goalsDone/goalsTotal },
     { w:1, v: state.cardio ? 1 : 0 },
     { w:1, v: medsDone/2 },
+    { w:1, v: habitsDone/HABITS_PLAN.length },
   ];
   const pct = Math.round(100 * parts.reduce((a,p)=>a+p.w*p.v,0) / parts.reduce((a,p)=>a+p.w,0));
 
@@ -717,43 +770,25 @@ function renderMeds(){
   `).join('');
 }
 
-/* ---------- GOALS TAB ---------- */
-function addGoal(){
-  const input = document.getElementById('goalInput');
-  const text = input.value.trim();
-  if(!text) return;
-  state.goals.push({id:'g'+Date.now(), text, done:false});
-  input.value = '';
+/* ---------- HABITS TAB ---------- */
+function toggleHabit(id){
+  state.habitChecks[id] = !state.habitChecks[id];
   persist();
-  renderGoals();
+  renderHabits();
   updateRing();
 }
-function toggleGoal(id){
-  const g = state.goals.find(g=>g.id===id);
-  if(g) g.done = !g.done;
-  persist();
-  renderGoals();
-  updateRing();
-}
-function deleteGoal(id){
-  state.goals = state.goals.filter(g=>g.id!==id);
-  persist();
-  renderGoals();
-  updateRing();
-}
-function renderGoals(){
-  const list = document.getElementById('goalList');
-  if(state.goals.length===0){
-    list.innerHTML = '<div class="empty">No goals yet — add your first one above.</div>';
-    return;
-  }
-  list.innerHTML = state.goals.map(g => `
-    <div class="goal-item">
-      <div class="goal-check ${g.done?'on':''}" onclick="toggleGoal('${g.id}')">${g.done?'✓':''}</div>
-      <div class="goal-text ${g.done?'on':''}">${g.text}</div>
-      <button class="del-x" onclick="deleteGoal('${g.id}')">✕</button>
-    </div>
-  `).join('');
+function renderHabits(){
+  const groups = { personal:'habitList-personal', partner:'habitList-partner', father:'habitList-father' };
+  Object.keys(groups).forEach(cat=>{
+    const list = document.getElementById(groups[cat]);
+    const items = HABITS_PLAN.filter(h=>h.cat===cat);
+    list.innerHTML = items.map(h => `
+      <div class="goal-item">
+        <div class="goal-check ${state.habitChecks[h.id]?'on':''}" onclick="toggleHabit('${h.id}')">${state.habitChecks[h.id]?'✓':''}</div>
+        <div class="goal-text ${state.habitChecks[h.id]?'on':''}">${h.text}</div>
+      </div>
+    `).join('');
+  });
 }
 
 /* ---------- TABS ---------- */
@@ -762,7 +797,7 @@ function switchTab(tab){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+tab).classList.add('active');
   document.querySelector(`.nav-btn[data-tab="${tab}"]`).classList.add('active');
-  document.getElementById('weatherCard').style.display = (tab === 'fuel' || tab === 'goals') ? 'flex' : 'none';
+  document.getElementById('weatherCard').style.display = (tab === 'goals') ? 'flex' : 'none';
 }
 
 /* ---------- WEATHER ---------- */
@@ -779,17 +814,30 @@ function weatherLabel(code){
   if([95,96,99].includes(code)) return { icon:'⛈️', label:'Thunderstorms' };
   return { icon:'🌡️', label:'—' };
 }
+function aqiLabel(aqi){
+  // US EPA AQI scale
+  if(aqi <= 50)  return { icon:'🟢', label:'Good' };
+  if(aqi <= 100) return { icon:'🟡', label:'Moderate' };
+  if(aqi <= 150) return { icon:'🟠', label:'Unhealthy for sensitive groups' };
+  if(aqi <= 200) return { icon:'🔴', label:'Unhealthy' };
+  if(aqi <= 300) return { icon:'🟣', label:'Very unhealthy' };
+  return { icon:'🟤', label:'Hazardous' };
+}
 function loadWeather(){
   const tempEl = document.getElementById('weatherTemp');
   const subEl = document.getElementById('weatherSub');
   const iconEl = document.getElementById('weatherIcon');
+  const aqiTempEl = document.getElementById('aqiTemp');
+  const aqiSubEl = document.getElementById('aqiSub');
+  const aqiIconEl = document.getElementById('aqiIcon');
   if(!navigator.geolocation){
     subEl.textContent = 'Location not available';
+    aqiSubEl.textContent = 'Location not available';
     return;
   }
   navigator.geolocation.getCurrentPosition(async (pos)=>{
+    const { latitude, longitude } = pos.coords;
     try{
-      const { latitude, longitude } = pos.coords;
       const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,precipitation_probability_max,weathercode&temperature_unit=fahrenheit&timezone=auto`;
       const res = await fetch(url);
       const data = await res.json();
@@ -803,11 +851,46 @@ function loadWeather(){
     }catch(e){
       subEl.textContent = 'Weather unavailable';
     }
+    try{
+      const aqiUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${latitude}&longitude=${longitude}&current=us_aqi`;
+      const aqiRes = await fetch(aqiUrl);
+      const aqiData = await aqiRes.json();
+      const aqi = Math.round(aqiData.current.us_aqi);
+      const a = aqiLabel(aqi);
+      aqiIconEl.textContent = a.icon;
+      aqiTempEl.textContent = `AQI ${aqi}`;
+      aqiSubEl.textContent = a.label;
+    }catch(e){
+      aqiSubEl.textContent = 'Air quality unavailable';
+    }
   }, ()=>{
     subEl.textContent = 'Enable location for weather';
+    aqiSubEl.textContent = 'Enable location for air quality';
   });
 }
 document.getElementById('weatherCard').addEventListener('click', loadWeather);
+
+/* ---------- DAILY GRIT QUOTE ---------- */
+const GRIT_QUOTES = [
+  "Stand tall today. Your shield is discipline, and it never runs out.",
+  "The hammer falls not from anger, but from resolve.",
+  "A steady wall holds more ground than a wild swing.",
+  "Protect what matters — your work, your family, your word.",
+  "Every rep, every rest, every choice — armor for tomorrow.",
+  "The strongest gate is the one you show up to guard daily.",
+  "Small victories, stacked, become an unbreakable line.",
+  "Lead with your chest up. Others are watching how you carry weight.",
+  "Rest is not retreat — it's how the wall stays standing.",
+  "Discipline today is the shield your future self leans on.",
+  "Hold the line, even when no one's cheering.",
+  "Strength serves best when it protects someone else.",
+];
+function loadGritQuote(){
+  const dayIndex = Math.floor(Date.now() / 86400000); // days since epoch, stable all day
+  const quote = GRIT_QUOTES[dayIndex % GRIT_QUOTES.length];
+  document.getElementById('quoteText').textContent = quote;
+}
+loadGritQuote();
 
 /* ---------- INIT ---------- */
 function renderAll(){
@@ -817,12 +900,12 @@ function renderAll(){
   renderExercises();
   renderFuel();
   renderMeds();
-  renderGoals();
+  renderHabits();
   updateRing();
 }
 renderAll();
 loadWeather();
-document.getElementById('weatherCard').style.display = 'none'; // Train is default tab; weather only shows on Fuel/Goals
+document.getElementById('weatherCard').style.display = 'none'; // Train is default tab; weather only shows on VAKT (goals)
 </script>
 </body>
 </html>
