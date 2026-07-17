@@ -194,8 +194,20 @@
   .macro-box.cal .v{ color:var(--red); }
 
   .meal-form{ display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+  .weighin-form{ display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
   .form-row{ display:grid; grid-template-columns:1fr; gap:8px; }
   .form-row.four{ grid-template-columns:repeat(4,1fr); }
+  .form-row.two{ grid-template-columns:repeat(2,1fr); }
+  .weighin-item{
+    display:flex; justify-content:space-between; align-items:center;
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:12px 14px; margin-bottom:8px;
+  }
+  .weighin-item .wi-date{ font-size:11px; color:var(--muted); margin-bottom:2px; }
+  .weighin-item .wi-stats{ font-weight:700; font-size:14px; }
+  .weighin-item .wi-delta{ font-size:11.5px; margin-top:2px; }
+  .wi-delta.down{ color:var(--green); }
+  .wi-delta.up{ color:var(--red); }
   input[type=text], input[type=number]{
     background:var(--panel-2); border:1px solid var(--line); border-radius:10px;
     padding:10px 12px; color:var(--text); font-family:'Inter'; font-size:14px; width:100%;
@@ -369,6 +381,16 @@
 
     <div class="section-title"><span class="bar"></span>MEAL PLAN</div>
     <div id="mealPlanList"></div>
+
+    <div class="section-title"><span class="bar"></span>WEEKLY WEIGH-IN</div>
+    <div class="weighin-form">
+      <div class="form-row two">
+        <div><span class="num-label">Weight (lbs)</span><input type="number" id="weighinWeight" inputmode="decimal" placeholder="0"></div>
+        <div><span class="num-label">Waist (in)</span><input type="number" id="weighinWaist" inputmode="decimal" placeholder="0"></div>
+      </div>
+      <button class="add-btn" onclick="addWeighin()">LOG ENTRY</button>
+    </div>
+    <div id="weighinList"></div>
   </section>
 
   <!-- GOALS -->
@@ -379,8 +401,26 @@
       <div class="grit-text" id="quoteText">Loading...</div>
     </div>
 
+    <div class="weather-card" id="jokeCard" style="cursor:default;">
+      <div class="w-icon">🎮</div>
+      <div class="w-body">
+        <div class="w-temp" id="jokeText">Loading...</div>
+        <div class="w-sub">Joke of the day — share with the boys</div>
+      </div>
+    </div>
+
     <div class="section-title"><span class="bar"></span>MEDICATION</div>
     <div id="medList"></div>
+
+    <div class="section-title"><span class="bar"></span>CATHOLIC VERSE</div>
+    <div class="weather-card" id="verseCard" style="cursor:default; align-items:flex-start;">
+      <div class="w-icon">✝️</div>
+      <div class="w-body">
+        <div class="w-temp" id="verseText" style="line-height:1.4;">Loading...</div>
+        <div class="w-sub" id="verseRef" style="margin-top:6px;"></div>
+        <div class="w-sub" id="verseReflect" style="margin-top:6px; font-style:italic;"></div>
+      </div>
+    </div>
   </section>
 
   <!-- HABITS -->
@@ -564,6 +604,8 @@ let state = load('berserkr_day_' + todayKey(), {
 let meta = load('berserkr_meta', { lastDate:null, streak:0 });
 let weights = load('berserkr_weights', {}); // "day-exIndex": { weight:'', streak:0 }
 function saveWeights(){ save('berserkr_weights', weights); }
+let weighins = load('berserkr_weighins', []); // [{date, weight, waist}], persists across all time (not daily-reset)
+function saveWeighins(){ save('berserkr_weighins', weighins); }
 function getWeightEntry(day, exIdx){
   const key = `${day}-${exIdx}`;
   if(!weights[key]) weights[key] = { weight:'', streak:0 };
@@ -781,7 +823,62 @@ function renderMealPlanList(){
     `;
   }).join('');
 }
-function renderFuel(){ renderMacros(); renderMealPlanList(); }
+function renderFuel(){ renderMacros(); renderMealPlanList(); renderWeighins(); }
+
+/* ---------- WEEKLY WEIGH-IN ---------- */
+function addWeighin(){
+  const weightVal = document.getElementById('weighinWeight').value;
+  const waistVal = document.getElementById('weighinWaist').value;
+  if(!weightVal && !waistVal) return;
+  const today = todayKey();
+  // overwrite today's entry if one already exists, so re-logging same day doesn't duplicate
+  const existingIdx = weighins.findIndex(w=>w.date===today);
+  const entry = { date:today, weight:weightVal?Number(weightVal):null, waist:waistVal?Number(waistVal):null };
+  if(existingIdx>=0) weighins[existingIdx] = entry;
+  else weighins.push(entry);
+  weighins.sort((a,b)=> a.date < b.date ? 1 : -1); // most recent first
+  saveWeighins();
+  document.getElementById('weighinWeight').value = '';
+  document.getElementById('weighinWaist').value = '';
+  renderWeighins();
+}
+function renderWeighins(){
+  const list = document.getElementById('weighinList');
+  if(weighins.length === 0){
+    list.innerHTML = '<div class="empty">No entries yet — log your first weigh-in above.</div>';
+    return;
+  }
+  list.innerHTML = weighins.map((w, i) => {
+    const prev = weighins[i+1]; // next in array = previous in time, since sorted most-recent-first
+    let deltaHtml = '';
+    if(prev){
+      const parts = [];
+      if(w.weight!=null && prev.weight!=null){
+        const d = w.weight - prev.weight;
+        const cls = d < 0 ? 'down' : (d > 0 ? 'up' : '');
+        parts.push(`<span class="wi-delta ${cls}">${d===0?'±0':(d>0?'+':'')+d.toFixed(1)} lbs</span>`);
+      }
+      if(w.waist!=null && prev.waist!=null){
+        const d = w.waist - prev.waist;
+        const cls = d < 0 ? 'down' : (d > 0 ? 'up' : '');
+        parts.push(`<span class="wi-delta ${cls}">${d===0?'±0':(d>0?'+':'')+d.toFixed(1)}in waist</span>`);
+      }
+      deltaHtml = parts.join(' &nbsp;·&nbsp; ');
+    }
+    const statsParts = [];
+    if(w.weight!=null) statsParts.push(`${w.weight} lbs`);
+    if(w.waist!=null) statsParts.push(`${w.waist}in waist`);
+    return `
+      <div class="weighin-item">
+        <div>
+          <div class="wi-date">${w.date}</div>
+          <div class="wi-stats">${statsParts.join(' · ')}</div>
+          ${deltaHtml ? `<div>${deltaHtml}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
 
 /* ---------- MEDICATION ---------- */
 function toggleMed(period){
@@ -899,6 +996,73 @@ function loadGritQuote(){
   document.getElementById('quoteText').textContent = quote;
 }
 loadGritQuote();
+
+/* ---------- KIDS' GAMER JOKE OF THE DAY ---------- */
+const KID_JOKES = [
+  "Why did the gamer bring a ladder to the boss fight? He heard the loot table was on a higher tier.",
+  "Why don't skeletons play video games? They don't have the guts to respawn.",
+  "What's a creeper's favorite subject in school? Chemistry — it really blows up.",
+  "Why did the controller go to the doctor? It had a joystick.",
+  "What do you call a dinosaur that plays video games? A Nintenda-saurus.",
+  "Why was the math book sad at the arcade? It had too many problems and not enough high scores.",
+  "Why did the wizard quit his video game guild? Too much drama, not enough mana.",
+  "What's a knight's favorite video game genre? Anything with a good quest-ion mark.",
+  "Why did the NPC bring a snack to work? In case someone said 'grind time.'",
+  "Why don't robots ever panic during boss fights? They always keep their circuits calm.",
+  "What did the pixel say to the other pixel? I've got my eye on you.",
+  "Why did the player refuse to fight the final boss? The odds were level with him.",
+  "Why was the computer cold at the LAN party? It left its Windows open.",
+  "What's a zombie's favorite level? Anything with lots of extra lives.",
+];
+function loadKidJoke(){
+  const dayIndex = Math.floor(Date.now() / 86400000);
+  const joke = KID_JOKES[dayIndex % KID_JOKES.length];
+  document.getElementById('jokeText').textContent = joke;
+}
+loadKidJoke();
+
+/* ---------- DINNER TABLE VERSE ---------- */
+// Douay-Rheims translation (public domain, Catholic) — chosen for themes of love, mercy, and compassion
+const DAILY_VERSES = [
+  {
+    text: '"Dearly beloved, let us love one another, for charity is of God. And every one that loveth, is born of God, and knoweth God. He that loveth not, knoweth not God: for God is charity."',
+    ref: '1 John 4:7–8',
+    reflect: 'Talk about it: What\'s one way we can show love to someone outside our family this week?'
+  },
+  {
+    text: '"For God so loved the world, as to give his only begotten Son; that whosoever believeth in him, may not perish, but may have life everlasting."',
+    ref: 'John 3:16',
+    reflect: 'Talk about it: What does it mean that God gave His Son because He loves the whole world?'
+  },
+  {
+    text: '"Charity is patient, is kind: charity envieth not, dealeth not perversely; is not puffed up; is not ambitious, seeketh not her own, is not provoked to anger, thinketh no evil; rejoiceth not in iniquity, but rejoiceth with the truth; beareth all things, believeth all things, hopeth all things, endureth all things."',
+    ref: '1 Corinthians 13:4–7',
+    reflect: 'Talk about it: Which part of this description of love is hardest for you to practice?'
+  },
+  {
+    text: '"I will shew thee, O man, what is good, and what the Lord requireth of thee: verily to do judgment, and to love mercy, and to walk solicitous with thy God."',
+    ref: 'Micah 6:8',
+    reflect: 'Talk about it: What\'s one way we can "love mercy" today, even in a small way?'
+  },
+  {
+    text: '"Put ye on therefore, as the elect of God, holy and beloved, the bowels of mercy, benignity, humility, modesty, patience."',
+    ref: 'Colossians 3:12',
+    reflect: 'Talk about it: If we "put on" kindness like clothing each morning, what would that look like today?'
+  },
+  {
+    text: '"Blessed are the merciful: for they shall obtain mercy."',
+    ref: 'Matthew 5:7',
+    reflect: 'Talk about it: Can you think of a time someone showed you mercy? How did it feel?'
+  },
+];
+function loadDailyVerse(){
+  const dayIndex = Math.floor(Date.now() / 86400000);
+  const v = DAILY_VERSES[dayIndex % DAILY_VERSES.length];
+  document.getElementById('verseText').textContent = v.text;
+  document.getElementById('verseRef').textContent = v.ref + ' (Douay-Rheims)';
+  document.getElementById('verseReflect').textContent = v.reflect;
+}
+loadDailyVerse();
 
 /* ---------- INIT ---------- */
 function renderAll(){
