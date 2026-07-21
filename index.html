@@ -166,18 +166,20 @@
   .ex-name{ font-weight:700; font-size:14.5px; }
   .ex-target{ font-size:11.5px; color:var(--muted); }
   .pr-line{ font-size:11.5px; color:var(--red); font-weight:700; margin-bottom:8px; }
+  .weight-row{ display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .weight-row label{ font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; }
+  .weight-row input{
+    width:72px; background:var(--panel-2); border:1px solid var(--line); border-radius:8px;
+    padding:6px 8px; color:var(--text); font-family:'Inter'; font-size:13px;
+  }
   .weight-suggest{
     font-size:11.5px; color:var(--green); margin-top:8px; font-weight:600;
     display:flex; align-items:center; gap:5px;
   }
-  .set-line{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
-  .set-line input{
-    width:64px; background:var(--panel-2); border:1px solid var(--line); border-radius:8px;
-    padding:8px 6px; color:var(--text); font-family:'Inter'; font-size:13px; text-align:center; flex-shrink:0;
-  }
+  .sets-row{ display:flex; gap:6px; }
   .set-box{
     flex:1; background:var(--panel-2); border:1px solid var(--line); border-radius:10px;
-    padding:8px 6px; text-align:center; cursor:pointer;
+    padding:12px 6px; text-align:center; cursor:pointer;
   }
   .set-box.done{ background:rgba(61,220,151,0.15); border-color:rgba(61,220,151,0.45); }
   .set-box .n{ font-family:'Bebas Neue'; font-size:13px; color:var(--muted); }
@@ -569,8 +571,14 @@ let state = load('berserkr_day_' + todayKey(), {
   streakCounted: {},  // "day-exIndex": true (guards against double-counting weight progression same day)
 });
 let meta = load('berserkr_meta', { lastDate:null, streak:0 });
-let setWeights = load('berserkr_set_weights', {}); // "day-exIndex-setIndex": weight value, persists forever (never resets daily/weekly)
+let setWeights = load('berserkr_set_weights', {}); // "day-exIndex-setIndex": weight value actually used when that set was checked (for PR/streak accuracy)
 function saveSetWeights(){ save('berserkr_set_weights', setWeights); }
+let exerciseWeights = load('berserkr_exercise_weights', {}); // "day-exIndex": current weight shown in the single shared input, persists forever
+function saveExerciseWeights(){ save('berserkr_exercise_weights', exerciseWeights); }
+function getExerciseWeight(day, exIdx){
+  const key = `${day}-${exIdx}`;
+  return exerciseWeights[key] !== undefined ? exerciseWeights[key] : '';
+}
 let prs = load('berserkr_prs', {}); // "day-exIndex": { best: number } — highest weight ever logged, never resets
 function savePRs(){ save('berserkr_prs', prs); }
 let streaks = load('berserkr_streaks', {}); // "day-exIndex": { streak: number } — progression suggestion counter, never resets
@@ -689,6 +697,7 @@ function renderExercises(){
     const key = `${state.activeDay}-${exIdx}`;
     const sentry = getStreakEntry(state.activeDay, exIdx);
     const pr = getPR(state.activeDay, exIdx);
+    const currentWeight = getExerciseWeight(state.activeDay, exIdx);
 
     let setsHtml = '';
     let doneCount = 0;
@@ -697,13 +706,8 @@ function renderExercises(){
       const skey = `${state.activeDay}-${exIdx}-${s}`;
       const done = !!state.sets[skey];
       if(done) doneCount++;
-      const wVal = getSetWeight(state.activeDay, exIdx, s);
-      setWeightVals.push(wVal);
-      setsHtml += `
-        <div class="set-line">
-          <input type="number" inputmode="decimal" placeholder="lbs" value="${wVal}" onchange="updateSetWeight(${state.activeDay},${exIdx},${s},this.value)">
-          <div class="set-box ${done?'done':''}" onclick="toggleSet('${skey}')"><div class="n">SET ${s+1}${done?' ✓':''}</div></div>
-        </div>`;
+      setWeightVals.push(getSetWeight(state.activeDay, exIdx, s));
+      setsHtml += `<div class="set-box ${done?'done':''}" onclick="toggleSet('${skey}')"><div class="n">SET ${s+1}${done?' ✓':''}</div></div>`;
     }
 
     // count progression streak once per day when all 3 sets are completed at the same, non-empty weight
@@ -730,18 +734,22 @@ function renderExercises(){
         <div class="ex-target">${ex.target}</div>
       </div>
       ${pr!==null ? `<div class="pr-line">🏆 Best: ${pr} lbs</div>` : ''}
-      ${setsHtml}
+      <div class="weight-row">
+        <label>${ex.inverse ? 'Assist (lbs)' : 'Weight (lbs)'}</label>
+        <input type="number" inputmode="decimal" placeholder="0" value="${currentWeight}" onchange="updateWeight(${state.activeDay},${exIdx},this.value)">
+      </div>
+      <div class="sets-row">${setsHtml}</div>
       ${suggestHtml}
       ${exIdx < plan.exercises.length-1 ? '<div class="divider-line"></div>' : ''}
     `;
     card.appendChild(wrap);
   });
 }
-function updateSetWeight(day, exIdx, setIdx, val){
-  const key = `${day}-${exIdx}-${setIdx}`;
-  setWeights[key] = val;
-  saveSetWeights();
-  // manually changing a weight resets the progression streak for that exercise, assuming the suggestion was taken
+function updateWeight(day, exIdx, val){
+  const key = `${day}-${exIdx}`;
+  exerciseWeights[key] = val;
+  saveExerciseWeights();
+  // manually changing weight resets the progression streak, assuming the suggestion was taken
   const sentry = getStreakEntry(day, exIdx);
   sentry.streak = 0;
   saveStreaks();
@@ -752,11 +760,14 @@ function toggleSet(key){
   const wasDone = !!state.sets[key];
   state.sets[key] = !wasDone;
   persist();
-  // update the permanent PR if this set's weight is a new high for this exercise
   if(!wasDone){
     const parts = key.split('-');
-    const day = parts[0], exIdx = parts[1];
-    const wVal = Number(getSetWeight(day, exIdx, parts[2]));
+    const day = parts[0], exIdx = parts[1], setIdx = parts[2];
+    // capture whatever weight is currently showing for this exercise as this set's recorded weight
+    const currentWeight = getExerciseWeight(day, exIdx);
+    setWeights[key] = currentWeight;
+    saveSetWeights();
+    const wVal = Number(currentWeight);
     if(wVal > 0){
       const prKey = `${day}-${exIdx}`;
       if(!prs[prKey] || wVal > prs[prKey].best){
