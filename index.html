@@ -160,22 +160,21 @@
   .toggle.on{ background:rgba(61,220,151,0.18); border-color:rgba(61,220,151,0.4); }
   .toggle.on::after{ background:var(--green); transform:translateX(19px); }
 
-  .exercise{ margin-bottom:10px; }
+  .exercise{ margin-bottom:14px; }
   .exercise:last-child{ margin-bottom:0; }
-  .ex-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+  .ex-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
   .ex-name{ font-weight:700; font-size:14.5px; }
   .ex-target{ font-size:11.5px; color:var(--muted); }
-  .weight-row{ display:flex; align-items:center; gap:8px; margin-bottom:8px; }
-  .weight-row label{ font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; }
-  .weight-row input{
-    width:72px; background:var(--panel-2); border:1px solid var(--line); border-radius:8px;
-    padding:6px 8px; color:var(--text); font-family:'Inter'; font-size:13px;
-  }
+  .pr-line{ font-size:11.5px; color:var(--red); font-weight:700; margin-bottom:8px; }
   .weight-suggest{
     font-size:11.5px; color:var(--green); margin-top:8px; font-weight:600;
     display:flex; align-items:center; gap:5px;
   }
-  .sets-row{ display:flex; gap:6px; }
+  .set-line{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+  .set-line input{
+    width:64px; background:var(--panel-2); border:1px solid var(--line); border-radius:8px;
+    padding:8px 6px; color:var(--text); font-family:'Inter'; font-size:13px; text-align:center; flex-shrink:0;
+  }
   .set-box{
     flex:1; background:var(--panel-2); border:1px solid var(--line); border-radius:10px;
     padding:8px 6px; text-align:center; cursor:pointer;
@@ -423,18 +422,6 @@
     </div>
   </section>
 
-  <!-- HABITS -->
-  <section class="tab-panel" id="panel-habits">
-    <div class="section-title"><span class="bar"></span>PARTNER & MARRIAGE</div>
-    <div id="habitList-partner"></div>
-
-    <div class="section-title"><span class="bar"></span>FATHERHOOD</div>
-    <div id="habitList-father"></div>
-
-    <div class="section-title"><span class="bar"></span>PERSONAL — PROFESSIONAL & WRITER</div>
-    <div id="habitList-personal"></div>
-  </section>
-
   <!-- RESEARCH -->
   <section class="tab-panel" id="panel-research">
     <div class="section-title"><span class="bar"></span>ANXIETY</div>
@@ -489,9 +476,6 @@
     <button class="nav-btn" data-tab="fuel" onclick="switchTab('fuel')">
       <span class="ic">🍽️</span>FUEL
     </button>
-    <button class="nav-btn" data-tab="habits" onclick="switchTab('habits')">
-      <span class="ic">🧭</span>HABITS
-    </button>
     <button class="nav-btn" data-tab="train" onclick="switchTab('train')">
       <span class="ic">🏋️</span>TRAIN
     </button>
@@ -516,7 +500,7 @@ const WORKOUT_PLAN = {
   1: { name:"PUSH", sub:"Chest / Shoulders / Tris", exercises:[
         {name:"Machine Chest Press", target:"3 sets x 10-12", inc:5},
         {name:"Machine Fly (Pec Deck)", target:"3 sets x 12-15", inc:5},
-        {name:"Machine Shoulder Press", target:"3 sets x 10-12", inc:5},
+        {name:"DB Lateral Raises", target:"3 sets x 12-15", inc:2.5},
         {name:"Cable Triceps Pushdown", target:"3 sets x 12-15", inc:2.5},
       ]},
   2: { name:"PULL", sub:"Back / Biceps", exercises:[
@@ -538,22 +522,6 @@ const WORKOUT_PLAN = {
         {name:"Barbell RDL", target:"3 sets x 8-10, light-moderate", inc:5},
       ]},
 };
-
-const HABITS_PLAN = [
-  // Personal — professional & writer
-  { id:'p2', cat:'personal', text:'Protect one distraction-free block of deep work or writing time' },
-  { id:'p3', cat:'personal', text:'Do one thing today that "sharpens the saw" — training, reading, or real rest' },
-  { id:'p4', cat:'personal', text:'Review the day for 2 minutes: what worked, what to adjust tomorrow' },
-  // Partner & marriage
-  { id:'m1', cat:'partner', text:'Kiss her and say one genuine thing you appreciate — morning or night' },
-  { id:'m3', cat:'partner', text:'Notice and say thank you for one specific thing she did today' },
-  { id:'m5', cat:'partner', text:'Do one small unprompted thing that makes her day easier' },
-  // Fatherhood
-  { id:'f1', cat:'father', text:'One-on-one check-in with each kid — ask about their day and actually listen' },
-  { id:'f2', cat:'father', text:'Give specific praise for effort or character, not just results' },
-  { id:'f5', cat:'father', text:'Model the behavior you want them to copy — they watch more than they listen' },
-];
-
 
 const DAILY_TARGET = { cal:1800, p:180, c:160, f:50 };
 const MEAL_PLAN = [
@@ -598,18 +566,41 @@ let state = load('berserkr_day_' + todayKey(), {
   sets: {},          // "day-exIndex-setIndex": true
   mealChecks: {},     // mealPlanId: true
   meds: { morning:false, night:false },
-  habitChecks: {}, // habitId: true
   streakCounted: {},  // "day-exIndex": true (guards against double-counting weight progression same day)
 });
 let meta = load('berserkr_meta', { lastDate:null, streak:0 });
-let weights = load('berserkr_weights', {}); // "day-exIndex": { weight:'', streak:0 }
-function saveWeights(){ save('berserkr_weights', weights); }
+let setWeights = load('berserkr_set_weights', {}); // "day-exIndex-setIndex": weight value, persists forever (never resets daily/weekly)
+function saveSetWeights(){ save('berserkr_set_weights', setWeights); }
+let prs = load('berserkr_prs', {}); // "day-exIndex": { best: number } — highest weight ever logged, never resets
+function savePRs(){ save('berserkr_prs', prs); }
+let streaks = load('berserkr_streaks', {}); // "day-exIndex": { streak: number } — progression suggestion counter, never resets
+function saveStreaks(){ save('berserkr_streaks', streaks); }
 let weighins = load('berserkr_weighins', []); // [{date, weight, waist}], persists across all time (not daily-reset)
 function saveWeighins(){ save('berserkr_weighins', weighins); }
-function getWeightEntry(day, exIdx){
+function getSetWeight(day, exIdx, setIdx){
+  const key = `${day}-${exIdx}-${setIdx}`;
+  return setWeights[key] !== undefined ? setWeights[key] : '';
+}
+function getStreakEntry(day, exIdx){
   const key = `${day}-${exIdx}`;
-  if(!weights[key]) weights[key] = { weight:'', streak:0 };
-  return weights[key];
+  if(!streaks[key]) streaks[key] = { streak:0 };
+  return streaks[key];
+}
+function getPR(day, exIdx){
+  const key = `${day}-${exIdx}`;
+  return prs[key] ? prs[key].best : null;
+}
+
+/* one-time cleanup: PUSH day slot 2 changed from Machine Shoulder Press to DB Lateral Raises,
+   so any old weight/PR/streak data there belongs to a different exercise and would be misleading */
+if(!meta.migratedLateralRaise){
+  const staleKey = '1-2'; // day 1 (PUSH), exercise index 2
+  delete prs[staleKey];
+  delete streaks[staleKey];
+  Object.keys(setWeights).forEach(k=>{ if(k.startsWith(staleKey+'-')) delete setWeights[k]; });
+  savePRs(); saveStreaks(); saveSetWeights();
+  meta.migratedLateralRaise = true;
+  save('berserkr_meta', meta);
 }
 
 function persist(){ save('berserkr_day_' + todayKey(), state); }
@@ -639,14 +630,12 @@ function updateRing(){
   const mealsChecked = MEAL_PLAN.filter(m => state.mealChecks[m.id]).length;
   const mealsLogged = mealsChecked / MEAL_PLAN.length;
   const medsDone = (state.meds.morning?1:0) + (state.meds.night?1:0);
-  const habitsDone = HABITS_PLAN.filter(h => state.habitChecks[h.id]).length;
 
   const parts = [
     { w:1, v: doneSets/totalSets },
     { w:1, v: mealsLogged },
     { w:1, v: state.cardio ? 1 : 0 },
     { w:1, v: medsDone/2 },
-    { w:1, v: habitsDone/HABITS_PLAN.length },
   ];
   const pct = Math.round(100 * parts.reduce((a,p)=>a+p.w*p.v,0) / parts.reduce((a,p)=>a+p.w,0));
 
@@ -698,27 +687,36 @@ function renderExercises(){
   card.innerHTML = '';
   plan.exercises.forEach((ex, exIdx)=>{
     const key = `${state.activeDay}-${exIdx}`;
-    const wentry = getWeightEntry(state.activeDay, exIdx);
+    const sentry = getStreakEntry(state.activeDay, exIdx);
+    const pr = getPR(state.activeDay, exIdx);
 
     let setsHtml = '';
     let doneCount = 0;
+    const setWeightVals = [];
     for(let s=0;s<3;s++){
       const skey = `${state.activeDay}-${exIdx}-${s}`;
       const done = !!state.sets[skey];
       if(done) doneCount++;
-      setsHtml += `<div class="set-box ${done?'done':''}" onclick="toggleSet('${skey}')"><div class="n">SET ${s+1}${done?' ✓':''}</div></div>`;
+      const wVal = getSetWeight(state.activeDay, exIdx, s);
+      setWeightVals.push(wVal);
+      setsHtml += `
+        <div class="set-line">
+          <input type="number" inputmode="decimal" placeholder="lbs" value="${wVal}" onchange="updateSetWeight(${state.activeDay},${exIdx},${s},this.value)">
+          <div class="set-box ${done?'done':''}" onclick="toggleSet('${skey}')"><div class="n">SET ${s+1}${done?' ✓':''}</div></div>
+        </div>`;
     }
 
-    // count progression streak once per day when all 3 sets are completed
-    if(doneCount === 3 && !state.streakCounted[key]){
-      wentry.streak += 1;
+    // count progression streak once per day when all 3 sets are completed at the same, non-empty weight
+    const allSameWeight = setWeightVals[0] !== '' && setWeightVals.every(w => w === setWeightVals[0]);
+    if(doneCount === 3 && allSameWeight && !state.streakCounted[key]){
+      sentry.streak += 1;
       state.streakCounted[key] = true;
-      saveWeights();
+      saveStreaks();
       persist();
     }
 
     let suggestHtml = '';
-    if(wentry.streak >= 2){
+    if(sentry.streak >= 2){
       suggestHtml = ex.inverse
         ? `<div class="weight-suggest">🔽 All sets done 2x in a row — remove ${ex.inc} lbs of assistance next time</div>`
         : `<div class="weight-suggest">🔼 All sets done 2x in a row — add ${ex.inc} lbs next time</div>`;
@@ -731,28 +729,42 @@ function renderExercises(){
         <div class="ex-name">${ex.name}</div>
         <div class="ex-target">${ex.target}</div>
       </div>
-      <div class="weight-row">
-        <label>${ex.inverse ? 'Assist (lbs)' : 'Weight (lbs)'}</label>
-        <input type="number" inputmode="decimal" placeholder="0" value="${wentry.weight}" onchange="updateWeight(${state.activeDay},${exIdx},this.value)">
-      </div>
-      <div class="sets-row">${setsHtml}</div>
+      ${pr!==null ? `<div class="pr-line">🏆 Best: ${pr} lbs</div>` : ''}
+      ${setsHtml}
       ${suggestHtml}
       ${exIdx < plan.exercises.length-1 ? '<div class="divider-line"></div>' : ''}
     `;
     card.appendChild(wrap);
   });
 }
-function updateWeight(day, exIdx, val){
-  const entry = getWeightEntry(day, exIdx);
-  entry.weight = val;
-  entry.streak = 0; // reset progression tracking whenever the weight is manually changed
-  saveWeights();
+function updateSetWeight(day, exIdx, setIdx, val){
+  const key = `${day}-${exIdx}-${setIdx}`;
+  setWeights[key] = val;
+  saveSetWeights();
+  // manually changing a weight resets the progression streak for that exercise, assuming the suggestion was taken
+  const sentry = getStreakEntry(day, exIdx);
+  sentry.streak = 0;
+  saveStreaks();
   renderExercises();
 }
 function toggleSet(key){
+  ensureAudioContext(); // unlock audio during this user gesture so the rest-timer beep works later on iOS
   const wasDone = !!state.sets[key];
   state.sets[key] = !wasDone;
   persist();
+  // update the permanent PR if this set's weight is a new high for this exercise
+  if(!wasDone){
+    const parts = key.split('-');
+    const day = parts[0], exIdx = parts[1];
+    const wVal = Number(getSetWeight(day, exIdx, parts[2]));
+    if(wVal > 0){
+      const prKey = `${day}-${exIdx}`;
+      if(!prs[prKey] || wVal > prs[prKey].best){
+        prs[prKey] = { best: wVal };
+        savePRs();
+      }
+    }
+  }
   renderExercises();
   updateRing();
   if(!wasDone) startRestTimer(60); // just marked complete -> start rest
@@ -760,6 +772,32 @@ function toggleSet(key){
 
 /* ---------- REST TIMER ---------- */
 let restInterval = null;
+let audioCtx = null;
+function ensureAudioContext(){
+  // Must be created/resumed during a user gesture (like a tap) to work reliably on iOS Safari
+  if(!audioCtx){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(AC) audioCtx = new AC();
+  }
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+function playBeep(){
+  if(!audioCtx) return;
+  const now = audioCtx.currentTime;
+  [0, 0.22, 0.44].forEach(offset=>{
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.001, now + offset);
+    gain.gain.exponentialRampToValueAtTime(0.3, now + offset + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.18);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(now + offset);
+    osc.stop(now + offset + 0.2);
+  });
+}
 function startRestTimer(seconds){
   clearInterval(restInterval);
   let remaining = seconds;
@@ -772,7 +810,7 @@ function startRestTimer(seconds){
     if(remaining <= 0){
       clearInterval(restInterval);
       pill.classList.remove('active');
-      if(navigator.vibrate) navigator.vibrate([200,100,200]);
+      playBeep();
       return;
     }
     text.textContent = remaining + 's';
@@ -899,27 +937,6 @@ function renderMeds(){
       <div class="goal-text ${state.meds[r.key]?'on':''}">${r.label}</div>
     </div>
   `).join('');
-}
-
-/* ---------- HABITS TAB ---------- */
-function toggleHabit(id){
-  state.habitChecks[id] = !state.habitChecks[id];
-  persist();
-  renderHabits();
-  updateRing();
-}
-function renderHabits(){
-  const groups = { personal:'habitList-personal', partner:'habitList-partner', father:'habitList-father' };
-  Object.keys(groups).forEach(cat=>{
-    const list = document.getElementById(groups[cat]);
-    const items = HABITS_PLAN.filter(h=>h.cat===cat);
-    list.innerHTML = items.map(h => `
-      <div class="goal-item">
-        <div class="goal-check ${state.habitChecks[h.id]?'on':''}" onclick="toggleHabit('${h.id}')">${state.habitChecks[h.id]?'✓':''}</div>
-        <div class="goal-text ${state.habitChecks[h.id]?'on':''}">${h.text}</div>
-      </div>
-    `).join('');
-  });
 }
 
 /* ---------- TABS ---------- */
@@ -1072,7 +1089,6 @@ function renderAll(){
   renderExercises();
   renderFuel();
   renderMeds();
-  renderHabits();
   updateRing();
 }
 renderAll();
