@@ -402,65 +402,16 @@
       <div class="grit-text" id="quoteText">Loading...</div>
     </div>
 
-    <div class="weather-card" id="jokeCard" style="cursor:default;">
-      <div class="w-icon">🎮</div>
-      <div class="w-body">
-        <div class="w-temp" id="jokeText">Loading...</div>
-        <div class="w-sub">Joke of the day — share with the boys</div>
-      </div>
-    </div>
-
     <div class="section-title"><span class="bar"></span>MEDICATION</div>
     <div id="medList"></div>
 
-    <div class="section-title"><span class="bar"></span>CATHOLIC VERSE</div>
-    <div class="weather-card" id="verseCard" style="cursor:default; align-items:flex-start;">
-      <div class="w-icon">✝️</div>
-      <div class="w-body">
-        <div class="w-temp" id="verseText" style="line-height:1.4;">Loading...</div>
-        <div class="w-sub" id="verseRef" style="margin-top:6px;"></div>
-        <div class="w-sub" id="verseReflect" style="margin-top:6px; font-style:italic;"></div>
-      </div>
+    <div class="section-title"><span class="bar"></span><span id="hairDayLabel">HAIR CARE</span></div>
+    <div id="hairList"></div>
+
+    <div id="hairWeeklyWrap" style="display:none;">
+      <div class="section-title"><span class="bar"></span>WEEKLY CHECK-IN</div>
+      <div id="hairWeeklyList"></div>
     </div>
-  </section>
-
-  <!-- RESEARCH -->
-  <section class="tab-panel" id="panel-research">
-    <div class="section-title"><span class="bar"></span>ANXIETY</div>
-    <a class="weather-card" href="https://adaa.org" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
-      <div class="w-icon">🧠</div>
-      <div class="w-body">
-        <div class="w-temp">Anxiety &amp; Depression Association of America</div>
-        <div class="w-sub">adaa.org — clinician resources &amp; current research</div>
-      </div>
-    </a>
-
-    <div class="section-title"><span class="bar"></span>COUPLES WORK</div>
-    <a class="weather-card" href="https://www.gottman.com/blog/" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
-      <div class="w-icon">💞</div>
-      <div class="w-body">
-        <div class="w-temp">The Gottman Institute — Research Blog</div>
-        <div class="w-sub">gottman.com — evidence-based relationship research</div>
-      </div>
-    </a>
-
-    <div class="section-title"><span class="bar"></span>SPORTS PERFORMANCE</div>
-    <a class="weather-card" href="https://appliedsportpsych.org/blog/" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
-      <div class="w-icon">🏆</div>
-      <div class="w-body">
-        <div class="w-temp">Association for Applied Sport Psychology</div>
-        <div class="w-sub">appliedsportpsych.org/blog — latest articles</div>
-      </div>
-    </a>
-
-    <div class="section-title"><span class="bar"></span>GENERAL PSYCHOLOGY</div>
-    <a class="weather-card" href="https://www.apa.org/monitor" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
-      <div class="w-icon">📰</div>
-      <div class="w-body">
-        <div class="w-temp">APA Monitor on Psychology</div>
-        <div class="w-sub">apa.org/monitor — broad field updates &amp; new findings</div>
-      </div>
-    </a>
   </section>
 
 </main>
@@ -480,9 +431,6 @@
     </button>
     <button class="nav-btn" data-tab="train" onclick="switchTab('train')">
       <span class="ic">🏋️</span>TRAIN
-    </button>
-    <button class="nav-btn" data-tab="research" onclick="switchTab('research')">
-      <span class="ic">📚</span>RESEARCH
     </button>
   </div>
 </nav>
@@ -537,6 +485,39 @@ const MEAL_PLAN = [
   { id:'dinner-shake', meal:'Snack',    food:'Protein shake (Ascent vanilla, 2 scoops) + mixed berries', cal:280, p:51, c:18, f:5 },
 ];
 
+// Keyed by Date.getDay(): 0=Sunday ... 6=Saturday
+const REST_DAY_ITEMS = [
+  'No wash',
+  'Refresh roots only if needed (dry shampoo/water spritz)',
+];
+const WASH_DAY_ITEMS = [
+  'Warm water rinse',
+  'Shampoo scalp (regular SEEN Fragrance Free), 30-60 sec massage',
+  'Rinse fully',
+  'Condition ends only (skip roots)',
+  'Towel-dry by squeezing, not rubbing',
+  'Root-lifting product on damp roots',
+  'Blow-dry upside down, lift at roots',
+  'Cool air finish (20-30 sec)',
+  'Matte clay/texturizing cream on mid-ends',
+];
+const HAIR_CARE_PLAN = {
+  0: { dayName:'Sunday',    label:'Rest Day',       items: REST_DAY_ITEMS },
+  1: { dayName:'Monday',    label:'Wash Day',       items: WASH_DAY_ITEMS },
+  2: { dayName:'Tuesday',   label:'Rest Day',       items: REST_DAY_ITEMS },
+  3: { dayName:'Wednesday', label:'Rest Day',       items: REST_DAY_ITEMS },
+  4: { dayName:'Thursday',  label:'Clarifying Day', items: [
+        'Use SEEN Scalp Clarifying Shampoo (instead of regular)',
+        'Condition ends only',
+        'Dry + style as usual',
+      ] },
+  5: { dayName:'Friday',    label:'Wash Day',       items: WASH_DAY_ITEMS },
+  6: { dayName:'Saturday',  label:'Rest Day',       items: REST_DAY_ITEMS },
+};
+const HAIR_WEEKLY_ITEMS = [
+  'Scalp feels good, not overly oily or dry — adjust wash days next week if not',
+];
+
 /* ---------- STATE / STORAGE ---------- */
 const todayKey = () => {
   const d = new Date();
@@ -568,6 +549,8 @@ let state = load('berserkr_day_' + todayKey(), {
   sets: {},          // "day-exIndex-setIndex": true
   mealChecks: {},     // mealPlanId: true
   meds: { morning:false, night:false },
+  hair: {},            // item index (within today's hair care plan) -> true
+  hairWeekly: {},       // item index (within HAIR_WEEKLY_ITEMS, shown Sundays) -> true
   streakCounted: {},  // "day-exIndex": true (guards against double-counting weight progression same day)
 });
 let meta = load('berserkr_meta', { lastDate:null, streak:0 });
@@ -950,6 +933,46 @@ function renderMeds(){
   `).join('');
 }
 
+/* ---------- HAIR CARE ---------- */
+function toggleHair(idx){
+  state.hair[idx] = !state.hair[idx];
+  persist();
+  renderHair();
+}
+function toggleHairWeekly(idx){
+  state.hairWeekly[idx] = !state.hairWeekly[idx];
+  persist();
+  renderHair();
+}
+function renderHair(){
+  const dow = new Date().getDay(); // 0=Sunday ... 6=Saturday
+  const plan = HAIR_CARE_PLAN[dow];
+
+  document.getElementById('hairDayLabel').textContent = `${plan.dayName.toUpperCase()} — ${plan.label.toUpperCase()}`;
+
+  const list = document.getElementById('hairList');
+  list.innerHTML = plan.items.map((item, idx) => `
+    <div class="goal-item">
+      <div class="goal-check ${state.hair[idx]?'on':''}" onclick="toggleHair(${idx})">${state.hair[idx]?'✓':''}</div>
+      <div class="goal-text ${state.hair[idx]?'on':''}">${item}</div>
+    </div>
+  `).join('');
+
+  // Weekly check-in only shows on the last day of the routine (Sunday)
+  const weeklyWrap = document.getElementById('hairWeeklyWrap');
+  if(dow === 0){
+    weeklyWrap.style.display = '';
+    document.getElementById('hairWeeklyList').innerHTML = HAIR_WEEKLY_ITEMS.map((item, idx) => `
+      <div class="goal-item">
+        <div class="goal-check ${state.hairWeekly[idx]?'on':''}" onclick="toggleHairWeekly(${idx})">${state.hairWeekly[idx]?'✓':''}</div>
+        <div class="goal-text ${state.hairWeekly[idx]?'on':''}">${item}</div>
+      </div>
+    `).join('');
+  } else {
+    weeklyWrap.style.display = 'none';
+  }
+}
+
 /* ---------- TABS ---------- */
 function switchTab(tab){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
@@ -1025,73 +1048,6 @@ function loadGritQuote(){
 }
 loadGritQuote();
 
-/* ---------- KIDS' GAMER JOKE OF THE DAY ---------- */
-const KID_JOKES = [
-  "Why did the gamer bring a ladder to the boss fight? He heard the loot table was on a higher tier.",
-  "Why don't skeletons play video games? They don't have the guts to respawn.",
-  "What's a creeper's favorite subject in school? Chemistry — it really blows up.",
-  "Why did the controller go to the doctor? It had a joystick.",
-  "What do you call a dinosaur that plays video games? A Nintenda-saurus.",
-  "Why was the math book sad at the arcade? It had too many problems and not enough high scores.",
-  "Why did the wizard quit his video game guild? Too much drama, not enough mana.",
-  "What's a knight's favorite video game genre? Anything with a good quest-ion mark.",
-  "Why did the NPC bring a snack to work? In case someone said 'grind time.'",
-  "Why don't robots ever panic during boss fights? They always keep their circuits calm.",
-  "What did the pixel say to the other pixel? I've got my eye on you.",
-  "Why did the player refuse to fight the final boss? The odds were level with him.",
-  "Why was the computer cold at the LAN party? It left its Windows open.",
-  "What's a zombie's favorite level? Anything with lots of extra lives.",
-];
-function loadKidJoke(){
-  const dayIndex = Math.floor(Date.now() / 86400000);
-  const joke = KID_JOKES[dayIndex % KID_JOKES.length];
-  document.getElementById('jokeText').textContent = joke;
-}
-loadKidJoke();
-
-/* ---------- DINNER TABLE VERSE ---------- */
-// Douay-Rheims translation (public domain, Catholic) — chosen for themes of love, mercy, and compassion
-const DAILY_VERSES = [
-  {
-    text: '"Dearly beloved, let us love one another, for charity is of God. And every one that loveth, is born of God, and knoweth God. He that loveth not, knoweth not God: for God is charity."',
-    ref: '1 John 4:7–8',
-    reflect: 'Talk about it: What\'s one way we can show love to someone outside our family this week?'
-  },
-  {
-    text: '"For God so loved the world, as to give his only begotten Son; that whosoever believeth in him, may not perish, but may have life everlasting."',
-    ref: 'John 3:16',
-    reflect: 'Talk about it: What does it mean that God gave His Son because He loves the whole world?'
-  },
-  {
-    text: '"Charity is patient, is kind: charity envieth not, dealeth not perversely; is not puffed up; is not ambitious, seeketh not her own, is not provoked to anger, thinketh no evil; rejoiceth not in iniquity, but rejoiceth with the truth; beareth all things, believeth all things, hopeth all things, endureth all things."',
-    ref: '1 Corinthians 13:4–7',
-    reflect: 'Talk about it: Which part of this description of love is hardest for you to practice?'
-  },
-  {
-    text: '"I will shew thee, O man, what is good, and what the Lord requireth of thee: verily to do judgment, and to love mercy, and to walk solicitous with thy God."',
-    ref: 'Micah 6:8',
-    reflect: 'Talk about it: What\'s one way we can "love mercy" today, even in a small way?'
-  },
-  {
-    text: '"Put ye on therefore, as the elect of God, holy and beloved, the bowels of mercy, benignity, humility, modesty, patience."',
-    ref: 'Colossians 3:12',
-    reflect: 'Talk about it: If we "put on" kindness like clothing each morning, what would that look like today?'
-  },
-  {
-    text: '"Blessed are the merciful: for they shall obtain mercy."',
-    ref: 'Matthew 5:7',
-    reflect: 'Talk about it: Can you think of a time someone showed you mercy? How did it feel?'
-  },
-];
-function loadDailyVerse(){
-  const dayIndex = Math.floor(Date.now() / 86400000);
-  const v = DAILY_VERSES[dayIndex % DAILY_VERSES.length];
-  document.getElementById('verseText').textContent = v.text;
-  document.getElementById('verseRef').textContent = v.ref + ' (Douay-Rheims)';
-  document.getElementById('verseReflect').textContent = v.reflect;
-}
-loadDailyVerse();
-
 /* ---------- INIT ---------- */
 function renderAll(){
   renderHeader();
@@ -1100,6 +1056,7 @@ function renderAll(){
   renderExercises();
   renderFuel();
   renderMeds();
+  renderHair();
   updateRing();
 }
 renderAll();
