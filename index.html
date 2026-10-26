@@ -340,6 +340,68 @@
     background:rgba(255,255,255,0.2); border:none; color:#fff; font-family:'Inter'; font-weight:700;
     font-size:11.5px; padding:7px 14px; border-radius:20px; cursor:pointer; text-transform:uppercase;
   }
+
+  /* Quest tab */
+  .q-title{ font-size:30px; line-height:1.05; margin:4px 0 6px; }
+  .q-chapter{ font-size:11px; color:var(--red); font-weight:800; letter-spacing:0.08em; margin-top:6px; }
+  .q-sub{ font-size:13px; color:var(--muted); margin-bottom:12px; }
+  .q-label{ font-size:10.5px; color:var(--red); font-weight:800; letter-spacing:0.08em; margin-bottom:8px; }
+  .q-party{ display:flex; flex-direction:column; gap:6px; margin:6px 0 12px; }
+  .q-heroes{ display:flex; flex-wrap:wrap; gap:6px; }
+  .q-chip{ background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:5px 11px; font-size:12.5px; font-weight:700; }
+  .q-chip.turn{ border-color:var(--red); box-shadow:0 0 0 1px var(--red) inset; }
+  .q-stats{ display:flex; justify-content:space-between; font-size:13px; flex-wrap:wrap; gap:6px; }
+  .q-story{ border-left:3px solid var(--red); }
+  .q-text{ font-size:17px; line-height:1.6; }
+  .q-choice{ display:block; width:100%; text-align:left; background:var(--panel); border:1px solid var(--line); color:var(--text); border-radius:14px; padding:14px; margin-bottom:10px; cursor:pointer; font-family:'Inter'; }
+  .q-choice:active{ transform:scale(0.98); }
+  .q-choice-l{ display:block; font-size:16px; font-weight:700; margin-top:4px; }
+  .q-type{ font-size:10.5px; font-weight:800; letter-spacing:0.06em; color:var(--muted); text-transform:uppercase; }
+  .q-picked{ font-size:14px; font-weight:600; }
+  .q-foe{ font-size:14px; margin:4px 0 10px; letter-spacing:1px; }
+  .q-turn{ text-align:center; font-family:'Bebas Neue'; font-size:28px; margin-top:8px; }
+  .q-need{ text-align:center; color:var(--muted); font-size:14px; }
+  .q-need b{ color:var(--text); font-size:17px; }
+  .d20-wrap{ display:flex; justify-content:center; margin:18px 0; }
+  .d20{ width:170px; height:170px; cursor:pointer; user-select:none; -webkit-user-select:none;
+    clip-path:polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+    background:linear-gradient(160deg, #ff5a4f, var(--red-dim)); display:flex; align-items:center; justify-content:center;
+    font-family:'Bebas Neue'; font-size:64px; color:#fff; text-shadow:0 3px 8px rgba(0,0,0,0.35); }
+  .d20:active{ transform:scale(0.95); }
+  .d20.rolling{ animation:d20spin 0.25s linear infinite; }
+  @keyframes d20spin{ 0%{transform:rotate(0) scale(1);} 50%{transform:rotate(180deg) scale(0.9);} 100%{transform:rotate(360deg) scale(1);} }
+  .q-last{ text-align:center; font-size:14px; padding:10px; border-radius:12px; margin-bottom:10px; }
+  .q-last.hit{ background:rgba(61,220,151,0.12); color:var(--green); }
+  .q-last.miss{ background:rgba(255,59,48,0.12); color:#ff8a82; }
+  .q-log{ font-size:12.5px; color:var(--muted); line-height:1.6; margin-bottom:12px; }
+  .q-banner{ text-align:center; font-family:'Bebas Neue'; font-size:32px; margin:6px 0 10px; animation:fadein 0.4s ease; }
+  .q-banner.win{ color:var(--green); }
+  .q-banner.lose{ color:#ff8a82; }
+  .q-reward{ margin-top:10px; font-weight:800; color:#ffd166; }
+  .q-hero-row{ display:grid; grid-template-columns:1fr 130px auto; gap:8px; margin-bottom:8px; align-items:center; }
+  .q-hero-row select{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:10px 8px; color:var(--text); font-family:'Inter'; font-size:13px; }
+  .q-classes{ font-size:12px; color:var(--muted); line-height:1.7; margin-top:8px; }
+  .q-parent{ display:flex; flex-direction:column; gap:6px; margin-top:22px; align-items:center; }
+  .q-parent button{ background:none; border:none; color:var(--muted); font-size:11.5px; text-decoration:underline; cursor:pointer; font-family:'Inter'; }
+
+  /* Write tab */
+  .w-head{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:6px; }
+  .w-head > div{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px 6px; text-align:center; }
+  .w-big{ font-size:30px; line-height:1; color:var(--red); }
+  .w-small{ font-size:11px; color:var(--muted); }
+  .w-stages{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:12px 0 8px; }
+  .w-stage{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:10px 2px; text-align:center; font-size:12px; font-weight:700; color:var(--muted); cursor:pointer; }
+  .w-stage.on{ background:rgba(61,220,151,0.12); border-color:rgba(61,220,151,0.35); color:var(--green); }
+  .w-stage.cur{ box-shadow:0 0 0 1px var(--green) inset; }
+  .w-tip{ font-size:13px; color:var(--muted); line-height:1.45; }
+  .w-dots{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+  .w-dot{ aspect-ratio:1; border-radius:50%; background:var(--panel-2); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue'; font-size:15px; color:var(--muted); cursor:pointer; }
+  .w-dot.on{ background:var(--green); border-color:var(--green); color:#0d1310; }
+  .w-dot.today{ border-color:var(--red); }
+  .w-dot.future{ opacity:0.35; cursor:default; }
+  .w-link{ color:var(--text); }
+  .w-setting{ margin:22px 0 0; font-size:12.5px; color:var(--muted); text-align:center; }
+  .w-setting select{ background:var(--panel-2); border:1px solid var(--line); border-radius:8px; color:var(--text); padding:6px 8px; margin-left:6px; font-family:'Inter'; }
 </style>
 </head>
 <body>
@@ -451,6 +513,16 @@
     <div id="weighinList"></div>
   </section>
 
+  <!-- WRITE -->
+  <section class="tab-panel" id="panel-write">
+    <div id="writeRoot"></div>
+  </section>
+
+  <!-- QUEST -->
+  <section class="tab-panel" id="panel-quest">
+    <div id="questRoot"></div>
+  </section>
+
 </main>
 
 <div class="rest-timer" id="restTimer">
@@ -468,6 +540,12 @@
     </button>
     <button class="nav-btn" data-tab="train" onclick="switchTab('train')">
       <span class="ic">🏋️</span>TRAIN
+    </button>
+    <button class="nav-btn" data-tab="write" onclick="switchTab('write')">
+      <span class="ic">✍️</span>WRITE
+    </button>
+    <button class="nav-btn" data-tab="quest" onclick="switchTab('quest')">
+      <span class="ic">🎲</span>QUEST
     </button>
   </div>
 </nav>
@@ -1154,6 +1232,529 @@ function saveCheckin(){
   renderWeighins();
 }
 
+/* ---------- QUEST: CAMPAIGN DATA ---------- */
+/* Each chapter: read-aloud text + 3 choices. type = combat | action | sneak | talk.
+   Non-combat choices roll a d20 vs dc. Combat choices fight a foe (hp, ac) over several rolls.
+   s = success outcome, f = fail outcome (both move the story forward). goldFail overrides fail gold. */
+const CAMPAIGN = {
+  name: 'The Winter Lantern',
+  chapters: [
+    { title:'The Stolen Lantern',
+      text:`In the snowy village of Lindholm, the Winter Lantern has glowed in the town square for a hundred years. Its golden light keeps the Endless Frost away. But this morning, the heroes wake up to silence. The lantern is GONE! Frost is already creeping across the windows, and the chickens have tiny icicles on their beaks. Elder Astrid bangs her walking stick on the ground. "Whoever took it left in the night. If the lantern isn't back in twelve days, Lindholm will freeze forever!" She looks right at you. "You are the bravest heroes we have. Where will you start?"`,
+      choices:[
+        { label:'Follow the strange footprints in the snow', type:'action', dc:10,
+          s:`The footprints are huge, with three toes and long claws. They lead north toward the Whispering Woods. Stuck in the snow, you find a shiny blue scale, cold as ice. Whatever took the lantern has scales!`,
+          f:`The wind blows snow over the tracks before you can follow them very far. After an hour of searching, you guess they went north, toward the Whispering Woods. Your toes are VERY cold.` },
+        { label:'Ask the goat herder what he saw', type:'talk', dc:8,
+          s:`Old Gunnar stops shaking long enough to whisper: "A shadow with wings flew north, toward the mountain! The lantern swung from its claws!" He gives you a warm loaf of bread for the road.`,
+          f:`Gunnar is so scared he only says "Baaah!", just like his goats. But all his goats are pointing their noses north. That's a clue... probably.` },
+        { label:'Climb the bell tower to look around', type:'action', dc:12,
+          s:`From the very top, you spot a faint golden glow far to the north, beyond the Whispering Woods, high on Frost Mountain. Now you know where to go!`,
+          f:`Halfway up, a pigeon lands on your head and you slide all the way back down into a pile of snow. Everyone laughs, but a kind villager points north. "Strange lights up there last night," she says.` },
+      ]},
+    { title:'The Whispering Woods',
+      text:`The trees of the Whispering Woods are so tall they scratch the clouds. As you walk, the branches whisper: "Turn back... turn back..." Then you hear a growl. Three frost wolves step onto the path, with fur like snowdrifts and eyes like blue candles. The biggest wolf shows its teeth. They are hungry, and they are blocking the only path north.`,
+      choices:[
+        { label:'Fight the frost wolves', type:'combat', foe:{ name:'Frost Wolf Pack', hp:3, ac:10 },
+          s:`With one last brave strike, the wolves yelp and run off into the trees with their tails tucked. One drops a sparkly collar. These wolves belong to someone... but who?`,
+          f:`The wolves knock you into a snowbank and steal your lunch! Hungry but not hurt, you dig yourselves out and keep heading north.` },
+        { label:'Sneak around through the bushes', type:'sneak', dc:12,
+          s:`Quiet as falling snow, you creep past the pack. The wolves never even sniff you. One of them yawns a big, sleepy yawn.`,
+          f:`SNAP! A twig breaks under your boot. The wolves chase you all the way to the edge of the woods. You're totally out of breath, but you made it!` },
+        { label:'Toss them your lunch', type:'talk', dc:10,
+          s:`The wolves gobble up the sandwiches, wag their tails, and one licks your face. They trot away happily. You might have made some new friends!`,
+          f:`The wolves eat the lunch... then look at you for more. You back away slowly, then RUN! Everyone escapes, but now your tummies are rumbling.` },
+      ]},
+    { title:"Näcken's River",
+      text:`The path ends at a wide, rushing river. The water is so cold it sings. On a rock in the middle sits Näcken, the river spirit, playing a fiddle made of ice. "Nobody crosses MY river," he says with a grin, "unless they impress me first!" The old bridge has fallen into the water. You'll need to get across somehow.`,
+      choices:[
+        { label:'Swing across on a long vine', type:'action', dc:12,
+          s:`WHEEEE! You swing over the water like true adventurers and land on the far bank. Näcken claps. "Bravo! Not bad at all, little heroes!"`,
+          f:`SPLASH! You land in the shallow part and climb out dripping wet. Näcken laughs so hard he falls off his rock, then kindly dries you off with a warm wind.` },
+        { label:'Sing Näcken a song', type:'talk', dc:11,
+          s:`Your song is so silly and so LOUD that Näcken giggles until he cries. Then he freezes a sparkling ice bridge across the river, just for you.`,
+          f:`Your song is... very loud. Näcken covers his ears. He builds you an ice bridge anyway, mostly so you'll stop singing.` },
+        { label:'Build a raft from fallen logs', type:'action', dc:10,
+          s:`You tie the logs together tight and paddle across as a team. Näcken plays a victory song on his ice fiddle as you land.`,
+          f:`The raft spins around three times before bumping into the other bank. You're dizzy, but you made it across!` },
+      ]},
+    { title:'The Goblin Toll Bridge',
+      text:`Past the river, a narrow stone bridge crosses a deep canyon. A gang of goblins in mismatched armor blocks the way. One is wearing a cooking pot as a helmet. "TOLL BRIDGE!" squeaks their leader, Snikkit. "Pay ten gold or turn around!" Behind him, another goblin is holding a shiny blue scale... just like the one from the village.`,
+      choices:[
+        { label:'Charge the goblins', type:'combat', foe:{ name:'Goblin Gang', hp:4, ac:11 },
+          s:`The goblins scatter, squeaking, and Snikkit loses his pot-helmet. As he runs away he yells, "The flying lizard PAID us to guard this bridge! Don't tell her we lost!"`,
+          f:`The goblins pelt you with snowballs and rotten turnips until you have to back off. But while they're busy celebrating, you tiptoe across the bridge behind them.` },
+        { label:'Challenge Snikkit to a riddle', type:'talk', dc:12,
+          s:`"What gets wetter the more it dries?" you ask. Snikkit thinks so hard his ears start to smoke. "A towel!" you finally tell him. He stomps his feet, but a deal's a deal. As you pass, he mutters, "The ice wyrm won't like you either..."`,
+          f:`"A TOWEL! Easy!" Snikkit shouts, and does a silly victory dance. While all the goblins are dancing, you sneak across the bridge. Not quite the plan, but it worked!` },
+        { label:'Haggle over the toll', type:'talk', dc:8, goldFail:-10,
+          s:`You haggle them all the way down to two shiny buttons and a pinecone. The goblins are thrilled with the deal. You keep all your gold!`,
+          f:`They take ten whole gold coins. Ouch! But they also give you a goblin cookie. It tastes like socks.` },
+      ]},
+    { title:'The Vittra Ring',
+      text:`In a hidden valley, you find a perfect circle of glowing mushrooms. Inside it, tiny vittra are dancing. Vittra are little people no taller than your boot, and they know every secret path in the mountains. But vittra can also be tricksters. Their queen, Lilla Lin, points at you with a twig. "Big ones! What do you want?"`,
+      choices:[
+        { label:'Join their dance', type:'action', dc:10,
+          s:`You dance so well that the vittra cheer and crown you with tiny flower crowns. Lilla Lin shows you a secret tunnel that goes halfway up the mountain!`,
+          f:`You trip and squish a mushroom. The vittra gasp... then burst out laughing. Lilla Lin points the way, but warns, "Watch those big feet!"` },
+        { label:'Politely ask for directions', type:'talk', dc:9,
+          s:`Lilla Lin loves your good manners. "An ice wyrm named Isvinge took your lantern," she says. "She lives in the Frozen Hall at the top of the mountain." Now you know who you're looking for!`,
+          f:`The vittra give you directions... in a rhyme... backwards. It takes a long time to figure out, but you get there in the end.` },
+        { label:'Sneak a glowing mushroom for light', type:'sneak', dc:13,
+          s:`You slip a glowing mushroom into your pocket without anyone noticing. It will light up dark caves later!`,
+          f:`"THIEF!" squeaks a vittra. You give the mushroom back and say sorry. Lilla Lin forgives you, but first you have to sing the whole Vittra Song.` },
+      ]},
+    { title:'Avalanche!',
+      text:`The mountain path is steep and slippery. Halfway up, you hear a deep RUMBLE. You look up. Snow is sliding down from the peak, faster and faster. An AVALANCHE is coming straight at you! You have only seconds to act!`,
+      choices:[
+        { label:'Sprint for the nearby cave', type:'action', dc:11,
+          s:`You dive into the cave just as the snow thunders past the entrance. Safe! And deep in the cave, something is glittering...`,
+          f:`The edge of the avalanche knocks you over, and you tumble into the cave like rolling snowballs. A little bumped and bruised, but safe.` },
+        { label:'Duck behind a giant boulder', type:'action', dc:10,
+          s:`The snow roars right over the boulder, and you're left in a perfect little snow fort. Cozy!`,
+          f:`The boulder wobbles and rolls, and you end up sliding halfway down the mountain. You'll have to climb that part again!` },
+        { label:'Shout a magic word to split the snow', type:'talk', dc:13,
+          s:`"STOP!" you shout with all your might. The avalanche splits around you like a river around a rock. Even the mountain looks impressed.`,
+          f:`Your shout makes even MORE snow fall. Oops! You're buried up to your noses, and it takes ages to dig yourselves out.` },
+      ]},
+    { title:'The Great Snow Bear',
+      text:`At the top of the pass, a cave breathes out warm air. Inside sleeps an enormous white bear, as big as a house, snoring like thunder. The only way forward is right past her. Then one huge eye opens. The bear sniffs the air... and smells the honey cakes in your backpack.`,
+      choices:[
+        { label:'Face the snow bear', type:'combat', foe:{ name:'Great Snow Bear', hp:5, ac:11 },
+          s:`The bear grunts, bows her big head and steps aside. "You are strong, little ones," she rumbles. "Strong enough, maybe, to face the wyrm."`,
+          f:`The bear sits on you. Not hard, but bears are VERY heavy. When she gets bored, she wanders off for a nap and you squeeze past.` },
+        { label:'Offer her the honey cakes', type:'talk', dc:11,
+          s:`The bear munches the honey cakes happily, then gives you a ride on her back up the next steep hill. Best. Ride. EVER.`,
+          f:`She eats the honey cakes AND chews up your backpack straps. You tie your packs together with string, but she lets you pass.` },
+        { label:'Tiptoe past while she yawns', type:'sneak', dc:12,
+          s:`You time it perfectly. While her huge mouth is open in a giant yawn, you tiptoe right past her nose. She never notices a thing.`,
+          f:`Achoo! Someone sneezes. The bear growls and chases you up the trail, but she's too sleepy to keep up for long.` },
+      ]},
+    { title:'The Rune Door',
+      text:`Inside the mountain stands a giant door made of blue ice, covered in glowing runes. In the center are three symbols: a sun, a moon, and a star. A deep voice echoes through the tunnel: "Only those who bring LIGHT may pass." The floor in front of the door is pure, slippery ice.`,
+      choices:[
+        { label:'Study the runes and solve the puzzle', type:'talk', dc:12,
+          s:`You press the sun. The runes flash gold and the great door swings open. Light is the answer, of course!`,
+          f:`You press the moon. The floor tilts and you slide all the way back to the entrance! On your second try, you press the sun, and the door opens.` },
+        { label:'Slide across the ice and push the door', type:'action', dc:11,
+          s:`You get a running start and slide across the ice like hockey pucks, crashing into the door together. It creaks open!`,
+          f:`You slide... right past the door and into a snowdrift. It takes three tries, but you finally push it open.` },
+        { label:'Melt the door with a torch', type:'action', dc:10,
+          s:`Your torch glows bright, and the door melts into a doorway-shaped hole. You brought the light!`,
+          f:`The torch makes a tiny hole, just big enough to crawl through. It's a tight squeeze, but everyone fits.` },
+      ]},
+    { title:'Grumbold the Troll',
+      text:`Beyond the door, the tunnel opens into a huge cavern with an underground lake. On an island in the middle sits Grumbold, a troll with a nose like a potato and moss growing out of his ears. He's holding a map with a big red X on it. "MINE!" he grumbles. "Map to the Frozen Hall. You want it? You have to beat me!"`,
+      choices:[
+        { label:'Battle Grumbold', type:'combat', foe:{ name:'Grumbold the Troll', hp:6, ac:12 },
+          s:`Grumbold flops down with a big THUD. "Fine, fine. Take the map," he sulks. "Nobody ever wants to play with me anyway." You promise to come back and play on your way home.`,
+          f:`Grumbold tosses you into the lake. Luckily, it's only knee-deep! While he's busy laughing, you grab the map and run.` },
+        { label:'Challenge him to a riddle contest', type:'talk', dc:13,
+          s:`"What has to be broken before you can use it?" you ask. Grumbold scratches his mossy head for ten whole minutes. "An EGG," you tell him. He hands over the map, grumbling but impressed.`,
+          f:`Grumbold beats you at riddles. He's so happy that he dances around and drops the map. You pick it up while he's not looking.` },
+        { label:'Sneak around the lake to grab the map', type:'sneak', dc:12,
+          s:`You creep along the edge of the lake, quiet as shadows, and slip the map right out of his hand while he picks his nose.`,
+          f:`Splash! Someone slips on a wet rock. Grumbold roars and chases you around the lake three times before he gets dizzy and sits down. You grab the map.` },
+      ]},
+    { title:"The Frost Giant's Kitchen",
+      text:`The map leads straight through the kitchen of Snorre, a frost giant chef. Pots as big as swimming pools bubble with icy soup. Snorre is humming a song and chopping icicle carrots with a knife as big as a door. To get through, you have to cross his kitchen without getting noticed... or become his dinner guests.`,
+      choices:[
+        { label:'Hide in the bread basket and wait', type:'sneak', dc:12,
+          s:`Snorre carries the bread basket right through the dining hall and out the back door. A free ride!`,
+          f:`Snorre finds you in the basket. "Little croutons!" he booms. But he's actually friendly, and he sets you down gently by the back door.` },
+        { label:'Knock over a pot as a distraction', type:'action', dc:11,
+          s:`CLANG! A pot crashes on the other side of the kitchen. While Snorre stomps over to look, you run straight through.`,
+          f:`The pot lands on YOUR side of the kitchen. Snorre spots you, but he's too busy cleaning up the soup to chase you. You slip out.` },
+        { label:'Offer to help him cook', type:'talk', dc:10,
+          s:`Snorre loves your cooking help and shares a meatball the size of a pumpkin. He tells you a secret: "Isvinge only took the lantern because she's cold and lonely."`,
+          f:`You add WAY too much pepper. Snorre sneezes so hard that you're blown right out the back door. Well, that works!` },
+      ]},
+    { title:'The Ice Golem',
+      text:`At the top of a frozen staircase, a guardian made of giant ice blocks stands in front of the Frozen Hall. The Ice Golem's eyes glow bright blue. "NONE SHALL WAKE THE WYRM," it booms. Behind it, through a crack in the wall, you can see a golden glow. The lantern is close!`,
+      choices:[
+        { label:'Fight the Ice Golem', type:'combat', foe:{ name:'Ice Golem', hp:6, ac:12 },
+          s:`CRACK! The golem tumbles into a pile of ice cubes. A tiny voice from the pile says, "Okay. You may pass."`,
+          f:`The golem pushes you all the way down the stairs. On your way back up, you find a side door the golem forgot to guard.` },
+        { label:'Bounce light into its eyes with your shield', type:'action', dc:12,
+          s:`You catch the glow from the lantern on your shiny shield and flash it into the golem's eyes. "TOO BRIGHT!" it cries, and steps aside.`,
+          f:`You flash the light into your OWN eyes. Everything is spots for a minute! The golem feels sorry for you and lets you pass.` },
+        { label:'Tell it a joke', type:'talk', dc:11,
+          s:`"Why did the snowman name his dog Frost? Because Frost BITES!" The golem laughs so hard that it cracks right in half. Still giggling, it waves you through.`,
+          f:`The golem groans. "TERRIBLE." But it lets you pass anyway, out of pity.` },
+      ]},
+    { title:'Isvinge, the Ice Wyrm',
+      text:`The Frozen Hall glitters like the inside of a diamond. Curled around the Winter Lantern is Isvinge, a young ice wyrm with wings like frosted glass. Her eyes snap open and she hisses. "Go away! It's MINE! It's the only warm thing on this whole cold mountain!" She hugs the lantern tighter, and a single icy tear rolls down her nose. This is your moment, heroes. How will you save Lindholm?`,
+      choices:[
+        { label:'Battle the ice wyrm', type:'combat', foe:{ name:'Isvinge the Ice Wyrm', hp:8, ac:13 },
+          s:`With one last brave move, Isvinge drops the lantern and flies up to her perch. As you lift the lantern, you call up to her: "Come to Lindholm! It's warm there, and you won't be alone!" She looks down at you for a long moment... and nods.`,
+          f:`Isvinge's icy breath knocks you over, but the lantern slips from her claws, and you catch it! As you turn to leave, you see her crying. You hold out your hand. "Come with us," you say. And she does.` },
+        { label:'Invite her to live in Lindholm', type:'talk', dc:14,
+          s:`Isvinge's eyes go wide. "A real home? With friends?" She carries you AND the lantern all the way home on her back, flying over the mountains. Lindholm has a brand-new guardian!`,
+          f:`At first she doesn't believe you. You keep talking for a whole hour, telling her about the bakery, the goats and the warm fires. Finally, she smiles and agrees to try it.` },
+        { label:'Give her your warmest scarf', type:'action', dc:12,
+          s:`You wrap your warmest scarf around Isvinge's neck. She sighs happily. "So THIS is what warm feels like." She gives the lantern back and asks if she can come home with you.`,
+          f:`The scarf gets tangled on her horns, and everyone ends up in a big giggling heap. When you finally untangle it, Isvinge is laughing too. She hands you the lantern.` },
+      ]},
+  ],
+  epilogue:`The heroes return to Lindholm with the Winter Lantern, and with Isvinge flying overhead. The whole village cheers as the lantern is placed back in the town square. Golden light spreads across the rooftops, the frost melts away, and the chickens finally lose their icicles. That night there is a great feast. Isvinge curls up by the lantern, warm at last, and Elder Astrid makes her the official Guardian of Lindholm. As for the heroes, their names will be sung in Lindholm for a hundred years. THE END... for now.`,
+};
+
+/* ---------- QUEST: ENGINE ---------- */
+const QUEST_CLASSES = {
+  warrior:{ label:'Warrior', icon:'⚔️', bonus:'combat', desc:'+2 when fighting' },
+  ranger: { label:'Ranger',  icon:'🏹', bonus:'action', desc:'+2 on action rolls' },
+  rogue:  { label:'Rogue',   icon:'🗝️', bonus:'sneak',  desc:'+2 when sneaking' },
+  wizard: { label:'Wizard',  icon:'✨', bonus:'talk',   desc:'+2 on clever rolls' },
+};
+const QUEST_TYPES = {
+  combat:{ icon:'⚔️', label:'Fight' }, action:{ icon:'🏃', label:'Action' },
+  sneak:{ icon:'🤫', label:'Sneak' },  talk:{ icon:'🗣️', label:'Clever' },
+};
+const MAX_HEARTS = 10;
+let quest = load('berserkr_quest', null);
+function saveQuest(){ save('berserkr_quest', quest); }
+let questDraft = [{ name:'', cls:'warrior' }, { name:'', cls:'wizard' }];
+let questRolling = false;
+let questArmed = null; // two-tap confirm for parent actions: 'unlock' | 'reset'
+
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function questHero(){ return quest.heroes[quest.turn % quest.heroes.length]; }
+function heartsHtml(n){ return '❤️'.repeat(Math.max(0,n)) + '🤍'.repeat(Math.max(0, MAX_HEARTS - n)); }
+
+/* sounds — reuse the rest-timer audio context */
+function questTone(freq, at, dur, vol){
+  if(!audioCtx) return;
+  const t = audioCtx.currentTime + at;
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = 'triangle'; o.frequency.value = freq;
+  g.gain.setValueAtTime(0.001, t); g.gain.exponentialRampToValueAtTime(vol||0.25, t+0.02);
+  g.gain.exponentialRampToValueAtTime(0.001, t+dur);
+  o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t+dur+0.02);
+}
+function questSound(kind){
+  if(kind==='tick') questTone(700, 0, 0.04, 0.08);
+  if(kind==='win')  [523,659,784,1047].forEach((f,i)=>questTone(f, i*0.12, 0.25));
+  if(kind==='lose') [392,330,262].forEach((f,i)=>questTone(f, i*0.16, 0.3));
+  if(kind==='crit') [523,659,784,1047,1319].forEach((f,i)=>questTone(f, i*0.09, 0.3, 0.3));
+}
+
+/* ----- setup ----- */
+function questSetupHtml(){
+  const rows = questDraft.map((h,i)=>`
+    <div class="q-hero-row">
+      <input type="text" placeholder="Hero ${i+1} name" value="${esc(h.name)}" oninput="questDraft[${i}].name=this.value">
+      <select onchange="questDraft[${i}].cls=this.value">
+        ${Object.entries(QUEST_CLASSES).map(([k,c])=>`<option value="${k}" ${h.cls===k?'selected':''}>${c.icon} ${c.label}</option>`).join('')}
+      </select>
+      ${questDraft.length>1 ? `<button class="del-x" onclick="questDraft.splice(${i},1);renderQuest()">×</button>` : ''}
+    </div>`).join('');
+  return `
+    <div class="q-title display">THE WINTER LANTERN</div>
+    <div class="q-sub">A 12-day adventure. One chapter a day.</div>
+    <div class="card">
+      <div class="q-label">CREATE YOUR HEROES</div>
+      ${rows}
+      ${questDraft.length<4 ? `<button class="cue-btn" onclick="questDraft.push({name:'',cls:'ranger'});renderQuest()">+ ADD HERO</button>` : ''}
+      <div class="q-classes">${Object.values(QUEST_CLASSES).map(c=>`<div>${c.icon} <b>${c.label}</b> ${c.desc}</div>`).join('')}</div>
+      <button class="add-btn" style="width:100%;margin-top:12px" onclick="questStart()">BEGIN THE ADVENTURE</button>
+    </div>`;
+}
+function questStart(){
+  const heroes = questDraft.map(h=>({ name:h.name.trim(), cls:h.cls })).filter(h=>h.name);
+  if(!heroes.length) return;
+  quest = { heroes, chapter:0, lastDone:null, hearts:MAX_HEARTS, gold:0, turn:0, scene:null, lastRest:todayKey(), lastOutcome:null };
+  saveQuest(); renderQuest();
+}
+
+/* ----- play ----- */
+function questPick(i){
+  const ch = CAMPAIGN.chapters[quest.chapter], c = ch.choices[i];
+  if(quest.lastRest !== todayKey()){ quest.hearts = Math.min(MAX_HEARTS, quest.hearts + 3); quest.lastRest = todayKey(); } // a night's rest heals
+  quest.scene = { choice:i, foeHp: c.type==='combat' ? c.foe.hp : null, misses:0, log:[], result:null, last:null, crit:false, rescued:false };
+  saveQuest(); renderQuest();
+  document.getElementById('questRoot').scrollIntoView({behavior:'smooth'});
+}
+function questRoll(){
+  if(questRolling || !quest.scene || quest.scene.result) return;
+  ensureAudioContext();
+  questRolling = true;
+  const die = document.getElementById('d20'), num = document.getElementById('d20num');
+  die.classList.add('rolling');
+  let ticks = 0;
+  const iv = setInterval(()=>{
+    num.textContent = 1 + Math.floor(Math.random()*20);
+    questSound('tick');
+    if(++ticks >= 14){
+      clearInterval(iv);
+      die.classList.remove('rolling');
+      questRolling = false;
+      questResolve(1 + Math.floor(Math.random()*20));
+    }
+  }, 70);
+}
+function questResolve(n){
+  const sc = quest.scene, ch = CAMPAIGN.chapters[quest.chapter], c = ch.choices[sc.choice];
+  const hero = questHero();
+  const bonus = QUEST_CLASSES[hero.cls].bonus === c.type ? 2 : 0;
+  const rally = sc.misses >= 2 ? 2 : 0; // after 2 misses in a row the team rallies
+  const total = n + bonus + rally;
+  const target = c.type==='combat' ? c.foe.ac : c.dc;
+  const hit = n === 20 || (n !== 1 && total >= target);
+  sc.last = { hero:hero.name, n, bonus, rally, total, target, hit };
+  if(c.type === 'combat'){
+    if(hit){
+      const dmg = n===20 ? 2 : 1;
+      sc.foeHp = Math.max(0, sc.foeHp - dmg);
+      sc.misses = 0;
+      sc.log.unshift(`${hero.name} ${n===20?'lands a LEGENDARY blow':'hits'}! ${c.foe.name}: ${sc.foeHp} left`);
+      if(sc.foeHp === 0){ questEnd(true, n===20); return; }
+      questSound(n===20?'crit':'tick');
+    } else {
+      quest.hearts -= 1; sc.misses += 1;
+      sc.log.unshift(`${hero.name} ${n===1?'trips over their own feet':'misses'}! ${c.foe.name} strikes back. -1 ❤️`);
+      if(quest.hearts <= 0){ quest.hearts = 5; sc.rescued = true; questEnd(false); return; }
+      questSound('lose');
+    }
+    quest.turn++;
+    saveQuest(); renderQuest();
+  } else {
+    if(!hit){ quest.hearts -= 1; if(quest.hearts <= 0){ quest.hearts = 5; sc.rescued = true; } }
+    questEnd(hit, n===20);
+  }
+}
+function questEnd(success, crit){
+  const sc = quest.scene, c = CAMPAIGN.chapters[quest.chapter].choices[sc.choice];
+  sc.result = success ? 'success' : 'fail';
+  sc.crit = !!crit;
+  const gold = success ? (crit ? 20 : 10) : (c.goldFail !== undefined ? c.goldFail : 2);
+  quest.gold = Math.max(0, quest.gold + gold);
+  sc.gold = gold;
+  quest.turn++;
+  saveQuest(); renderQuest();
+  questSound(success ? (crit?'crit':'win') : 'lose');
+}
+function questFinish(){
+  const ch = CAMPAIGN.chapters[quest.chapter], sc = quest.scene, c = ch.choices[sc.choice];
+  quest.lastOutcome = { title:ch.title, text: sc.result==='success' ? c.s : c.f };
+  quest.chapter++;
+  quest.lastDone = todayKey();
+  quest.scene = null;
+  saveQuest(); renderQuest();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function questParent(action){
+  if(questArmed !== action){ questArmed = action; renderQuest(); return; }
+  questArmed = null;
+  if(action === 'unlock') quest.lastDone = null;
+  if(action === 'reset'){ questDraft = quest.heroes.map(h=>({...h})); quest = null; }
+  saveQuest(); renderQuest();
+}
+
+/* ----- render ----- */
+function questPartyHtml(){
+  const turnHero = questHero();
+  return `<div class="q-party">
+      <div class="q-heroes">${quest.heroes.map(h=>`<span class="q-chip${h===turnHero?' turn':''}">${QUEST_CLASSES[h.cls].icon} ${esc(h.name)}</span>`).join('')}</div>
+      <div class="q-stats"><span>${heartsHtml(quest.hearts)}</span><span>🪙 ${quest.gold}</span></div>
+    </div>`;
+}
+function questParentLinks(){
+  return `<div class="q-parent">
+      ${quest.lastDone===todayKey() && quest.chapter < CAMPAIGN.chapters.length ? `<button onclick="questParent('unlock')">${questArmed==='unlock'?'Tap again to unlock':'Parent: play next chapter now'}</button>` : ''}
+      <button onclick="questParent('reset')">${questArmed==='reset'?'Tap again — this restarts the campaign':'Parent: new heroes / restart'}</button>
+    </div>`;
+}
+function renderQuest(){
+  const root = document.getElementById('questRoot');
+  if(!root) return;
+  if(!quest){ root.innerHTML = questSetupHtml(); return; }
+  const total = CAMPAIGN.chapters.length;
+
+  if(quest.chapter >= total){
+    root.innerHTML = `
+      <div class="q-title display">VICTORY!</div>
+      ${questPartyHtml()}
+      <div class="card q-story"><div class="q-label">READ ALOUD · EPILOGUE</div><div class="q-text">${CAMPAIGN.epilogue}</div></div>
+      <div class="card q-sub">The heroes finished with 🪙 ${quest.gold} gold.</div>
+      ${questParentLinks()}`;
+    return;
+  }
+
+  if(quest.lastDone === todayKey() && !quest.scene){
+    const lo = quest.lastOutcome;
+    root.innerHTML = `
+      <div class="q-title display">TODAY'S QUEST IS DONE</div>
+      <div class="q-sub">Chapter ${quest.chapter + 1} of ${total} unlocks tomorrow.</div>
+      ${questPartyHtml()}
+      ${lo ? `<div class="card q-story"><div class="q-label">LAST TIME · ${esc(lo.title).toUpperCase()}</div><div class="q-text">${lo.text}</div></div>` : ''}
+      ${questParentLinks()}`;
+    return;
+  }
+
+  const ch = CAMPAIGN.chapters[quest.chapter];
+  const sc = quest.scene;
+  let body = '';
+  if(!sc){
+    body = `
+      <div class="q-label" style="margin:14px 0 8px">WHAT DO THE HEROES DO?</div>
+      ${ch.choices.map((c,i)=>`
+        <button class="q-choice" onclick="questPick(${i})">
+          <span class="q-type">${QUEST_TYPES[c.type].icon} ${QUEST_TYPES[c.type].label}</span>
+          <span class="q-choice-l">${c.label}</span>
+        </button>`).join('')}`;
+  } else {
+    const c = ch.choices[sc.choice];
+    const hero = questHero();
+    const target = c.type==='combat' ? c.foe.ac : c.dc;
+    const heroBonus = QUEST_CLASSES[hero.cls].bonus === c.type;
+    const foeBar = c.type==='combat' ? `<div class="q-foe"><b>${c.foe.name}</b> ${'🟥'.repeat(sc.foeHp)}${'⬛'.repeat(c.foe.hp - sc.foeHp)}</div>` : '';
+    const lastHtml = sc.last ? `<div class="q-last ${sc.last.hit?'hit':'miss'}">${esc(sc.last.hero)} rolled <b>${sc.last.n}</b>${sc.last.bonus?' +2 class':''}${sc.last.rally?' +2 rally':''} = ${sc.last.total} vs ${sc.last.target} → ${sc.last.n===20?'NATURAL 20!':(sc.last.n===1?'Natural 1...':(sc.last.hit?'SUCCESS':'MISS'))}</div>` : '';
+    if(!sc.result){
+      body = `
+        <div class="card q-picked"><span class="q-type">${QUEST_TYPES[c.type].icon} ${QUEST_TYPES[c.type].label}</span> ${c.label}</div>
+        ${foeBar}
+        <div class="q-turn">${QUEST_CLASSES[hero.cls].icon} <b>${esc(hero.name).toUpperCase()}'S TURN!</b></div>
+        <div class="q-need">Roll <b>${target}</b> or higher${heroBonus?' · +2 '+QUEST_CLASSES[hero.cls].label+' bonus':''}${sc.misses>=2?' · +2 RALLY!':''}</div>
+        <div class="d20-wrap"><div class="d20" id="d20" onclick="questRoll()"><span id="d20num">${sc.last?sc.last.n:'TAP'}</span></div></div>
+        ${lastHtml}
+        ${sc.log.length ? `<div class="q-log">${sc.log.slice(0,6).map(l=>`<div>${esc(l)}</div>`).join('')}</div>` : ''}`;
+    } else {
+      const ok = sc.result === 'success';
+      body = `
+        <div class="card q-picked"><span class="q-type">${QUEST_TYPES[c.type].icon} ${QUEST_TYPES[c.type].label}</span> ${c.label}</div>
+        ${lastHtml}
+        <div class="q-banner ${ok?'win':'lose'}">${ok ? (sc.crit?'⭐ LEGENDARY SUCCESS! ⭐':'SUCCESS!') : 'IT DIDN\'T GO AS PLANNED...'}</div>
+        <div class="card q-story"><div class="q-label">READ ALOUD</div><div class="q-text">${ok ? c.s : c.f}</div>
+          ${sc.rescued ? `<div class="q-text" style="margin-top:10px">Out of hearts! A friendly reindeer pulls the heroes to safety and they catch their breath. (Hearts back to 5.)</div>` : ''}
+          <div class="q-reward">${sc.gold>=0?'+':''}${sc.gold} 🪙 gold</div></div>
+        <button class="add-btn" style="width:100%" onclick="questFinish()">${quest.chapter+1 < total ? "FINISH TODAY'S ADVENTURE" : 'RETURN TO LINDHOLM'}</button>`;
+    }
+  }
+  root.innerHTML = `
+    <div class="q-chapter">CHAPTER ${quest.chapter + 1} OF ${total}</div>
+    <div class="q-title display">${ch.title.toUpperCase()}</div>
+    ${questPartyHtml()}
+    <div class="card q-story"><div class="q-label">READ ALOUD</div><div class="q-text">${ch.text}</div></div>
+    ${body}
+    ${questParentLinks()}`;
+}
+
+/* ---------- WRITE: weekly Substack accountability ---------- */
+/* Goal: publish 1 story per week (weeks run Monday-Sunday). Four stages, a "wrote today" check,
+   an idea bank and an archive. Kept deliberately light: no word counts, no daily quotas. */
+const WRITE_STAGES = [
+  { key:'idea',  label:'Idea',      tip:'Pick the story. One sentence: who wants what, and what stands in the way?' },
+  { key:'draft', label:'Draft',     tip:'Write the ugly first draft. Done beats good — fix it Friday.' },
+  { key:'edit',  label:'Edit',      tip:'One pass for story, one for sentences. Read it out loud. Pick a title.' },
+  { key:'pub',   label:'Published', tip:'Shipped. Rest, read, collect ideas for next week.' },
+];
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+let write = load('berserkr_write', { publishDay:5, weeks:{}, ideas:[] }); // publishDay uses Date.getDay(); 5 = Friday
+function saveWrite(){ save('berserkr_write', write); }
+
+function dateKey(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function weekStart(d){ const x = new Date(d); const off = (x.getDay() + 6) % 7; x.setDate(x.getDate() - off); x.setHours(0,0,0,0); return x; }
+function weekKey(d){ return dateKey(weekStart(d || new Date())); }
+function thisWeek(){
+  const k = weekKey();
+  if(!write.weeks[k]) write.weeks[k] = { title:'', stage:0, link:'', sessions:{}, pubDate:null };
+  return write.weeks[k];
+}
+function deadlineDate(){ const ws = weekStart(new Date()); const d = new Date(ws); d.setDate(ws.getDate() + ((write.publishDay + 6) % 7)); return d; }
+function writeStreak(){
+  let n = 0; const d = weekStart(new Date());
+  if(!(write.weeks[dateKey(d)] && write.weeks[dateKey(d)].stage === 3)) d.setDate(d.getDate() - 7); // this week still open: count from last week
+  while(write.weeks[dateKey(d)] && write.weeks[dateKey(d)].stage === 3){ n++; d.setDate(d.getDate() - 7); }
+  return n;
+}
+function writeStatus(w){
+  if(w.stage === 3) return { cls:'ok', txt:"Published. This week's done — enjoy it." };
+  const today = new Date(); today.setHours(0,0,0,0);
+  const daysLeft = Math.round((deadlineDate() - today) / 86400000);
+  const total = (write.publishDay + 6) % 7 + 1;              // days from Monday through publish day
+  const elapsed = Math.min(1, (total - Math.max(daysLeft,0)) / total);
+  const expected = elapsed < 0.35 ? 0 : (elapsed < 0.7 ? 1 : 2); // where you'd want to be by now
+  if(daysLeft < 0) return { cls:'warn', txt:`Past your ${DAY_NAMES[write.publishDay]} target. Publish what you have — a finished short story beats a perfect unfinished one.` };
+  if(w.stage >= expected) return { cls:'ok', txt: daysLeft===0 ? 'Publish day. Ship it.' : `On track · ${daysLeft} day${daysLeft===1?'':'s'} to ${DAY_NAMES[write.publishDay]}.` };
+  return { cls:'warn', txt:`A bit behind · ${daysLeft} day${daysLeft===1?'':'s'} left. Next step: ${WRITE_STAGES[w.stage+1].label.toLowerCase()}. 25 minutes today gets you there.` };
+}
+
+function writeSetStage(i){
+  const w = thisWeek();
+  w.stage = (w.stage === i && i > 0) ? i - 1 : i; // tap the current stage again to step back
+  w.pubDate = w.stage === 3 ? todayKey() : null;
+  saveWrite(); renderWrite();
+}
+function writeField(field, val){ thisWeek()[field] = val; saveWrite(); }
+function writeToggleSession(dk){ const w = thisWeek(); w.sessions[dk] = !w.sessions[dk]; saveWrite(); renderWrite(); }
+function writeAddIdea(){
+  const el = document.getElementById('ideaInput'); const v = el.value.trim();
+  if(!v) return; write.ideas.unshift(v); el.value=''; saveWrite(); renderWrite();
+}
+function writeUseIdea(i){
+  const w = thisWeek(); const idea = write.ideas.splice(i,1)[0];
+  if(w.title && w.stage < 3) write.ideas.unshift(w.title); // swap the old one back into the bank
+  w.title = idea; saveWrite(); renderWrite();
+}
+function writeDelIdea(i){ write.ideas.splice(i,1); saveWrite(); renderWrite(); }
+function writeSetDay(v){ write.publishDay = Number(v); saveWrite(); renderWrite(); }
+
+function renderWrite(){
+  const root = document.getElementById('writeRoot'); if(!root) return;
+  const w = thisWeek(); const st = writeStatus(w);
+  const ws = weekStart(new Date()); const todayK = todayKey();
+  const dots = [0,1,2,3,4,5,6].map(i=>{
+    const d = new Date(ws); d.setDate(ws.getDate()+i); const dk = dateKey(d);
+    const future = dk > todayK; const on = !!w.sessions[dk];
+    return `<div class="w-dot${on?' on':''}${dk===todayK?' today':''}${future?' future':''}" ${future?'':`onclick="writeToggleSession('${dk}')"`}>${'MTWTFSS'[i]}</div>`;
+  }).join('');
+  const sessions = Object.values(w.sessions).filter(Boolean).length;
+  const archive = Object.entries(write.weeks).filter(([k,x])=>x.stage===3).sort((a,b)=>a[0]<b[0]?1:-1);
+  const streak = writeStreak();
+  root.innerHTML = `
+    <div class="w-head">
+      <div><div class="w-big display">${streak}</div><div class="w-small">week streak</div></div>
+      <div><div class="w-big display">${archive.length}</div><div class="w-small">stories published</div></div>
+      <div><div class="w-big display">${sessions}</div><div class="w-small">sessions this week</div></div>
+    </div>
+
+    <div class="section-title"><span class="bar"></span>THIS WEEK'S STORY</div>
+    <div class="card">
+      <span class="num-label">Working title</span>
+      <input type="text" id="wTitle" placeholder="What's this week's story?" value="${esc(w.title)}" onchange="writeField('title', this.value)">
+      <div class="w-stages">${WRITE_STAGES.map((s,i)=>`<div class="w-stage${i<=w.stage?' on':''}${i===w.stage?' cur':''}" onclick="writeSetStage(${i})">${i<w.stage?'✓ ':''}${s.label}</div>`).join('')}</div>
+      <div class="w-tip">${WRITE_STAGES[w.stage].tip}</div>
+      ${w.stage===3 ? `<span class="num-label" style="margin-top:10px">Substack link</span><input type="text" placeholder="https://…substack.com/p/…" value="${esc(w.link)}" onchange="writeField('link', this.value)">` : ''}
+      <div class="verdict ${st.cls==='warn'?'warn':''}">${st.txt}</div>
+    </div>
+
+    <div class="section-title"><span class="bar"></span>DID YOU WRITE TODAY?</div>
+    <div class="card">
+      <div class="w-dots">${dots}</div>
+      <div class="w-small" style="margin-top:8px">Tap a day you sat down and wrote — any amount counts. Aim for 3–4 sessions a week, not 7.</div>
+    </div>
+
+    <div class="section-title"><span class="bar"></span>IDEA BANK</div>
+    <div class="goal-add"><input type="text" id="ideaInput" placeholder="Jot an idea before it's gone" onkeydown="if(event.key==='Enter')writeAddIdea()"><button onclick="writeAddIdea()">+</button></div>
+    ${write.ideas.length ? write.ideas.map((t,i)=>`
+      <div class="goal-item">
+        <div class="goal-text">${esc(t)}</div>
+        <button class="cue-btn" style="margin:0" onclick="writeUseIdea(${i})">USE</button>
+        <button class="del-x" onclick="writeDelIdea(${i})">×</button>
+      </div>`).join('') : '<div class="empty">No ideas saved yet.</div>'}
+
+    <div class="section-title"><span class="bar"></span>PUBLISHED</div>
+    ${archive.length ? archive.slice(0,12).map(([k,x])=>`
+      <div class="weighin-item"><div>
+        <div class="wi-date">Week of ${k}</div>
+        <div class="wi-stats">${x.link ? `<a class="w-link" href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.title||'Untitled')}</a>` : esc(x.title||'Untitled')}</div>
+      </div></div>`).join('') : '<div class="empty">Your first published story lands here.</div>'}
+
+    <div class="w-setting">Publish day:
+      <select onchange="writeSetDay(this.value)">${[1,2,3,4,5,6,0].map(d=>`<option value="${d}" ${write.publishDay===d?'selected':''}>${DAY_NAMES[d]}</option>`).join('')}</select>
+    </div>`;
+}
+
 /* ---------- TABS ---------- */
 function switchTab(tab){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
@@ -1161,6 +1762,9 @@ function switchTab(tab){
   document.getElementById('panel-'+tab).classList.add('active');
   document.querySelector(`.nav-btn[data-tab="${tab}"]`).classList.add('active');
   document.getElementById('weatherCard').style.display = (tab === 'goals') ? 'flex' : 'none';
+  document.querySelector('.ring-card').style.display = (tab === 'quest' || tab === 'write') ? 'none' : 'flex';
+  if(tab === 'quest') renderQuest();
+  if(tab === 'write') renderWrite();
 }
 
 /* ---------- WEATHER ---------- */
@@ -1238,6 +1842,7 @@ function renderAll(){
   renderExercises();
   renderFuel();
   renderCheckin();
+  renderQuest();
   updateRing();
 }
 renderAll();
