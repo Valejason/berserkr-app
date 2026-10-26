@@ -186,6 +186,28 @@
   .set-box.done .n{ color:var(--green); }
 
   .divider-line{ height:1px; background:var(--line); margin:6px 0 14px; }
+  .ss-link{ font-size:10.5px; color:var(--red); font-weight:700; letter-spacing:0.03em; text-align:center; margin:6px 0 12px; text-transform:uppercase; }
+  .ex-tag{ display:inline-block; min-width:24px; font-family:'Bebas Neue'; font-size:13px; background:var(--panel-2); border:1px solid var(--line); border-radius:6px; padding:1px 5px; margin-right:7px; text-align:center; color:var(--text); }
+  .ex-tag.ss{ border-color:rgba(255,59,48,0.5); color:var(--red); }
+  .ex-target{ margin-bottom:6px; }
+  .week-focus{ font-size:12px; color:var(--muted); margin:-6px 0 6px; }
+  .session-plan{ font-size:12.5px; color:var(--muted); line-height:1.45; }
+  .cue-btn{ background:none; border:1px solid var(--line); color:var(--muted); border-radius:8px; font-family:'Inter'; font-weight:700; font-size:10.5px; letter-spacing:0.04em; padding:4px 10px; cursor:pointer; margin:2px 0 8px; }
+  .cue-list{ background:var(--panel-2); border-radius:10px; padding:10px 12px; margin-bottom:10px; font-size:12.5px; line-height:1.45; }
+  .cue-list ol, .cue-list ul{ margin:4px 0 8px; padding-left:18px; }
+  .cue-h{ font-size:10px; color:var(--red); font-weight:800; letter-spacing:0.05em; }
+  .plan-how{ font-size:11px; color:var(--green); margin-top:2px; }
+  details.eatout{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:8px; font-size:13px; line-height:1.5; }
+  details.eatout summary{ font-weight:700; cursor:pointer; font-size:14px; }
+  details.eatout ol, details.eatout ul{ padding-left:18px; margin:8px 0; }
+  .wi-avg{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:10px; font-size:13px; }
+  .wi-avg b{ font-family:'Bebas Neue'; font-size:22px; font-weight:400; }
+  .ci-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:8px; }
+  .ci-stat{ font-size:12.5px; color:var(--muted); margin-bottom:10px; line-height:1.5; }
+  .ci-stat b{ color:var(--text); }
+  .verdict{ margin-top:12px; padding:12px; border-radius:12px; background:rgba(61,220,151,0.10); border:1px solid rgba(61,220,151,0.35); font-size:13.5px; line-height:1.45; }
+  .verdict.warn{ background:rgba(255,59,48,0.10); border-color:rgba(255,59,48,0.4); }
+  .verdict small{ display:block; color:var(--muted); margin-top:6px; font-size:11.5px; }
 
   /* Fuel tab */
   .macro-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:16px; }
@@ -361,18 +383,27 @@
 
   <!-- TRAIN -->
   <section class="tab-panel" id="panel-train">
+    <div class="section-title"><span class="bar"></span>BLOCK 1 — PICK YOUR WEEK</div>
+    <div class="day-tabs" id="weekTabs"></div>
+    <div class="week-focus" id="weekFocus"></div>
+
     <div class="section-title"><span class="bar"></span>PICK YOUR DAY</div>
     <div class="day-tabs" id="dayTabs"></div>
 
-    <div class="card cardio-card">
-      <div>
-        <div class="l">Uphill Treadmill</div>
-        <div class="s">30 min incline walk — fat burn base</div>
-      </div>
-      <div class="toggle" id="cardioToggle" onclick="toggleCardio()"></div>
-    </div>
+    <div class="card session-plan">5 min warm-up → lifting (A/B straight sets, then supersets) → uphill walk. Running late? Shorten the walk, never the lifting.</div>
 
     <div class="card" id="exerciseCard"></div>
+
+    <div class="card">
+      <div class="cardio-card">
+        <div>
+          <div class="l">Uphill Treadmill — after lifting</div>
+          <div class="s" id="cardioSub">—</div>
+        </div>
+        <div class="toggle" id="cardioToggle" onclick="toggleCardio()"></div>
+      </div>
+      <div id="cardioCues"></div>
+    </div>
   </section>
 
   <!-- FUEL -->
@@ -380,10 +411,32 @@
     <div class="section-title"><span class="bar"></span>LOGGED TODAY</div>
     <div class="macro-grid" id="macroGrid"></div>
 
-    <div class="section-title"><span class="bar"></span>MEAL PLAN</div>
+    <div class="section-title"><span class="bar"></span>MEAL PLAN — <span id="mealDayLabel">TODAY</span></div>
     <div id="mealPlanList"></div>
 
-    <div class="section-title"><span class="bar"></span>WEEKLY WEIGH-IN</div>
+    <div class="section-title"><span class="bar"></span>EATING OUT</div>
+    <details class="eatout">
+      <summary>4-step order (~800 cal, 50 g+ protein, replaces dinner + snack)</summary>
+      <ol>
+        <li><b>Protein first:</b> fish, shrimp or lean steak — grilled, blackened, broiled, seared. Skip fried, breaded, crispy, smothered. Sirloin/filet/flank over ribeye.</li>
+        <li><b>One carb:</b> baked potato, rice or 2–3 tortillas. Bread, chips and fries count as your carb.</li>
+        <li><b>Double the veg:</b> swap fries or a second side for vegetables or a side salad.</li>
+        <li><b>Hidden fat:</b> sauces and dressing on the side. Ask for light butter.</li>
+      </ol>
+      <ul>
+        <li><b>Steakhouse:</b> 8–9 oz sirloin/filet, plain baked potato, steamed veg</li>
+        <li><b>Seafood:</b> grilled salmon or shrimp skewers, rice, veg, no tartar</li>
+        <li><b>Mexican:</b> steak/shrimp fajitas, 2–3 tortillas, pico, beans; no chip refills, cheese, sour cream</li>
+        <li><b>Poke:</b> greens base, double shrimp + crab, ponzu</li>
+        <li><b>Burger:</b> single patty, lettuce wrap or one bun, side salad</li>
+        <li><b>Italian:</b> grilled fish/steak + veg; pasta = half, box the rest</li>
+      </ul>
+      Drinks: water, sparkling, diet soda. Alcohol max 2 (light beer / spirit + soda) and it replaces the carb. Next meal, back on plan — no making up for it.
+    </details>
+
+    <div class="section-title"><span class="bar"></span>DAILY WEIGH-IN</div>
+    <div class="ci-stat">Every morning after the bathroom, before food. Waist at the navel on Sundays. Only the 7-day average counts.</div>
+    <div id="weighinAvg"></div>
     <div class="weighin-form">
       <div class="form-row two">
         <div><span class="num-label">Weight (lbs)</span><input type="number" id="weighinWeight" inputmode="decimal" placeholder="0"></div>
@@ -401,6 +454,9 @@
       <div class="grit-label display">DAILY GRIT</div>
       <div class="grit-text" id="quoteText">Loading...</div>
     </div>
+
+    <div class="section-title"><span class="bar"></span>SUNDAY CHECK-IN <span id="checkinDue" style="font-family:Inter;font-size:11px;color:var(--muted);letter-spacing:0;"></span></div>
+    <div class="card" id="checkinCard"></div>
 
     <div class="section-title"><span class="bar"></span>MEDICATION</div>
     <div id="medList"></div>
@@ -446,44 +502,119 @@ window.addEventListener('error', function(e){
 });
 
 /* ---------- DATA ---------- */
+/* BLOCK 1 — 4-week recomp. Weeks 1-3 build, week 4 deloads.
+   Exercise fields: tag (A, B, C1/C2 = superset), sets (week-1 base), reps, rest (seconds after this
+   exercise; 0 = go straight to the next exercise in the superset), inc (lbs to add), main (gets +1 set
+   in weeks 2-3), cues (key into FORM_CUES). */
+const BLOCK = { name:'BLOCK 1', start:'2026-10-26' }; // Monday the block starts
+const WEEK_FOCUS = {
+  1:'Learn weights, own the form · 3 reps in the tank',
+  2:'+1 set on A & B lifts · 2 reps in the tank',
+  3:'Push intensity · 1 rep in the tank, last isolation set to failure',
+  4:'Deload · 2 sets each, same weight · 3 reps in the tank',
+};
+const CARDIO_BY_WEEK = {
+  1:{ min:20, txt:'20 min · 3.0 mph · 8% incline' },
+  2:{ min:20, txt:'20 min · 3.0 mph · 10% incline' },
+  3:{ min:20, txt:'20 min · 3.2 mph · 10–12% incline' },
+  4:{ min:30, txt:'30 min · 3.0 mph · 8% incline (deload)' },
+};
 const WORKOUT_PLAN = {
-  1: { name:"PUSH", sub:"Chest / Shoulders / Tris", exercises:[
-        {name:"Machine Chest Press", target:"3 sets x 10-12", inc:5},
-        {name:"Machine Fly (Pec Deck)", target:"3 sets x 12-15", inc:5},
-        {name:"DB Lateral Raises", target:"3 sets x 12-15", inc:2.5},
-        {name:"Cable Triceps Pushdown", target:"3 sets x 12-15", inc:2.5},
+  1: { name:"PUSH", sub:"Chest / Delts / Tris", exercises:[
+        {tag:'A',  name:"Incline DB Press (30°)",          sets:3, reps:'8-10',       rest:120, inc:5,   main:true, cues:'incline'},
+        {tag:'B',  name:"Barbell Bench Press",             sets:3, reps:'8-10',       rest:120, inc:5,   main:true, cues:'bench'},
+        {tag:'C',  name:"Cable Lateral Raise (each arm)",  sets:4, reps:'12-15 / side', rest:45, inc:2.5, cues:'lateral'},
+        {tag:'D1', name:"Low-to-High Cable Fly",           sets:3, reps:'12-15',      rest:0,   inc:2.5},
+        {tag:'D2', name:"DB Lateral Raises",               sets:3, reps:'15-20',      rest:60,  inc:2.5, cues:'lateral'},
+        {tag:'E1', name:"Overhead Rope Triceps Extension", sets:3, reps:'10-12',      rest:0,   inc:2.5},
+        {tag:'E2', name:"Rope Pushdown (same rope)",       sets:2, reps:'12-15',      rest:0,   inc:2.5},
+        {tag:'E3', name:"Standing Cable Crunch (same rope)", sets:3, reps:'12-15',    rest:60,  inc:2.5, cues:'crunch'},
       ]},
-  2: { name:"PULL", sub:"Back / Biceps", exercises:[
-        {name:"Lat Pulldown", target:"3 sets x 10-12", inc:5},
-        {name:"Seated Cable Row", target:"3 sets x 10-12", inc:5},
-        {name:"Cable Bicep Curl", target:"3 sets x 12-15", inc:2.5},
-        {name:"Rear Delt Machine", target:"3 sets x 12-15", inc:2.5},
+  2: { name:"PULL", sub:"Lats / Back / Bis", exercises:[
+        {tag:'A',  name:"Lat Pulldown",                    sets:4, reps:'8-10',       rest:120, inc:5,   main:true, cues:'pulldown'},
+        {tag:'B',  name:"Chest-Supported Row",             sets:3, reps:'8-10',       rest:120, inc:5,   main:true, cues:'row'},
+        {tag:'C',  name:"Single-Arm Cable Row (each side)", sets:3, reps:'10-12 / side', rest:60, inc:2.5},
+        {tag:'D1', name:"Straight-Arm Cable Pulldown",     sets:3, reps:'12-15',      rest:0,   inc:2.5},
+        {tag:'D2', name:"Cable Face Pull / Reverse Pec Deck", sets:3, reps:'15',      rest:60,  inc:2.5},
+        {tag:'E1', name:"EZ-Bar or DB Curl",               sets:3, reps:'10-12',      rest:0,   inc:2.5},
+        {tag:'E2', name:"Hammer Curl",                     sets:2, reps:'12',         rest:0,   inc:2.5},
+        {tag:'E3', name:"Hanging Knee Raise",              sets:3, reps:'10-15',      rest:60,  inc:0},
       ]},
-  3: { name:"LEGS", sub:"Hip / Knee Friendly", exercises:[
-        {name:"Leg Press", target:"3 sets x 10-12", inc:10},
-        {name:"Leg Extension Machine", target:"3 sets x 12-15", inc:5},
-        {name:"Seated Leg Curl", target:"3 sets x 12-15", inc:5},
-        {name:"Leg Press Calf Raise", target:"3 sets x 15-20", inc:10},
+  3: { name:"LEGS", sub:"Knee-Friendly", exercises:[
+        {tag:'A',  name:"Romanian Deadlift",               sets:4, reps:'6-8',        rest:150, inc:5,   main:true, cues:'rdl'},
+        {tag:'B1', name:"Leg Press (feet high, pain-free depth)", sets:3, reps:'10-12', rest:0, inc:10, main:true, cues:'legpress'},
+        {tag:'B2', name:"Leg Press Calf Raise",            sets:3, reps:'12-15',      rest:120, inc:10},
+        {tag:'C1', name:"Barbell Hip Thrust",              sets:3, reps:'10',         rest:0,   inc:10},
+        {tag:'C2', name:"Seated / Lying Leg Curl",         sets:3, reps:'10-12',      rest:90,  inc:5},
+        {tag:'D1', name:"Hip Abductor Machine",            sets:2, reps:'15-20',      rest:0,   inc:5},
+        {tag:'D2', name:"Pallof Press",                    sets:3, reps:'10 / side',  rest:60,  inc:2.5},
       ]},
-  4: { name:"FULL BODY", sub:"+ Core", exercises:[
-        {name:"Cable Woodchopper", target:"3 sets x 12 / side", inc:2.5},
-        {name:"Assisted Dip / Pull-up Machine", target:"3 sets x 8-10", inc:5, inverse:true},
-        {name:"Cable Crunch", target:"3 sets x 15", inc:2.5},
-        {name:"Barbell RDL", target:"3 sets x 8-10, light-moderate", inc:5},
+  4: { name:"FULL BODY", sub:"V-Taper", exercises:[
+        {tag:'A',  name:"Neutral-Grip Pulldown",           sets:3, reps:'8-10',       rest:120, inc:5,   main:true, cues:'pulldown'},
+        {tag:'B',  name:"Seated DB Shoulder Press",        sets:3, reps:'8-10',       rest:120, inc:5,   main:true},
+        {tag:'C1', name:"Seated Cable Row",                sets:3, reps:'10-12',      rest:0,   inc:5,   cues:'row'},
+        {tag:'C2', name:"Incline Machine Press",           sets:3, reps:'10-12',      rest:90,  inc:5,   cues:'incline'},
+        {tag:'D1', name:"Cable Lateral Raise (each arm)",  sets:3, reps:'15 / side',  rest:0,   inc:2.5, cues:'lateral'},
+        {tag:'D2', name:"Back Extension",                  sets:2, reps:'12',         rest:60,  inc:0},
+        {tag:'E1', name:"Cable Curl",                      sets:2, reps:'12',         rest:0,   inc:2.5},
+        {tag:'E2', name:"Rope Pushdown",                   sets:2, reps:'12',         rest:0,   inc:2.5},
+        {tag:'E3', name:"Standing Cable Crunch",           sets:3, reps:'12-15',      rest:60,  inc:2.5, cues:'crunch'},
       ]},
+};
+function setsFor(ex, week){
+  if(week === 4) return Math.min(2, ex.sets);
+  if((week === 2 || week === 3) && ex.main) return ex.sets + 1;
+  return ex.sets;
+}
+
+const FORM_CUES = {
+  incline:{ cues:['Bench at 30°, feet flat, shoulder blades pinched back and down','Elbows ~45° from your body, not flared to 90°','Lower to the upper chest until you feel a stretch','Press up and slightly in; stop before the DBs touch','Wrists stacked over elbows the whole time'],
+    fixes:['Bench too steep → set it at 30° or one notch lower','Shoulders roll forward at top → keep blades pinned, end the rep earlier','Half reps → lighter weight, full stretch at the bottom'] },
+  bench:{ cues:['Eyes under the bar, feet planted, glutes on the bench','Squeeze shoulder blades back and down, grip just outside shoulders','Lower to the lower chest with elbows ~45° from your body','Light touch, then press up and slightly back over the shoulders','Wrists straight, stacked over elbows — set the safety pins'],
+    fixes:['Elbows flared to 90° → tuck to ~45°, easier on shoulders','Bouncing off the chest → 1-second controlled touch','Butt lifting off the bench → drive through feet, glutes stay down'] },
+  pulldown:{ cues:['Thighs locked under the pad, chest up, slight lean back (~15°)','Start by pulling shoulders down, away from the ears','Drive elbows down to your back pockets','Bar to upper chest','Arms fully straight at the top for the lat stretch'],
+    fixes:['Swinging the torso → drop weight 10–20%, same lean every rep','Pulling with biceps → think "elbows down", hands are hooks','Never straightening arms → pause 1 sec at the top'] },
+  row:{ cues:['Chest glued to the pad (or torso still) the whole set','Neck neutral, eyes down','Pull elbows back toward your hips','Squeeze shoulder blades together for 1 second','Let the shoulders reach forward at the bottom'],
+    fixes:['Chest lifting off pad → lighter weight','Shrugging the weight up → shoulders down first, then row','Short range → full reach forward, full squeeze back'] },
+  lateral:{ cues:['Cable at hand height/lowest, stand side-on, slight forward lean','Small locked bend in the elbow','Lead with the elbow, raise out to the side','Stop at shoulder height','Lower slowly over 3 seconds'],
+    fixes:['Too heavy, traps take over → weight you can do 15 slow reps with','Swinging → hold the machine with your free hand','Raising in front → arm slightly forward of torso, not in front of face'] },
+  rdl:{ cues:['Feet hip-width, soft knees that stay at the same bend','Push hips straight back like closing a car door','Bar slides down the thighs, close to the legs','Stop when hamstrings are tight (~mid-shin), back flat','Drive hips forward, squeeze glutes to stand'],
+    fixes:['Rounding the low back → stop at the hamstring stretch','Bending knees into a squat → knees fixed, hips do the work','Bar drifting forward → lats tight, "bend the bar" around your legs'] },
+  legpress:{ cues:['Feet high and shoulder-width or wider','Lower back pressed into the pad the whole set','Lower only as far as pain-free and hips don\'t curl','Knees track over toes, never caving in','Press through heels; stop just short of lockout'],
+    fixes:['Too deep, back rounds → shorter range, mark your stop point','Locking out knees → leave a slight bend at the top','Feet low on platform → move them up to unload the knees'] },
+  crunch:{ cues:['Rope on high pulley, face away, hands by forehead','Hips stay still — slight knee bend only','Curl ribs down toward the pelvis','Exhale hard at the bottom, squeeze 1 second','Uncurl slowly, stop before the stack rests'],
+    fixes:['Hinging at hips → roll your spine like a poster','Pulling with arms → hands glued to your head','Heavy and fast → moderate weight, 2-sec lowering'] },
+  treadmill:{ cues:['Hands off the rails','Tall posture, slight lean from the ankles','Short, quick steps','Land mid-foot, under your hips','Nose-breathing pace you can sustain'],
+    fixes:['Holding rails → lower incline/speed until you can let go','Incline too steep for knees → cap at 10–12%','Leaning back / over-striding → shorter steps, eyes forward'] },
 };
 
 const DAILY_TARGET = { cal:1800, p:180, c:160, f:50 };
-const MEAL_PLAN = [
-  { id:'bfast-egg',   meal:'Breakfast', food:'1 whole egg + 2/3 cup egg whites', cal:155, p:23, c:2,  f:5 },
-  { id:'bfast-shake', meal:'Breakfast', food:'Protein shake (Ascent vanilla, 2 scoops) + mixed berries', cal:280, p:51, c:18, f:5 },
-  { id:'lunch',       meal:'Lunch',     food:'Non-fat Greek yogurt (individual cup) with honey', cal:150, p:15, c:23, f:0 },
-  { id:'afternoon',   meal:'3PM',       food:'Himalayan pink salt popcorn (individual bag, Costco)', cal:80, p:1,  c:9, f:4 },
-  { id:'dinner',      meal:'Dinner',    food:'10oz meat (sirloin / 97% lean beef / salmon) + steamed veggies', cal:450, p:63, c:10, f:14 },
-  { id:'dinner-potato',meal:'Dinner',   food:'Baked sweet potato (large)', cal:270, p:6, c:62, f:0 },
-  { id:'snack-popcorn',meal:'Snack',    food:'Himalayan pink salt popcorn (extra individual bag)', cal:80, p:1, c:9, f:4 },
-  { id:'dinner-shake', meal:'Snack',    food:'Protein shake (Ascent vanilla, 2 scoops) + mixed berries', cal:280, p:51, c:18, f:5 },
+/* Same breakfast, 3pm meal and snack every day; dinner rotates by weekday. Meat weighed raw. */
+const FIXED_MEALS_AM = [
+  { id:'bfast-egg',   meal:'Breakfast', food:'1 whole egg + ⅔ cup (162 g) egg whites, spray oil', cal:156, p:24, c:1,  f:5 },
+  { id:'bfast-shake', meal:'Breakfast', food:'Shake: 2 scoops Ascent vanilla + 1 cup raspberries/blackberries + 1 tbsp chia', cal:362, p:54, c:26, f:8 },
+  { id:'bfast-bread', meal:'Breakfast', food:'1 slice sourdough (~2 oz), toasted — or swap 150 g air-fried breakfast potatoes', cal:130, p:5, c:25, f:1 },
+  { id:'pm-yogurt',   meal:'3PM',       food:'Protein yogurt bowl: Greek yogurt cup + 1 scoop Ascent + 1 tsp honey — 3pm, or after dinner if not hungry', cal:241, p:43, c:15, f:2 },
+  { id:'pm-popcorn',  meal:'3PM',       food:'Himalayan pink salt popcorn (1 individual bag)', cal:80, p:1, c:9, f:4 },
 ];
+const FIXED_MEALS_PM = [
+  { id:'snack', meal:'Snack', food:'Himalayan pink salt popcorn (1 individual bag)', cal:80, p:1, c:9, f:4 },
+];
+// Keyed by Date.getDay(): 0=Sunday ... 6=Saturday
+const DINNERS = {
+  1:{ food:'Sirloin + sweet potato: 9 oz top sirloin · 1 medium sweet potato · 6 oz broccoli · 1 tsp olive oil', how:'Microwave potato 8 min · sear steak 4 min/side · steam broccoli', cal:642, p:63, c:52, f:21 },
+  2:{ food:'Salmon rice bowl: 8 oz sockeye · 200 g cooked jasmine rice · 5 oz asparagus · 1 tsp oil', how:'Air fry salmon 400°F 10 min · rice pouch · roast asparagus alongside', cal:632, p:59, c:62, f:16 },
+  3:{ food:'Beef taco bowl: 8 oz 93/7 ground beef · 150 g rice · ½ cup black beans · ¼ cup salsa · 2 cups romaine · 2 tbsp Greek yogurt', how:'Brown beef with taco seasoning 10 min · assemble', cal:676, p:63, c:64, f:17 },
+  4:{ food:'Lemon-garlic cod: 12 oz cod · 300 g baby potatoes · 5 oz green beans · 2 tsp olive oil', how:'Potatoes microwave 6 + air fry 10 · bake cod 400°F 12 min', cal:624, p:69, c:58, f:13 },
+  5:{ food:'Salmon onigiri + miso soup: 8 oz sockeye (flaked) · 170 g cooked sushi rice · 3 nori strips · ½ cup shelled edamame · miso soup with 3 oz firm tofu + wakame', how:'Air fry salmon 400°F 10 min · shape 3 rice balls · miso: dissolve paste in hot water, add tofu + wakame', cal:704, p:70, c:62, f:19 },
+  6:{ food:'Traeger flank steak: 9 oz flank · 280 g potatoes · 3.5 oz greens + 3.5 oz broccoli · 1 tsp oil', how:'Traeger 450°F ~12 min to 130°F · slice across the grain', cal:677, p:63, c:55, f:23 },
+  0:{ food:'Fish tacos: 12 oz tilapia/cod · 3 corn tortillas · 1 cup slaw + lime · ¼ avocado · 2 tbsp Greek yogurt · ½ cup black beans', how:'Chili-lime fish, air fry 400°F 10 min', cal:688, p:84, c:60, f:14 },
+};
+function todaysMeals(){
+  const d = DINNERS[new Date().getDay()];
+  return [...FIXED_MEALS_AM, { id:'dinner', meal:'Dinner', ...d }, ...FIXED_MEALS_PM];
+}
+let MEAL_PLAN = todaysMeals();
 
 // Keyed by Date.getDay(): 0=Sunday ... 6=Saturday
 const REST_DAY_ITEMS = [
@@ -594,6 +725,43 @@ if(!meta.migratedLateralRaise){
   save('berserkr_meta', meta);
 }
 
+/* one-time migration to BLOCK 1: exercise slots moved, so carry weights/PRs over by exercise
+   (old "day-index" -> new "day-index"), drop exercises that no longer exist, archive the originals */
+if(!meta.migratedBlock1){
+  const MAP = {
+    '1-2':'1-4', // DB Lateral Raises
+    '1-3':'1-6', // Cable Triceps Pushdown -> Rope Pushdown
+    '2-0':'2-0', // Lat Pulldown
+    '2-1':'4-2', // Seated Cable Row (now Full Body)
+    '2-2':'4-6', // Cable Bicep Curl -> Cable Curl (now Full Body)
+    '2-3':'2-4', // Rear Delt Machine -> Face Pull / Reverse Pec Deck
+    '3-0':'3-1', // Leg Press
+    '3-2':'3-4', // Seated Leg Curl
+    '3-3':'3-2', // Leg Press Calf Raise
+    '4-3':'3-0', // Barbell RDL (now Legs A)
+  };
+  save('berserkr_archive_pre_block1', { prs, exerciseWeights, setWeights, streaks });
+  const remap = obj => { const out = {}; Object.keys(MAP).forEach(o=>{ if(obj[o]!==undefined) out[MAP[o]] = obj[o]; }); return out; };
+  prs = remap(prs);
+  exerciseWeights = remap(exerciseWeights);
+  setWeights = {};
+  streaks = {}; // rep ranges changed, so progression streaks restart
+  savePRs(); saveExerciseWeights(); saveSetWeights(); saveStreaks();
+  state.sets = {}; state.streakCounted = {};
+  meta.migratedBlock1 = true;
+  save('berserkr_meta', meta);
+}
+let checkins = load('berserkr_checkins', []); // [{date, avg, waist, logged, sessions, steps, energy, hunger, sleep}]
+function saveCheckins(){ save('berserkr_checkins', checkins); }
+let openCues = {}; // which form-cue panels are expanded (not persisted)
+
+function currentWeek(){
+  if(state.week) return state.week;
+  const start = new Date(BLOCK.start + 'T00:00:00');
+  const days = Math.floor((new Date() - start) / 86400000);
+  return Math.max(1, Math.min(4, Math.floor(days/7) + 1));
+}
+
 function persist(){ save('berserkr_day_' + todayKey(), state); }
 
 /* streak check on load */
@@ -614,10 +782,14 @@ function renderHeader(){
 
 /* ---------- RING ---------- */
 function updateRing(){
-  const totalExercises = WORKOUT_PLAN[state.activeDay].exercises.length;
-  const totalSets = totalExercises * 3;
-  let doneSets = 0;
-  for(let e=0;e<totalExercises;e++) for(let s=0;s<3;s++) if(state.sets[`${state.activeDay}-${e}-${s}`]) doneSets++;
+  const exs = WORKOUT_PLAN[state.activeDay].exercises;
+  const wk = currentWeek();
+  let totalSets = 0, doneSets = 0;
+  exs.forEach((ex, e)=>{
+    const n = setsFor(ex, wk);
+    totalSets += n;
+    for(let s=0;s<n;s++) if(state.sets[`${state.activeDay}-${e}-${s}`]) doneSets++;
+  });
   const mealsChecked = MEAL_PLAN.filter(m => state.mealChecks[m.id]).length;
   const mealsLogged = mealsChecked / MEAL_PLAN.length;
   const medsDone = (state.meds.morning?1:0) + (state.meds.night?1:0);
@@ -649,6 +821,30 @@ function updateRing(){
 }
 
 /* ---------- TRAIN TAB ---------- */
+function renderWeekTabs(){
+  const wk = currentWeek();
+  const wrap = document.getElementById('weekTabs');
+  wrap.innerHTML = [1,2,3,4].map(w =>
+    `<div class="day-tab${w===wk?' active':''}" onclick="setWeek(${w})">WEEK ${w}<small>${w===4?'Deload':(w===1?'Base':(w===2?'Volume':'Intensity'))}</small></div>`
+  ).join('');
+  document.getElementById('weekFocus').textContent = WEEK_FOCUS[wk];
+}
+function setWeek(w){ state.week = w; persist(); renderAll(); }
+function fmtRest(sec){
+  if(!sec) return 'no rest → next';
+  const m = Math.floor(sec/60), s = sec%60;
+  return 'rest ' + (m ? `${m}:${String(s).padStart(2,'0')}` : `${s}s`);
+}
+function cuesHtml(key){
+  const c = FORM_CUES[key];
+  if(!c) return '';
+  return `<div class="cue-list">
+      <div class="cue-h">5 CUES</div><ol>${c.cues.map(x=>`<li>${x}</li>`).join('')}</ol>
+      <div class="cue-h">MISTAKE → FIX</div><ul>${c.fixes.map(x=>`<li>${x}</li>`).join('')}</ul>
+    </div>`;
+}
+function toggleCues(id){ openCues[id] = !openCues[id]; renderExercises(); renderCardio(); }
+
 function renderDayTabs(){
   const wrap = document.getElementById('dayTabs');
   wrap.innerHTML = '';
@@ -670,10 +866,16 @@ function toggleCardio(){
 }
 function renderCardio(){
   document.getElementById('cardioToggle').classList.toggle('on', state.cardio);
+  const c = CARDIO_BY_WEEK[currentWeek()];
+  document.getElementById('cardioSub').textContent = c.txt + (state.activeDay===3 ? ' · drop 2% if knees are sore' : '');
+  document.getElementById('cardioCues').innerHTML =
+    `<button class="cue-btn" onclick="toggleCues('treadmill')">FORM ${openCues.treadmill?'▴':'▾'}</button>` +
+    (openCues.treadmill ? cuesHtml('treadmill') : '');
 }
 
 function renderExercises(){
   const plan = WORKOUT_PLAN[state.activeDay];
+  const wk = currentWeek();
   const card = document.getElementById('exerciseCard');
   card.innerHTML = '';
   plan.exercises.forEach((ex, exIdx)=>{
@@ -681,11 +883,12 @@ function renderExercises(){
     const sentry = getStreakEntry(state.activeDay, exIdx);
     const pr = getPR(state.activeDay, exIdx);
     const currentWeight = getExerciseWeight(state.activeDay, exIdx);
+    const nSets = setsFor(ex, wk);
 
     let setsHtml = '';
     let doneCount = 0;
     const setWeightVals = [];
-    for(let s=0;s<3;s++){
+    for(let s=0;s<nSets;s++){
       const skey = `${state.activeDay}-${exIdx}-${s}`;
       const done = !!state.sets[skey];
       if(done) doneCount++;
@@ -693,9 +896,9 @@ function renderExercises(){
       setsHtml += `<div class="set-box ${done?'done':''}" onclick="toggleSet('${skey}')"><div class="n">SET ${s+1}${done?' ✓':''}</div></div>`;
     }
 
-    // count progression streak once per day when all 3 sets are completed at the same, non-empty weight
+    // count progression streak once per day when all sets are completed at the same, non-empty weight
     const allSameWeight = setWeightVals[0] !== '' && setWeightVals.every(w => w === setWeightVals[0]);
-    if(doneCount === 3 && allSameWeight && !state.streakCounted[key]){
+    if(wk !== 4 && doneCount === nSets && allSameWeight && !state.streakCounted[key]){
       sentry.streak += 1;
       state.streakCounted[key] = true;
       saveStreaks();
@@ -703,19 +906,23 @@ function renderExercises(){
     }
 
     let suggestHtml = '';
-    if(sentry.streak >= 2){
-      suggestHtml = ex.inverse
-        ? `<div class="weight-suggest">🔽 All sets done 2x in a row — remove ${ex.inc} lbs of assistance next time</div>`
-        : `<div class="weight-suggest">🔼 All sets done 2x in a row — add ${ex.inc} lbs next time</div>`;
+    if(sentry.streak >= 2 && wk !== 4){
+      suggestHtml = ex.inc === 0
+        ? `<div class="weight-suggest">🔼 Top of the rep range 2x in a row? Add 2 reps or a 3-sec lowering</div>`
+        : `<div class="weight-suggest">🔼 Top of the rep range on every set 2x in a row? Add ${ex.inc} lbs, restart at the bottom of the range</div>`;
     }
+    const isSuperset = /\d$/.test(ex.tag);
+    const nextEx = plan.exercises[exIdx+1];
+    const linksNext = nextEx && isSuperset && nextEx.tag[0] === ex.tag[0];
 
     const wrap = document.createElement('div');
     wrap.className = 'exercise';
     wrap.innerHTML = `
       <div class="ex-head">
-        <div class="ex-name">${ex.name}</div>
-        <div class="ex-target">${ex.target}</div>
+        <div class="ex-name"><span class="ex-tag${isSuperset?' ss':''}">${ex.tag}</span>${ex.name}</div>
       </div>
+      <div class="ex-target">${nSets} × ${ex.reps} · ${fmtRest(ex.rest)}${ex.main && (wk===2||wk===3) ? ' · +1 set this week' : ''}</div>
+      ${ex.cues ? `<button class="cue-btn" onclick="toggleCues('${key}')">FORM ${openCues[key]?'▴':'▾'}</button>${openCues[key]?cuesHtml(ex.cues):''}` : ''}
       ${pr!==null ? `<div class="pr-line">🏆 Best: ${pr} lbs</div>` : ''}
       <div class="weight-row">
         <label>${ex.inverse ? 'Assist (lbs)' : 'Weight (lbs)'}</label>
@@ -723,7 +930,7 @@ function renderExercises(){
       </div>
       <div class="sets-row">${setsHtml}</div>
       ${suggestHtml}
-      ${exIdx < plan.exercises.length-1 ? '<div class="divider-line"></div>' : ''}
+      ${exIdx < plan.exercises.length-1 ? (linksNext ? '<div class="ss-link">↓ superset — go straight to next</div>' : '<div class="divider-line"></div>') : ''}
     `;
     card.appendChild(wrap);
   });
@@ -761,7 +968,11 @@ function toggleSet(key){
   }
   renderExercises();
   updateRing();
-  if(!wasDone) startRestTimer(60); // just marked complete -> start rest
+  if(!wasDone){ // just marked complete -> start this exercise's rest (supersets go straight to the next move)
+    const k = key.split('-');
+    const ex = WORKOUT_PLAN[k[0]].exercises[k[1]];
+    if(ex && ex.rest > 0) startRestTimer(ex.rest);
+  }
 }
 
 /* ---------- REST TIMER ---------- */
@@ -849,13 +1060,33 @@ function renderMealPlanList(){
         <div class="plan-check ${done?'on':''}" onclick="toggleMealCheck('${m.id}')">${done?'✓':''}</div>
         <div class="plan-body">
           <div class="plan-food ${done?'on':''}">${m.food}</div>
+          ${m.how ? `<div class="plan-how">⏱ ${m.how}</div>` : ''}
           <div class="plan-macros">${m.cal} cal · P ${m.p}g · C ${m.c}g · F ${m.f}g</div>
         </div>
       </div>
     `;
   }).join('');
 }
-function renderFuel(){ renderMacros(); renderMealPlanList(); renderWeighins(); }
+function renderFuel(){
+  document.getElementById('mealDayLabel').textContent = new Date().toLocaleDateString(undefined,{weekday:'long'}).toUpperCase();
+  renderMacros(); renderMealPlanList(); renderWeighins();
+}
+
+/* ---------- WEIGHT AVERAGES ---------- */
+function daysAgo(dateStr){
+  const d = new Date(dateStr + 'T00:00:00');
+  const t = new Date(todayKey() + 'T00:00:00');
+  return Math.round((t - d) / 86400000);
+}
+function avgWeight(fromDaysAgo, toDaysAgo){ // inclusive window, e.g. (0,6) = last 7 days
+  const vals = weighins.filter(w => w.weight!=null && daysAgo(w.date) >= fromDaysAgo && daysAgo(w.date) <= toDaysAgo).map(w=>w.weight);
+  if(vals.length < 3) return null; // need at least 3 weigh-ins for a fair average
+  return vals.reduce((a,b)=>a+b,0) / vals.length;
+}
+function waistNear(minDays, maxDays){
+  const w = weighins.find(x => x.waist!=null && daysAgo(x.date) >= minDays && daysAgo(x.date) <= maxDays);
+  return w ? w.waist : null;
+}
 
 /* ---------- WEEKLY WEIGH-IN ---------- */
 function addWeighin(){
@@ -875,12 +1106,24 @@ function addWeighin(){
   renderWeighins();
 }
 function renderWeighins(){
+  const a7 = avgWeight(0,6), p7 = avgWeight(7,13);
+  const avgEl = document.getElementById('weighinAvg');
+  if(a7 === null){
+    avgEl.innerHTML = '<div class="wi-avg">7-day average appears after 3 weigh-ins this week.</div>';
+  } else {
+    let delta = '';
+    if(p7 !== null){
+      const d = a7 - p7;
+      delta = ` <span class="wi-delta ${d<0?'down':(d>0?'up':'')}">${d>0?'+':''}${d.toFixed(1)} lbs vs last week</span>`;
+    }
+    avgEl.innerHTML = `<div class="wi-avg">7-day average: <b>${a7.toFixed(1)}</b> lbs${delta}</div>`;
+  }
   const list = document.getElementById('weighinList');
   if(weighins.length === 0){
     list.innerHTML = '<div class="empty">No entries yet — log your first weigh-in above.</div>';
     return;
   }
-  list.innerHTML = weighins.map((w, i) => {
+  list.innerHTML = weighins.slice(0, 14).map((w, i) => { // show last 14 entries
     const prev = weighins[i+1]; // next in array = previous in time, since sorted most-recent-first
     let deltaHtml = '';
     if(prev){
@@ -910,6 +1153,78 @@ function renderWeighins(){
       </div>
     `;
   }).join('');
+}
+
+/* ---------- SUNDAY CHECK-IN ---------- */
+// Two numbers decide changes: 7-day average weight and waist, judged over 2 weeks. The rest explains why.
+function checkinVerdict(c){
+  const a7 = avgWeight(0,6), p14 = avgWeight(14,20), p7 = avgWeight(7,13);
+  if(a7 === null) return { warn:false, txt:'Log at least 3 morning weigh-ins this week to get a verdict.' };
+  let perWeek, weeks;
+  if(p14 !== null){ perWeek = (a7 - p14) / 2; weeks = 2; }
+  else if(p7 !== null){ perWeek = a7 - p7; weeks = 1; }
+  else return { warn:false, txt:'Baseline week logged. Keep the plan exactly as is — first verdict next Sunday.' };
+  const loss = -perWeek;
+  const waistNow = waistNear(0,3), waistThen = waistNear(10,18);
+  const waistDelta = (waistNow!=null && waistThen!=null) ? waistNow - waistThen : null;
+  const note = weeks < 2 ? 'Only 1 week of data — confirm next Sunday before changing anything.' : '';
+  const sleepNote = (c.sleep && c.sleep <= 2) || (c.energy && c.energy <= 2) ? ' Sleep/energy is low: protect 7+ hours.' : '';
+  const rate = `Losing ${loss.toFixed(2)} lb/week.`;
+  let v;
+  if(loss > 1.5 && c.energy && c.energy <= 2) v = { warn:true, txt:`${rate} Too aggressive — add 150–200 cal of carbs (≈100–150 g extra rice or potatoes at dinner).` };
+  else if(loss >= 0.75) v = { warn:false, txt:`${rate} Working — change nothing.` };
+  else if(waistDelta !== null && waistDelta <= -0.25) v = { warn:false, txt:`${rate} Waist down ${Math.abs(waistDelta).toFixed(2)}" — you're losing fat. Change nothing.` };
+  else if(c.logged < 6) v = { warn:true, txt:`${rate} Fix logging first: 6–7 days, oils and sauces included. No plan change.` };
+  else if(c.steps < 8000) v = { warn:true, txt:`${rate} Get steps to 8,000–10,000 before cutting food.` };
+  else v = { warn:true, txt:`${rate} True plateau — cut 150 cal (≈100 g less rice/potatoes at dinner) OR add 2,000 daily steps. One, not both.` };
+  v.txt += sleepNote;
+  v.note = note;
+  return v;
+}
+function renderCheckin(){
+  const isSunday = new Date().getDay() === 0;
+  document.getElementById('checkinDue').textContent = isSunday ? '· due today (2 min)' : '· every Sunday';
+  const today = todayKey();
+  const c = checkins.find(x => x.date === today) || {};
+  const a7 = avgWeight(0,6);
+  const waist = waistNear(0,3);
+  const last = checkins.find(x => x.date !== today);
+  const val = (k, d='') => c[k] !== undefined ? c[k] : d;
+  let verdictHtml = '';
+  if(c.date){
+    const v = checkinVerdict(c);
+    verdictHtml = `<div class="verdict ${v.warn?'warn':''}">${v.txt}${v.note?`<small>${v.note}</small>`:''}</div>`;
+  } else if(last){
+    const v = checkinVerdict(last);
+    verdictHtml = `<div class="verdict ${v.warn?'warn':''}">Last check-in (${last.date}): ${v.txt}</div>`;
+  }
+  document.getElementById('checkinCard').innerHTML = `
+    <div class="ci-stat">7-day avg weight: <b>${a7!==null?a7.toFixed(1)+' lbs':'need 3 weigh-ins'}</b> · Waist: <b>${waist!==null?waist+'"':'log it in FUEL'}</b></div>
+    <div class="ci-row">
+      <div><span class="num-label">Days logged /7</span><input type="number" id="ciLogged" inputmode="numeric" placeholder="0" value="${val('logged')}"></div>
+      <div><span class="num-label">Lifts done /4</span><input type="number" id="ciSessions" inputmode="numeric" placeholder="0" value="${val('sessions')}"></div>
+      <div><span class="num-label">Avg steps</span><input type="number" id="ciSteps" inputmode="numeric" placeholder="0" value="${val('steps')}"></div>
+    </div>
+    <div class="ci-row">
+      <div><span class="num-label">Energy 1-5</span><input type="number" id="ciEnergy" inputmode="numeric" placeholder="3" value="${val('energy')}"></div>
+      <div><span class="num-label">Hunger 1-5</span><input type="number" id="ciHunger" inputmode="numeric" placeholder="3" value="${val('hunger')}"></div>
+      <div><span class="num-label">Sleep 1-5</span><input type="number" id="ciSleep" inputmode="numeric" placeholder="3" value="${val('sleep')}"></div>
+    </div>
+    <button class="add-btn" style="width:100%" onclick="saveCheckin()">${c.date?'UPDATE':'SAVE'} CHECK-IN</button>
+    ${verdictHtml}
+    <div class="ci-stat" style="margin:10px 0 0;font-size:11.5px;">First Sunday of the month: front + side photo, same lighting.</div>
+  `;
+}
+function saveCheckin(){
+  const n = id => { const v = document.getElementById(id).value; return v === '' ? null : Number(v); };
+  const entry = { date: todayKey(), avg: avgWeight(0,6), waist: waistNear(0,3),
+    logged:n('ciLogged') ?? 0, sessions:n('ciSessions') ?? 0, steps:n('ciSteps') ?? 0,
+    energy:n('ciEnergy'), hunger:n('ciHunger'), sleep:n('ciSleep') };
+  const i = checkins.findIndex(x => x.date === entry.date);
+  if(i >= 0) checkins[i] = entry; else checkins.unshift(entry);
+  checkins.sort((a,b)=> a.date < b.date ? 1 : -1);
+  saveCheckins();
+  renderCheckin();
 }
 
 /* ---------- MEDICATION ---------- */
@@ -1051,12 +1366,14 @@ loadGritQuote();
 /* ---------- INIT ---------- */
 function renderAll(){
   renderHeader();
+  renderWeekTabs();
   renderDayTabs();
   renderCardio();
   renderExercises();
   renderFuel();
   renderMeds();
   renderHair();
+  renderCheckin();
   updateRing();
 }
 renderAll();
