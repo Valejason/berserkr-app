@@ -434,17 +434,6 @@
       Drinks: water, sparkling, diet soda. Alcohol max 2 (light beer / spirit + soda) and it replaces the carb. Next meal, back on plan — no making up for it.
     </details>
 
-    <div class="section-title"><span class="bar"></span>DAILY WEIGH-IN</div>
-    <div class="ci-stat">Every morning after the bathroom, before food. Waist at the navel on Sundays. Only the 7-day average counts.</div>
-    <div id="weighinAvg"></div>
-    <div class="weighin-form">
-      <div class="form-row two">
-        <div><span class="num-label">Weight (lbs)</span><input type="number" id="weighinWeight" inputmode="decimal" placeholder="0"></div>
-        <div><span class="num-label">Waist (in)</span><input type="number" id="weighinWaist" inputmode="decimal" placeholder="0"></div>
-      </div>
-      <button class="add-btn" onclick="addWeighin()">LOG ENTRY</button>
-    </div>
-    <div id="weighinList"></div>
   </section>
 
   <!-- GOALS -->
@@ -458,16 +447,8 @@
     <div class="section-title"><span class="bar"></span>SUNDAY CHECK-IN <span id="checkinDue" style="font-family:Inter;font-size:11px;color:var(--muted);letter-spacing:0;"></span></div>
     <div class="card" id="checkinCard"></div>
 
-    <div class="section-title"><span class="bar"></span>MEDICATION</div>
-    <div id="medList"></div>
-
-    <div class="section-title"><span class="bar"></span><span id="hairDayLabel">HAIR CARE</span></div>
-    <div id="hairList"></div>
-
-    <div id="hairWeeklyWrap" style="display:none;">
-      <div class="section-title"><span class="bar"></span>WEEKLY CHECK-IN</div>
-      <div id="hairWeeklyList"></div>
-    </div>
+    <div class="section-title"><span class="bar"></span>WEIGH-IN HISTORY</div>
+    <div id="weighinList"></div>
   </section>
 
 </main>
@@ -616,39 +597,6 @@ function todaysMeals(){
 }
 let MEAL_PLAN = todaysMeals();
 
-// Keyed by Date.getDay(): 0=Sunday ... 6=Saturday
-const REST_DAY_ITEMS = [
-  'No wash',
-  'Refresh roots only if needed (dry shampoo/water spritz)',
-];
-const WASH_DAY_ITEMS = [
-  'Warm water rinse',
-  'Shampoo scalp (regular SEEN Fragrance Free), 30-60 sec massage',
-  'Rinse fully',
-  'Condition ends only (skip roots)',
-  'Towel-dry by squeezing, not rubbing',
-  'Root-lifting product on damp roots',
-  'Blow-dry upside down, lift at roots',
-  'Cool air finish (20-30 sec)',
-  'Matte clay/texturizing cream on mid-ends',
-];
-const HAIR_CARE_PLAN = {
-  0: { dayName:'Sunday',    label:'Rest Day',       items: REST_DAY_ITEMS },
-  1: { dayName:'Monday',    label:'Wash Day',       items: WASH_DAY_ITEMS },
-  2: { dayName:'Tuesday',   label:'Rest Day',       items: REST_DAY_ITEMS },
-  3: { dayName:'Wednesday', label:'Rest Day',       items: REST_DAY_ITEMS },
-  4: { dayName:'Thursday',  label:'Clarifying Day', items: [
-        'Use SEEN Scalp Clarifying Shampoo (instead of regular)',
-        'Condition ends only',
-        'Dry + style as usual',
-      ] },
-  5: { dayName:'Friday',    label:'Wash Day',       items: WASH_DAY_ITEMS },
-  6: { dayName:'Saturday',  label:'Rest Day',       items: REST_DAY_ITEMS },
-};
-const HAIR_WEEKLY_ITEMS = [
-  'Scalp feels good, not overly oily or dry — adjust wash days next week if not',
-];
-
 /* ---------- STATE / STORAGE ---------- */
 const todayKey = () => {
   const d = new Date();
@@ -679,9 +627,6 @@ let state = load('berserkr_day_' + todayKey(), {
   cardio: false,
   sets: {},          // "day-exIndex-setIndex": true
   mealChecks: {},     // mealPlanId: true
-  meds: { morning:false, night:false },
-  hair: {},            // item index (within today's hair care plan) -> true
-  hairWeekly: {},       // item index (within HAIR_WEEKLY_ITEMS, shown Sundays) -> true
   streakCounted: {},  // "day-exIndex": true (guards against double-counting weight progression same day)
 });
 let meta = load('berserkr_meta', { lastDate:null, streak:0 });
@@ -751,7 +696,7 @@ if(!meta.migratedBlock1){
   meta.migratedBlock1 = true;
   save('berserkr_meta', meta);
 }
-let checkins = load('berserkr_checkins', []); // [{date, avg, waist, logged, sessions, steps, energy, hunger, sleep}]
+let checkins = load('berserkr_checkins', []); // [{date, weight, waist, logged, sessions, energy, hunger, sleep}]
 function saveCheckins(){ save('berserkr_checkins', checkins); }
 let openCues = {}; // which form-cue panels are expanded (not persisted)
 
@@ -792,13 +737,11 @@ function updateRing(){
   });
   const mealsChecked = MEAL_PLAN.filter(m => state.mealChecks[m.id]).length;
   const mealsLogged = mealsChecked / MEAL_PLAN.length;
-  const medsDone = (state.meds.morning?1:0) + (state.meds.night?1:0);
 
   const parts = [
     { w:1, v: doneSets/totalSets },
     { w:1, v: mealsLogged },
     { w:1, v: state.cardio ? 1 : 0 },
-    { w:1, v: medsDone/2 },
   ];
   const pct = Math.round(100 * parts.reduce((a,p)=>a+p.w*p.v,0) / parts.reduce((a,p)=>a+p.w,0));
 
@@ -1072,58 +1015,29 @@ function renderFuel(){
   renderMacros(); renderMealPlanList(); renderWeighins();
 }
 
-/* ---------- WEIGHT AVERAGES ---------- */
 function daysAgo(dateStr){
   const d = new Date(dateStr + 'T00:00:00');
   const t = new Date(todayKey() + 'T00:00:00');
   return Math.round((t - d) / 86400000);
 }
-function avgWeight(fromDaysAgo, toDaysAgo){ // inclusive window, e.g. (0,6) = last 7 days
-  const vals = weighins.filter(w => w.weight!=null && daysAgo(w.date) >= fromDaysAgo && daysAgo(w.date) <= toDaysAgo).map(w=>w.weight);
-  if(vals.length < 3) return null; // need at least 3 weigh-ins for a fair average
-  return vals.reduce((a,b)=>a+b,0) / vals.length;
+// weighins are sorted newest first, so find() returns the most recent entry in the window
+function weightNear(minDays, maxDays){
+  const w = weighins.find(x => x.weight!=null && daysAgo(x.date) >= minDays && daysAgo(x.date) <= maxDays);
+  return w ? w.weight : null;
 }
 function waistNear(minDays, maxDays){
   const w = weighins.find(x => x.waist!=null && daysAgo(x.date) >= minDays && daysAgo(x.date) <= maxDays);
   return w ? w.waist : null;
 }
 
-/* ---------- WEEKLY WEIGH-IN ---------- */
-function addWeighin(){
-  const weightVal = document.getElementById('weighinWeight').value;
-  const waistVal = document.getElementById('weighinWaist').value;
-  if(!weightVal && !waistVal) return;
-  const today = todayKey();
-  // overwrite today's entry if one already exists, so re-logging same day doesn't duplicate
-  const existingIdx = weighins.findIndex(w=>w.date===today);
-  const entry = { date:today, weight:weightVal?Number(weightVal):null, waist:waistVal?Number(waistVal):null };
-  if(existingIdx>=0) weighins[existingIdx] = entry;
-  else weighins.push(entry);
-  weighins.sort((a,b)=> a.date < b.date ? 1 : -1); // most recent first
-  saveWeighins();
-  document.getElementById('weighinWeight').value = '';
-  document.getElementById('weighinWaist').value = '';
-  renderWeighins();
-}
+/* ---------- WEIGH-IN HISTORY (entered in the Sunday check-in) ---------- */
 function renderWeighins(){
-  const a7 = avgWeight(0,6), p7 = avgWeight(7,13);
-  const avgEl = document.getElementById('weighinAvg');
-  if(a7 === null){
-    avgEl.innerHTML = '<div class="wi-avg">7-day average appears after 3 weigh-ins this week.</div>';
-  } else {
-    let delta = '';
-    if(p7 !== null){
-      const d = a7 - p7;
-      delta = ` <span class="wi-delta ${d<0?'down':(d>0?'up':'')}">${d>0?'+':''}${d.toFixed(1)} lbs vs last week</span>`;
-    }
-    avgEl.innerHTML = `<div class="wi-avg">7-day average: <b>${a7.toFixed(1)}</b> lbs${delta}</div>`;
-  }
   const list = document.getElementById('weighinList');
   if(weighins.length === 0){
-    list.innerHTML = '<div class="empty">No entries yet — log your first weigh-in above.</div>';
+    list.innerHTML = '<div class="empty">Your Sunday weigh-ins show up here.</div>';
     return;
   }
-  list.innerHTML = weighins.slice(0, 14).map((w, i) => { // show last 14 entries
+  list.innerHTML = weighins.slice(0, 8).map((w, i) => { // last 8 weeks
     const prev = weighins[i+1]; // next in array = previous in time, since sorted most-recent-first
     let deltaHtml = '';
     if(prev){
@@ -1156,29 +1070,31 @@ function renderWeighins(){
 }
 
 /* ---------- SUNDAY CHECK-IN ---------- */
-// Two numbers decide changes: 7-day average weight and waist, judged over 2 weeks. The rest explains why.
+// One weigh-in + waist per week. Decisions use the 2-week change, never a single week (water swings 1-3 lb).
 function checkinVerdict(c){
-  const a7 = avgWeight(0,6), p14 = avgWeight(14,20), p7 = avgWeight(7,13);
-  if(a7 === null) return { warn:false, txt:'Log at least 3 morning weigh-ins this week to get a verdict.' };
+  const now = weightNear(0,2);
+  if(now === null) return { warn:false, txt:"Enter this morning's weight to get a verdict." };
+  const twoAgo = weightNear(12,16), oneAgo = weightNear(5,9);
   let perWeek, weeks;
-  if(p14 !== null){ perWeek = (a7 - p14) / 2; weeks = 2; }
-  else if(p7 !== null){ perWeek = a7 - p7; weeks = 1; }
-  else return { warn:false, txt:'Baseline week logged. Keep the plan exactly as is — first verdict next Sunday.' };
+  if(twoAgo !== null){ perWeek = (now - twoAgo) / 2; weeks = 2; }
+  else if(oneAgo !== null){ perWeek = now - oneAgo; weeks = 1; }
+  else return { warn:false, txt:'Baseline logged. Follow the plan as written — first comparison in 2 weeks.' };
   const loss = -perWeek;
-  const waistNow = waistNear(0,3), waistThen = waistNear(10,18);
+  const waistNow = waistNear(0,2), waistThen = weeks===2 ? waistNear(12,16) : waistNear(5,9);
   const waistDelta = (waistNow!=null && waistThen!=null) ? waistNow - waistThen : null;
-  const note = weeks < 2 ? 'Only 1 week of data — confirm next Sunday before changing anything.' : '';
-  const sleepNote = (c.sleep && c.sleep <= 2) || (c.energy && c.energy <= 2) ? ' Sleep/energy is low: protect 7+ hours.' : '';
-  const rate = `Losing ${loss.toFixed(2)} lb/week.`;
+  const rate = weeks===2 ? `Down ${loss.toFixed(1)} lb/week over 2 weeks.` : `${loss>=0?'Down':'Up'} ${Math.abs(loss).toFixed(1)} lb since last Sunday.`;
+  let extra = '';
+  if((c.sleep && c.sleep <= 2) || (c.energy && c.energy <= 2)) extra += ' Sleep/energy is low: protect 7+ hours.';
+  if(c.hunger && c.hunger >= 4) extra += ' Hunger is high: double the veg at dinner and eat the yogurt bowl earlier.';
   let v;
   if(loss > 1.5 && c.energy && c.energy <= 2) v = { warn:true, txt:`${rate} Too aggressive — add 150–200 cal of carbs (≈100–150 g extra rice or potatoes at dinner).` };
+  else if(weeks < 2) v = { warn:false, txt:`${rate} One week is mostly water noise. Keep the plan — real verdict next Sunday.` };
   else if(loss >= 0.75) v = { warn:false, txt:`${rate} Working — change nothing.` };
-  else if(waistDelta !== null && waistDelta <= -0.25) v = { warn:false, txt:`${rate} Waist down ${Math.abs(waistDelta).toFixed(2)}" — you're losing fat. Change nothing.` };
+  else if(waistDelta !== null && waistDelta <= -0.25) v = { warn:false, txt:`${rate} Waist down ${Math.abs(waistDelta).toFixed(1)}" — you're losing fat. Change nothing.` };
   else if(c.logged < 6) v = { warn:true, txt:`${rate} Fix logging first: 6–7 days, oils and sauces included. No plan change.` };
-  else if(c.steps < 8000) v = { warn:true, txt:`${rate} Get steps to 8,000–10,000 before cutting food.` };
-  else v = { warn:true, txt:`${rate} True plateau — cut 150 cal (≈100 g less rice/potatoes at dinner) OR add 2,000 daily steps. One, not both.` };
-  v.txt += sleepNote;
-  v.note = note;
+  else if(c.sessions < 4) v = { warn:true, txt:`${rate} Hit all 4 lifts before changing food.` };
+  else v = { warn:true, txt:`${rate} True plateau — cut 150 cal (≈100 g less rice/potatoes at dinner) OR add a 15-min walk after dinner on 3 non-gym days. One, not both.` };
+  v.txt += extra;
   return v;
 }
 function renderCheckin(){
@@ -1186,106 +1102,56 @@ function renderCheckin(){
   document.getElementById('checkinDue').textContent = isSunday ? '· due today (2 min)' : '· every Sunday';
   const today = todayKey();
   const c = checkins.find(x => x.date === today) || {};
-  const a7 = avgWeight(0,6);
-  const waist = waistNear(0,3);
+  const wi = weighins.find(x => x.date === today) || {};
   const last = checkins.find(x => x.date !== today);
-  const val = (k, d='') => c[k] !== undefined ? c[k] : d;
+  const val = (k) => c[k] !== undefined && c[k] !== null ? c[k] : '';
   let verdictHtml = '';
   if(c.date){
     const v = checkinVerdict(c);
-    verdictHtml = `<div class="verdict ${v.warn?'warn':''}">${v.txt}${v.note?`<small>${v.note}</small>`:''}</div>`;
+    verdictHtml = `<div class="verdict ${v.warn?'warn':''}">${v.txt}</div>`;
   } else if(last){
-    const v = checkinVerdict(last);
-    verdictHtml = `<div class="verdict ${v.warn?'warn':''}">Last check-in (${last.date}): ${v.txt}</div>`;
+    verdictHtml = `<div class="verdict">Last check-in: ${last.date}. Next one Sunday morning.</div>`;
   }
   document.getElementById('checkinCard').innerHTML = `
-    <div class="ci-stat">7-day avg weight: <b>${a7!==null?a7.toFixed(1)+' lbs':'need 3 weigh-ins'}</b> · Waist: <b>${waist!==null?waist+'"':'log it in FUEL'}</b></div>
+    <div class="ci-stat">Sunday morning, after the bathroom, before food. Waist at the navel, relaxed.</div>
+    <div class="ci-row" style="grid-template-columns:1fr 1fr;">
+      <div><span class="num-label">Weight (lbs)</span><input type="number" id="ciWeight" inputmode="decimal" placeholder="0" value="${wi.weight ?? ''}"></div>
+      <div><span class="num-label">Waist (in)</span><input type="number" id="ciWaist" inputmode="decimal" placeholder="0" value="${wi.waist ?? ''}"></div>
+    </div>
     <div class="ci-row">
       <div><span class="num-label">Days logged /7</span><input type="number" id="ciLogged" inputmode="numeric" placeholder="0" value="${val('logged')}"></div>
       <div><span class="num-label">Lifts done /4</span><input type="number" id="ciSessions" inputmode="numeric" placeholder="0" value="${val('sessions')}"></div>
-      <div><span class="num-label">Avg steps</span><input type="number" id="ciSteps" inputmode="numeric" placeholder="0" value="${val('steps')}"></div>
-    </div>
-    <div class="ci-row">
       <div><span class="num-label">Energy 1-5</span><input type="number" id="ciEnergy" inputmode="numeric" placeholder="3" value="${val('energy')}"></div>
+    </div>
+    <div class="ci-row" style="grid-template-columns:1fr 1fr;">
       <div><span class="num-label">Hunger 1-5</span><input type="number" id="ciHunger" inputmode="numeric" placeholder="3" value="${val('hunger')}"></div>
       <div><span class="num-label">Sleep 1-5</span><input type="number" id="ciSleep" inputmode="numeric" placeholder="3" value="${val('sleep')}"></div>
     </div>
     <button class="add-btn" style="width:100%" onclick="saveCheckin()">${c.date?'UPDATE':'SAVE'} CHECK-IN</button>
     ${verdictHtml}
-    <div class="ci-stat" style="margin:10px 0 0;font-size:11.5px;">First Sunday of the month: front + side photo, same lighting.</div>
+    <div class="ci-stat" style="margin:10px 0 0;font-size:11.5px;">First Sunday of the month: front + side photo, same lighting. Don't weigh in on other days.</div>
   `;
 }
 function saveCheckin(){
   const n = id => { const v = document.getElementById(id).value; return v === '' ? null : Number(v); };
-  const entry = { date: todayKey(), avg: avgWeight(0,6), waist: waistNear(0,3),
-    logged:n('ciLogged') ?? 0, sessions:n('ciSessions') ?? 0, steps:n('ciSteps') ?? 0,
+  const today = todayKey();
+  const weight = n('ciWeight'), waist = n('ciWaist');
+  if(weight !== null || waist !== null){
+    const i = weighins.findIndex(w => w.date === today);
+    const entry = { date:today, weight, waist };
+    if(i >= 0) weighins[i] = entry; else weighins.push(entry);
+    weighins.sort((a,b)=> a.date < b.date ? 1 : -1);
+    saveWeighins();
+  }
+  const entry = { date: today, weight, waist,
+    logged:n('ciLogged') ?? 0, sessions:n('ciSessions') ?? 0,
     energy:n('ciEnergy'), hunger:n('ciHunger'), sleep:n('ciSleep') };
-  const i = checkins.findIndex(x => x.date === entry.date);
+  const i = checkins.findIndex(x => x.date === today);
   if(i >= 0) checkins[i] = entry; else checkins.unshift(entry);
   checkins.sort((a,b)=> a.date < b.date ? 1 : -1);
   saveCheckins();
   renderCheckin();
-}
-
-/* ---------- MEDICATION ---------- */
-function toggleMed(period){
-  state.meds[period] = !state.meds[period];
-  persist();
-  renderMeds();
-  updateRing();
-}
-function renderMeds(){
-  const list = document.getElementById('medList');
-  const rows = [
-    { key:'morning', label:'Morning medication' },
-    { key:'night',   label:'Night medication' },
-  ];
-  list.innerHTML = rows.map(r => `
-    <div class="goal-item">
-      <div class="goal-check ${state.meds[r.key]?'on':''}" onclick="toggleMed('${r.key}')">${state.meds[r.key]?'✓':''}</div>
-      <div class="goal-text ${state.meds[r.key]?'on':''}">${r.label}</div>
-    </div>
-  `).join('');
-}
-
-/* ---------- HAIR CARE ---------- */
-function toggleHair(idx){
-  state.hair[idx] = !state.hair[idx];
-  persist();
-  renderHair();
-}
-function toggleHairWeekly(idx){
-  state.hairWeekly[idx] = !state.hairWeekly[idx];
-  persist();
-  renderHair();
-}
-function renderHair(){
-  const dow = new Date().getDay(); // 0=Sunday ... 6=Saturday
-  const plan = HAIR_CARE_PLAN[dow];
-
-  document.getElementById('hairDayLabel').textContent = `${plan.dayName.toUpperCase()} — ${plan.label.toUpperCase()}`;
-
-  const list = document.getElementById('hairList');
-  list.innerHTML = plan.items.map((item, idx) => `
-    <div class="goal-item">
-      <div class="goal-check ${state.hair[idx]?'on':''}" onclick="toggleHair(${idx})">${state.hair[idx]?'✓':''}</div>
-      <div class="goal-text ${state.hair[idx]?'on':''}">${item}</div>
-    </div>
-  `).join('');
-
-  // Weekly check-in only shows on the last day of the routine (Sunday)
-  const weeklyWrap = document.getElementById('hairWeeklyWrap');
-  if(dow === 0){
-    weeklyWrap.style.display = '';
-    document.getElementById('hairWeeklyList').innerHTML = HAIR_WEEKLY_ITEMS.map((item, idx) => `
-      <div class="goal-item">
-        <div class="goal-check ${state.hairWeekly[idx]?'on':''}" onclick="toggleHairWeekly(${idx})">${state.hairWeekly[idx]?'✓':''}</div>
-        <div class="goal-text ${state.hairWeekly[idx]?'on':''}">${item}</div>
-      </div>
-    `).join('');
-  } else {
-    weeklyWrap.style.display = 'none';
-  }
+  renderWeighins();
 }
 
 /* ---------- TABS ---------- */
@@ -1371,8 +1237,6 @@ function renderAll(){
   renderCardio();
   renderExercises();
   renderFuel();
-  renderMeds();
-  renderHair();
   renderCheckin();
   updateRing();
 }
