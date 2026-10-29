@@ -186,6 +186,9 @@
   .set-box.done .n{ color:var(--green); }
 
   .divider-line{ height:1px; background:var(--line); margin:6px 0 14px; }
+  .wu-toggle{ display:grid; grid-template-columns:1fr 1fr; gap:6px; margin:12px 0 10px; }
+  .wu-toggle div{ text-align:center; padding:8px; border-radius:10px; border:1px solid var(--line); background:var(--panel-2); color:var(--muted); font-family:'Bebas Neue'; font-size:16px; letter-spacing:0.03em; cursor:pointer; }
+  .wu-toggle div.on{ background:linear-gradient(160deg, var(--red), var(--red-dim)); color:#fff; border-color:transparent; }
   .ss-link{ font-size:10.5px; color:var(--red); font-weight:700; letter-spacing:0.03em; text-align:center; margin:6px 0 12px; text-transform:uppercase; }
   .ex-tag{ display:inline-block; min-width:24px; font-family:'Bebas Neue'; font-size:13px; background:var(--panel-2); border:1px solid var(--line); border-radius:6px; padding:1px 5px; margin-right:7px; text-align:center; color:var(--text); }
   .ex-tag.ss{ border-color:rgba(255,59,48,0.5); color:var(--red); }
@@ -897,43 +900,47 @@ function toggleCardio(){
 const WU_ROLL = { name:'Foam Roll (optional)', target:'2 min · 30–60 sec each: calves, quads, glutes, upper back · skip any strained spot', sets:1 };
 const WARMUPS = {
   1: [ WU_ROLL,
-       { name:'Easy Walk', target:'3 min · 2–3% incline', sets:1 },
+       { name:'Easy Walk', quick:true, target:'3 min · 2–3% incline', sets:1 },
        { name:'Arm Circles', target:'10 forward + 10 back', sets:1 },
        { name:'Incline Push-Ups (hands on a bench)', target:'10 reps', sets:1 },
-       { name:'Light Cable Face Pulls', target:'15 reps', sets:1 },
+       { name:'Light Cable Face Pulls', quick:true, target:'15 reps', sets:1 },
        { name:'Light DB Lateral Raises', target:'12 reps', sets:1 },
-       { name:'Incline DB Press Ramp-Up', target:'Set 1: 8 @ ~50% · Set 2: 5 @ ~75% of working weight', sets:2 } ],
+       { name:'Incline DB Press Ramp-Up', quick:true, target:'Set 1: 8 @ ~50% · Set 2: 5 @ ~75% of working weight', sets:2 } ],
   2: [ WU_ROLL,
-       { name:'Easy Walk', target:'3 min · 2–3% incline', sets:1 },
+       { name:'Easy Walk', quick:true, target:'3 min · 2–3% incline', sets:1 },
        { name:'Arm Circles', target:'10 forward + 10 back', sets:1 },
-       { name:'Scap Pull-Downs (lat pulldown, arms straight)', target:'10 reps · pull shoulders down, not elbows', sets:1 },
+       { name:'Scap Pull-Downs (lat pulldown, arms straight)', quick:true, target:'10 reps · pull shoulders down, not elbows', sets:1 },
        { name:'Light Straight-Arm Cable Pulldown', target:'15 reps', sets:1 },
        { name:'Light Cable Face Pulls', target:'15 reps', sets:1 },
-       { name:'Lat Pulldown Ramp-Up', target:'Set 1: 8 @ ~50% · Set 2: 5 @ ~75% of working weight', sets:2 } ],
+       { name:'Lat Pulldown Ramp-Up', quick:true, target:'Set 1: 8 @ ~50% · Set 2: 5 @ ~75% of working weight', sets:2 } ],
   3: [ WU_ROLL,
-       { name:'Easy Walk', target:'5 min · flat', sets:1 },
+       { name:'Easy Walk', quick:true, target:'5 min · flat', sets:1 },
        { name:'Leg Swings, Front-to-Back', target:'10 per leg · start small, hold something', sets:1 },
        { name:'Leg Swings, Side-to-Side', target:'10 per leg', sets:1 },
-       { name:'Glute Bridges', target:'2 × 10 · squeeze at the top', sets:2 },
+       { name:'Glute Bridges', quick:true, target:'2 × 10 · squeeze at the top', sets:2 },
        { name:'Bodyweight Good Mornings', target:'10 slow reps · only as deep as feels easy', sets:1 },
-       { name:'Light Leg Curls', target:'2 × 15', sets:2 },
-       { name:'RDL Ramp-Up', target:'Set 1: 8 @ ~50% · Set 2: 5 @ ~75% of working weight', sets:2 } ],
+       { name:'Light Leg Curls', quick:true, target:'2 × 15', sets:2 },
+       { name:'RDL Ramp-Up', quick:true, target:'Set 1: 8 @ ~50% · Set 2: 5 @ ~75% of working weight', sets:2 } ],
   4: [ WU_ROLL,
-       { name:'Easy Walk', target:'3 min · 2–3% incline', sets:1 },
+       { name:'Easy Walk', quick:true, target:'3 min · 2–3% incline', sets:1 },
        { name:'Arm Circles + Leg Swings', target:'10 each way / 10 per leg', sets:1 },
        { name:'Glute Bridges', target:'10 reps', sets:1 },
-       { name:'Light Cable Face Pulls', target:'15 reps', sets:1 },
-       { name:'Neutral-Grip Pulldown Ramp-Up', target:'Set 1: 8 @ ~50% · Set 2: 5 @ ~75% of working weight', sets:2 } ],
+       { name:'Light Cable Face Pulls', quick:true, target:'15 reps', sets:1 },
+       { name:'Neutral-Grip Pulldown Ramp-Up', quick:true, target:'Set 1: 8 @ ~50% · Set 2: 5 @ ~75% of working weight', sets:2 } ],
 };
 let warmOpen = true;
+let warmQuick = load('berserkr_warm_quick', false); // QUICK (~4 min) vs FULL (~8 min)
+function setWarmQuick(v){ warmQuick = v; save('berserkr_warm_quick', v); renderWarmup(); }
 function toggleWarmSet(i, si){ const k = `${state.activeDay}-${i}-${si}`; state.warm = state.warm || {}; state.warm[k] = !state.warm[k]; persist(); renderWarmup(); }
 function renderWarmup(){
   const el = document.getElementById('warmupCard'); if(!el) return;
-  const items = WARMUPS[state.activeDay];
+  const all = WARMUPS[state.activeDay];
+  const items = all.map((w,i)=>({...w, i})).filter(w => !warmQuick || w.quick);
   state.warm = state.warm || {};
   let total = 0, done = 0;
-  items.forEach((w,i)=>{ for(let si=0; si<w.sets; si++){ total++; if(state.warm[`${state.activeDay}-${i}-${si}`]) done++; } });
-  const body = items.map((w,i)=>{
+  items.forEach(w=>{ for(let si=0; si<w.sets; si++){ total++; if(state.warm[`${state.activeDay}-${w.i}-${si}`]) done++; } });
+  const body = items.map((w,n)=>{
+    const i = w.i;
     let boxes = '';
     for(let si=0; si<w.sets; si++){
       const on = !!state.warm[`${state.activeDay}-${i}-${si}`];
@@ -941,18 +948,18 @@ function renderWarmup(){
       boxes += `<div class="set-box ${on?'done':''}" onclick="toggleWarmSet(${i},${si})"><div class="n">${lbl}${on?' ✓':''}</div></div>`;
     }
     return `<div class="exercise">
-        <div class="ex-head"><div class="ex-name"><span class="ex-tag">W${i+1}</span>${w.name}</div></div>
+        <div class="ex-head"><div class="ex-name"><span class="ex-tag">W${n+1}</span>${w.name}</div></div>
         <div class="ex-target">${w.target}</div>
         <div class="sets-row">${boxes}</div>
-        ${i < items.length-1 ? '<div class="divider-line" style="margin-top:12px"></div>' : ''}
+        ${n < items.length-1 ? '<div class="divider-line" style="margin-top:12px"></div>' : ''}
       </div>`;
   }).join('');
   el.innerHTML = `
     <div class="cardio-card" style="cursor:pointer" onclick="warmOpen=!warmOpen;renderWarmup()">
-      <div><div class="l">Warm-Up · ~8 min</div><div class="s">${done}/${total} done${done===total?' · ready to lift 💪':''} · tap to ${warmOpen?'hide':'show'}</div></div>
+      <div><div class="l">Warm-Up · ~${warmQuick ? (state.activeDay===3?6:4) : 8} min</div><div class="s">${done}/${total} done${done===total?' · ready to lift 💪':''} · tap to ${warmOpen?'hide':'show'}</div></div>
       <div class="s">${warmOpen?'▴':'▾'}</div>
     </div>
-    ${warmOpen ? `<div style="margin-top:14px">${body}</div>` : ''}`;
+    ${warmOpen ? `<div class="wu-toggle"><div class="${warmQuick?'on':''}" onclick="setWarmQuick(true)">QUICK</div><div class="${!warmQuick?'on':''}" onclick="setWarmQuick(false)">FULL</div></div>${warmQuick && state.activeDay===3 ? '<div class="ex-target" style="margin-bottom:10px">Legs stays ~6 min: the bridges and curls protect your hamstring.</div>' : ''}<div style="margin-top:6px">${body}</div>` : ''}`;
 }
 
 function renderCardio(){
