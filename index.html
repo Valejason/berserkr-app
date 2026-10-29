@@ -452,7 +452,9 @@
     <div class="section-title"><span class="bar"></span>PICK YOUR DAY</div>
     <div class="day-tabs" id="dayTabs"></div>
 
-    <div class="card session-plan">5 min warm-up → lifting (A/B straight sets, then supersets) → uphill walk. Running late? Shorten the walk, never the lifting.</div>
+    <div class="card session-plan">8 min warm-up → lifting (A/B straight sets, then supersets) → uphill walk. Running late? Shorten the walk, never the lifting or the warm-up.</div>
+
+    <div class="card" id="warmupCard"></div>
 
     <div class="card" id="exerciseCard"></div>
 
@@ -605,8 +607,8 @@ const WORKOUT_PLAN = {
         {tag:'B2', name:"Leg Press Calf Raise",            sets:3, reps:'12-15',      rest:120, inc:10},
         {tag:'C1', name:"Barbell Hip Thrust",              sets:3, reps:'10',         rest:0,   inc:10},
         {tag:'C2', name:"Seated / Lying Leg Curl",         sets:3, reps:'10-12',      rest:90,  inc:5},
-        {tag:'D1', name:"Hip Abductor Machine",            sets:2, reps:'15-20',      rest:0,   inc:5},
-        {tag:'D2', name:"Pallof Press",                    sets:3, reps:'10 / side',  rest:60,  inc:2.5},
+        {tag:'D1', name:"Side-Lying Hip Abduction",        sets:2, reps:'15-20 / side', rest:0, inc:0, cues:'abduction'},
+        {tag:'D2', name:"Dead Bug",                        sets:3, reps:'10 / side',  rest:60,  inc:0, cues:'deadbug'},
       ]},
   4: { name:"FULL BODY", sub:"V-Taper", exercises:[
         {tag:'A',  name:"Neutral-Grip Pulldown",           sets:3, reps:'8-10',       rest:120, inc:5,   main:true, cues:'pulldown'},
@@ -643,6 +645,10 @@ const FORM_CUES = {
     fixes:['Too deep, back rounds → shorter range, mark your stop point','Locking out knees → leave a slight bend at the top','Feet low on platform → move them up to unload the knees'] },
   crunch:{ cues:['Rope on high pulley, face away, hands by forehead','Hips stay still — slight knee bend only','Curl ribs down toward the pelvis','Exhale hard at the bottom, squeeze 1 second','Uncurl slowly, stop before the stack rests'],
     fixes:['Hinging at hips → roll your spine like a poster','Pulling with arms → hands glued to your head','Heavy and fast → moderate weight, 2-sec lowering'] },
+  abduction:{ cues:['Lie on your side, bottom knee bent for balance, top leg straight','Hips stacked — don\'t roll backward','Toes point slightly down, heel leads','Lift to about 45°, pause 1 second at the top','Lower slowly over 2 seconds'],
+    fixes:['Rolling back so the hip flexor lifts → stack hips, heel leads','Swinging the leg → slow 1-sec pause at the top','Too easy → hold a light plate on the top hip'] },
+  deadbug:{ cues:['On your back, arms straight up, knees bent at 90° over hips','Press your low back flat into the floor','Slowly reach one arm back and the opposite leg out','Stop before your low back lifts off the floor','Breathe out as you reach, return, switch sides'],
+    fixes:['Low back arching → shorter reach, keep it pinned','Rushing → 3 seconds out, 3 seconds back','Holding breath → exhale on every reach'] },
   treadmill:{ cues:['Hands off the rails','Tall posture, slight lean from the ankles','Short, quick steps','Land mid-foot, under your hips','Nose-breathing pace you can sustain'],
     fixes:['Holding rails → lower incline/speed until you can let go','Incline too steep for knees → cap at 10–12%','Leaning back / over-striding → shorter steps, eyes forward'] },
 };
@@ -885,10 +891,60 @@ function toggleCardio(){
   renderCardio();
   updateRing();
 }
+
+/* ---------- WARM-UPS (per training day) ---------- */
+// ~8 min each. Moving warm-ups, not long static stretches (those can sap strength before lifting).
+const WARMUP_ROLL = 'Optional foam roll, 2 min: 30–60 sec each on calves, quads, glutes, upper back (skip any strained spot)';
+const WARMUPS = {
+  1: [ '3 min easy walk, 2–3% incline',
+       'Arm circles: 10 forward + 10 back',
+       'Incline push-ups on a bench: 10',
+       'Light cable face pulls: 15',
+       'Light DB lateral raises: 12',
+       'Incline DB press ramp-up: 1 set × 8 at ~50%, 1 set × 5 at ~75%' ],
+  2: [ '3 min easy walk, 2–3% incline',
+       'Arm circles: 10 forward + 10 back',
+       'Scap pull-downs on the lat pulldown (arms straight, pull shoulders down): 10',
+       'Light straight-arm cable pulldown: 15',
+       'Light cable face pulls: 15',
+       'Lat pulldown ramp-up: 1 set × 8 at ~50%, 1 set × 5 at ~75%' ],
+  3: [ '5 min easy walk, flat',
+       'Leg swings front-to-back: 10 per leg, start small (hold something)',
+       'Leg swings side-to-side: 10 per leg',
+       'Glute bridges: 2 × 10, squeeze at the top',
+       'Bodyweight good mornings: 10 slow reps, only as deep as feels easy',
+       'Light leg curls: 2 × 15',
+       'RDL ramp-up: 1 set × 8 at ~50%, 1 set × 5 at ~75%' ],
+  4: [ '3 min easy walk, 2–3% incline',
+       'Arm circles + leg swings: 10 each way / per leg',
+       'Glute bridges: 10',
+       'Light cable face pulls: 15',
+       'Neutral-grip pulldown ramp-up: 1 set × 8 at ~50%, 1 set × 5 at ~75%' ],
+};
+let warmOpen = true;
+function toggleWarmItem(i){ const k = `${state.activeDay}-${i}`; state.warm = state.warm || {}; state.warm[k] = !state.warm[k]; persist(); renderWarmup(); }
+function renderWarmup(){
+  const el = document.getElementById('warmupCard'); if(!el) return;
+  const items = [WARMUP_ROLL, ...WARMUPS[state.activeDay]];
+  state.warm = state.warm || {};
+  const done = items.filter((_,i)=>state.warm[`${state.activeDay}-${i}`]).length;
+  el.innerHTML = `
+    <div class="cardio-card" style="cursor:pointer" onclick="warmOpen=!warmOpen;renderWarmup()">
+      <div><div class="l">Warm-up · ~8 min</div><div class="s">${done}/${items.length} done · tap to ${warmOpen?'hide':'show'}</div></div>
+      <div class="s">${warmOpen?'▴':'▾'}</div>
+    </div>
+    ${warmOpen ? `<div style="margin-top:10px">${items.map((t,i)=>{
+      const on = !!state.warm[`${state.activeDay}-${i}`];
+      return `<div class="plan-item" style="margin-bottom:6px;padding:10px 12px">
+        <div class="plan-check ${on?'on':''}" onclick="toggleWarmItem(${i})">${on?'✓':''}</div>
+        <div class="plan-body"><div class="plan-food ${on?'on':''}" style="font-size:13.5px">${t}</div></div></div>`;
+    }).join('')}</div>` : ''}`;
+}
+
 function renderCardio(){
   document.getElementById('cardioToggle').classList.toggle('on', state.cardio);
   const c = CARDIO_BY_WEEK[currentWeek()];
-  document.getElementById('cardioSub').textContent = c.txt + (state.activeDay===3 ? ' · drop 2% if knees are sore' : '');
+  document.getElementById('cardioSub').textContent = c.txt + ' · ramp up: start at 3%, add 2% each minute to target' + (state.activeDay===3 ? ' · drop 2% if knees or hamstrings are sore' : '');
   document.getElementById('cardioCues').innerHTML =
     `<button class="cue-btn" onclick="toggleCues('treadmill')">FORM ${openCues.treadmill?'▴':'▾'}</button>` +
     (openCues.treadmill ? cuesHtml('treadmill') : '');
@@ -1839,6 +1895,7 @@ function renderAll(){
   renderWeekTabs();
   renderDayTabs();
   renderCardio();
+  renderWarmup();
   renderExercises();
   renderFuel();
   renderCheckin();
