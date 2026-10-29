@@ -186,6 +186,10 @@
   .set-box.done .n{ color:var(--green); }
 
   .divider-line{ height:1px; background:var(--line); margin:6px 0 14px; }
+  .ham-steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:10px 0 4px; }
+  .ham-steps div{ text-align:center; padding:6px; border-radius:8px; background:var(--panel-2); border:1px solid var(--line); font-family:'Bebas Neue'; font-size:15px; color:var(--muted); }
+  .ham-steps div.done{ background:rgba(61,220,151,0.15); color:var(--green); border-color:rgba(61,220,151,0.4); }
+  .ham-steps div.cur{ background:linear-gradient(160deg, var(--red), var(--red-dim)); color:#fff; border-color:transparent; }
   .wu-toggle{ display:grid; grid-template-columns:1fr 1fr; gap:6px; margin:12px 0 10px; }
   .wu-toggle div{ text-align:center; padding:8px; border-radius:10px; border:1px solid var(--line); background:var(--panel-2); color:var(--muted); font-family:'Bebas Neue'; font-size:16px; letter-spacing:0.03em; cursor:pointer; }
   .wu-toggle div.on{ background:linear-gradient(160deg, var(--red), var(--red-dim)); color:#fff; border-color:transparent; }
@@ -457,6 +461,8 @@
 
     <div class="card session-plan">8 min warm-up → lifting (A/B straight sets, then supersets) → uphill walk. Running late? Shorten the walk, never the lifting or the warm-up.</div>
 
+    <div class="card" id="hamCard" style="display:none"></div>
+
     <div class="card" id="warmupCard"></div>
 
     <div class="card" id="exerciseCard"></div>
@@ -619,12 +625,89 @@ const WORKOUT_PLAN = {
         {tag:'C1', name:"Seated Cable Row",                sets:3, reps:'10-12',      rest:0,   inc:5,   cues:'row'},
         {tag:'C2', name:"Incline Machine Press",           sets:3, reps:'10-12',      rest:90,  inc:5,   cues:'incline'},
         {tag:'D1', name:"Cable Lateral Raise (each arm)",  sets:3, reps:'15 / side',  rest:0,   inc:2.5, cues:'lateral'},
-        {tag:'D2', name:"Back Extension",                  sets:2, reps:'12',         rest:60,  inc:0},
+        {tag:'D2', name:"Back Extension",                  sets:2, reps:'12',         rest:60,  inc:0, hamAlt:{ name:'Glute Bridges (back extensions return in Phase 3)', reps:'12' }},
         {tag:'E1', name:"Cable Curl",                      sets:2, reps:'12',         rest:0,   inc:2.5},
         {tag:'E2', name:"Rope Pushdown",                   sets:2, reps:'12',         rest:0,   inc:2.5},
         {tag:'E3', name:"Standing Cable Crunch",           sets:3, reps:'12-15',      rest:60,  inc:2.5, cues:'crunch'},
       ]},
 };
+
+/* ---------- HAMSTRING REBUILD: legs day adapts to the current phase ----------
+   Phases 1-3 use their own plan keys (31-33) so weights/PRs don't mix with the full legs day.
+   Phase 4 uses the original key 3, so old RDL / leg press / hip thrust / leg curl numbers carry over. */
+WORKOUT_PLAN[31] = { name:"LEGS", sub:"Phase 1 · Calm", exercises:[
+  {tag:'A',  name:"Heel-Press Holds (lying, knees bent)", sets:5, reps:'10-sec hold · 30% → 70% effort', rest:20, inc:0, cues:'heelpress'},
+  {tag:'B',  name:"Glute Bridges",                        sets:2, reps:'10',            rest:45, inc:0},
+  {tag:'C',  name:"Standing Calf Raises (DB optional)",   sets:3, reps:'15',            rest:45, inc:0},
+  {tag:'D1', name:"Side-Lying Hip Abduction",             sets:2, reps:'15-20 / side',  rest:0,  inc:0, cues:'abduction'},
+  {tag:'D2', name:"Dead Bug",                             sets:3, reps:'10 / side',     rest:60, inc:0, cues:'deadbug'},
+]};
+WORKOUT_PLAN[32] = { name:"LEGS", sub:"Phase 2 · Rebuild", exercises:[
+  {tag:'A',  name:"Leg Press (feet high, pain-free depth)", sets:3, reps:'10-12',       rest:120, inc:10, main:true, cues:'legpress'},
+  {tag:'B1', name:"Slow Eccentric Leg Curl",              sets:3, reps:'8 / side · 4-sec lower', rest:0, inc:5, cues:'eccurl'},
+  {tag:'B2', name:"Single-Leg Glute Bridge",              sets:3, reps:'8 / side',      rest:60, inc:0},
+  {tag:'C1', name:"DB RDL — Partial (to mid-thigh)",      sets:3, reps:'12 · light',    rest:0,  inc:5, cues:'rdl'},
+  {tag:'C2', name:"Leg Press Calf Raise",                 sets:3, reps:'12-15',         rest:60, inc:10},
+  {tag:'D1', name:"Side-Lying Hip Abduction",             sets:2, reps:'15-20 / side',  rest:0,  inc:0, cues:'abduction'},
+  {tag:'D2', name:"Dead Bug",                             sets:3, reps:'10 / side',     rest:60, inc:0, cues:'deadbug'},
+]};
+WORKOUT_PLAN[33] = { name:"LEGS", sub:"Phase 3 · Load", exercises:[
+  {tag:'A',  name:"DB Romanian Deadlift (3-sec lower)",   sets:3, reps:'10',            rest:120, inc:5, main:true, cues:'rdl'},
+  {tag:'B1', name:"Leg Press (feet high, pain-free depth)", sets:3, reps:'10-12',       rest:0,  inc:10, main:true, cues:'legpress'},
+  {tag:'B2', name:"Leg Press Calf Raise",                 sets:3, reps:'12-15',         rest:90, inc:10},
+  {tag:'C1', name:"Barbell Hip Thrust",                   sets:3, reps:'10',            rest:0,  inc:10},
+  {tag:'C2', name:"Slow Eccentric Leg Curl",              sets:3, reps:'8-10 · 4-sec lower', rest:90, inc:5, cues:'eccurl'},
+  {tag:'D1', name:"Single-Leg RDL (light, hold support)", sets:2, reps:'8 / side',      rest:0,  inc:2.5, cues:'slrdl'},
+  {tag:'D2', name:"Dead Bug",                             sets:3, reps:'10 / side',     rest:60, inc:0, cues:'deadbug'},
+]};
+// Phase 4 = long-term legs day (key 3): slow eccentric curls stay forever
+WORKOUT_PLAN[3] = { name:"LEGS", sub:"Phase 4 · Strong", exercises:[
+  {tag:'A',  name:"Romanian Deadlift (3-sec lower)",      sets:3, reps:'8-10',          rest:150, inc:5, main:true, cues:'rdl'},
+  {tag:'B1', name:"Leg Press (feet high, pain-free depth)", sets:3, reps:'10-12',       rest:0,  inc:10, main:true, cues:'legpress'},
+  {tag:'B2', name:"Leg Press Calf Raise",                 sets:3, reps:'12-15',         rest:120, inc:10},
+  {tag:'C1', name:"Barbell Hip Thrust",                   sets:3, reps:'10',            rest:0,  inc:10},
+  {tag:'C2', name:"Slow Eccentric Leg Curl",              sets:3, reps:'6-8 · 4-sec lower', rest:90, inc:5, cues:'eccurl'},
+  {tag:'D1', name:"Single-Leg RDL (hold support)",        sets:2, reps:'8 / side',      rest:0,  inc:2.5, cues:'slrdl'},
+  {tag:'D2', name:"Dead Bug",                             sets:3, reps:'10 / side',     rest:60, inc:0, cues:'deadbug'},
+]};
+const HAM_PHASES = {
+  1:{ name:'Calm & activate', walk:'flat (0–2%), easy pace', inclineCap:2,
+      criteria:['Sitting and bending forward feel normal','No pain walking or on stairs','Heel-press holds at ~70% effort feel easy'] },
+  2:{ name:'Rebuild', walk:'cap incline at 5%', inclineCap:5,
+      criteria:['Everyday life pain-free for a full week','Single-leg bridges 3 × 8 with no pain','Partial DB RDLs feel easy, nothing the next morning'] },
+  3:{ name:'Load it', walk:'cap incline at 8%', inclineCap:8,
+      criteria:['Full-range DB RDL 3 × 10 pain-free','Single-leg RDL steady, no pulling','Two legs sessions in a row with a clean next morning'] },
+  4:{ name:'Keep it strong', walk:null, inclineCap:null, criteria:[] },
+};
+function planKey(day){ day = Number(day); if(day === 3) return ham.phase === 4 ? 3 : 30 + ham.phase; return day; }
+let hamDropArmed = false;
+function hamToggle(i){ ham.checks[`${ham.phase}-${i}`] = !ham.checks[`${ham.phase}-${i}`]; saveHam(); renderHam(); }
+function hamAdvance(){ if(ham.phase < 4){ ham.phase++; ham.since = todayKey(); saveHam(); renderAll(); } }
+function hamDrop(){
+  if(!hamDropArmed){ hamDropArmed = true; renderHam(); return; }
+  hamDropArmed = false;
+  if(ham.phase > 1){ ham.phase--; ham.since = todayKey(); Object.keys(ham.checks).forEach(k=>{ if(k.startsWith(ham.phase+'-')) delete ham.checks[k]; }); saveHam(); renderAll(); }
+}
+function renderHam(){
+  const el = document.getElementById('hamCard'); if(!el) return;
+  if(state.activeDay !== 3){ el.style.display = 'none'; return; }
+  el.style.display = '';
+  const ph = HAM_PHASES[ham.phase];
+  const crit = ph.criteria;
+  const allDone = crit.length && crit.every((_,i)=>ham.checks[`${ham.phase}-${i}`]);
+  el.innerHTML = `
+    <div class="q-label">HAMSTRING REBUILD · PHASE ${ham.phase} OF 4</div>
+    <div class="l" style="font-weight:700;font-size:15px">${ph.name}</div>
+    <div class="ham-steps">${[1,2,3,4].map(n=>`<div class="${n<ham.phase?'done':(n===ham.phase?'cur':'')}">${n}</div>`).join('')}</div>
+    ${crit.length ? `<div class="ex-target" style="margin:6px 0 8px">Move up when all three are true:</div>
+      ${crit.map((c,i)=>{ const on = !!ham.checks[`${ham.phase}-${i}`];
+        return `<div class="plan-item" style="margin-bottom:6px;padding:10px 12px"><div class="plan-check ${on?'on':''}" onclick="hamToggle(${i})">${on?'✓':''}</div><div class="plan-body"><div class="plan-food" style="font-size:13.5px">${c}</div></div></div>`; }).join('')}
+      <button class="add-btn" style="width:100%;margin-top:6px;${allDone?'':'opacity:0.35;pointer-events:none'}" onclick="hamAdvance()">MOVE TO PHASE ${ham.phase+1}</button>`
+    : `<div class="ex-target" style="margin:6px 0">Rebuilt. Slow eccentric leg curls stay in every legs day for good — they're your insurance.</div>`}
+    <div class="ex-target" style="margin-top:10px">Rules: discomfort ≤3/10 during, and no worse the next morning. Walk: ${ph.walk || 'normal plan'}.</div>
+    ${ham.phase > 1 ? `<div class="q-parent" style="margin-top:8px"><button onclick="hamDrop()">${hamDropArmed?'Tap again to drop to Phase '+(ham.phase-1):'Flare-up? Drop back a phase'}</button></div>` : ''}`;
+}
+
 function setsFor(ex, week){
   if(week === 4) return Math.min(2, ex.sets);
   if((week === 2 || week === 3) && ex.main) return ex.sets + 1;
@@ -652,6 +735,12 @@ const FORM_CUES = {
     fixes:['Rolling back so the hip flexor lifts → stack hips, heel leads','Swinging the leg → slow 1-sec pause at the top','Too easy → hold a light plate on the top hip'] },
   deadbug:{ cues:['On your back, arms straight up, knees bent at 90° over hips','Press your low back flat into the floor','Slowly reach one arm back and the opposite leg out','Stop before your low back lifts off the floor','Breathe out as you reach, return, switch sides'],
     fixes:['Low back arching → shorter reach, keep it pinned','Rushing → 3 seconds out, 3 seconds back','Holding breath → exhale on every reach'] },
+  heelpress:{ cues:['Lie on your back, knees bent ~90°, heels on the floor','Dig your heels down and back, like dragging them toward you','No movement — just tension in the back of the thigh','Breathe normally through the 10 seconds','Start at 30% effort; build toward 70% as it stays quiet'],
+    fixes:['Holding your breath → count the seconds out loud','Pushing too hard too soon → it should feel easy, zero pain','Hips lifting → keep your butt on the floor'] },
+  eccurl:{ cues:['Leg curl machine, light weight','Curl the weight up with both legs','Take one leg off and lower with the other over 4 seconds','Control it all the way to straight','Alternate legs each rep'],
+    fixes:["Weight drops fast → if you can't lower in 4 sec, go lighter",'Hips lifting off the pad → press hips down','Going heavy too soon → add weight only when 4-sec lowers feel easy'] },
+  slrdl:{ cues:['Hold a rack or bench with one hand, light DB in the other','Soft knee on the standing leg','Hinge at the hip; back leg reaches straight back','Keep hips square to the floor','Stop at the hamstring stretch; stand by squeezing the glute'],
+    fixes:['Hips opening up → point the back toe at the floor','Rounding the back → shorter range','Wobbling → use more support; balance is not the goal'] },
   treadmill:{ cues:['Hands off the rails','Tall posture, slight lean from the ankles','Short, quick steps','Land mid-foot, under your hips','Nose-breathing pace you can sustain'],
     fixes:['Holding rails → lower incline/speed until you can let go','Incline too steep for knees → cap at 10–12%','Leaning back / over-striding → shorter steps, eyes forward'] },
 };
@@ -783,6 +872,8 @@ if(!meta.migratedBlock1){
   meta.migratedBlock1 = true;
   save('berserkr_meta', meta);
 }
+let ham = load('berserkr_ham', { phase:1, since:todayKey(), checks:{} }); // hamstring rebuild phase (data + UI live with the workout plan)
+function saveHam(){ save('berserkr_ham', ham); }
 let checkins = load('berserkr_checkins', []); // [{date, weight, waist, logged, sessions, energy, hunger, sleep}]
 function saveCheckins(){ save('berserkr_checkins', checkins); }
 let openCues = {}; // which form-cue panels are expanded (not persisted)
@@ -814,13 +905,14 @@ function renderHeader(){
 
 /* ---------- RING ---------- */
 function updateRing(){
-  const exs = WORKOUT_PLAN[state.activeDay].exercises;
+  const pk = planKey(state.activeDay);
+  const exs = WORKOUT_PLAN[pk].exercises;
   const wk = currentWeek();
   let totalSets = 0, doneSets = 0;
   exs.forEach((ex, e)=>{
     const n = setsFor(ex, wk);
     totalSets += n;
-    for(let s=0;s<n;s++) if(state.sets[`${state.activeDay}-${e}-${s}`]) doneSets++;
+    for(let s=0;s<n;s++) if(state.sets[`${pk}-${e}-${s}`]) doneSets++;
   });
   const mealsChecked = MEAL_PLAN.filter(m => state.mealChecks[m.id]).length;
   const mealsLogged = mealsChecked / MEAL_PLAN.length;
@@ -878,8 +970,8 @@ function toggleCues(id){ openCues[id] = !openCues[id]; renderExercises(); render
 function renderDayTabs(){
   const wrap = document.getElementById('dayTabs');
   wrap.innerHTML = '';
-  Object.keys(WORKOUT_PLAN).forEach(dayNum=>{
-    const plan = WORKOUT_PLAN[dayNum];
+  ['1','2','3','4'].forEach(dayNum=>{
+    const plan = WORKOUT_PLAN[dayNum === '3' ? planKey(3) : dayNum];
     const btn = document.createElement('div');
     btn.className = 'day-tab' + (state.activeDay == dayNum ? ' active':'');
     btn.innerHTML = `${plan.name}<small>${plan.sub}</small>`;
@@ -918,9 +1010,9 @@ const WARMUPS = {
        { name:'Leg Swings, Front-to-Back', target:'10 per leg · start small, hold something', sets:1 },
        { name:'Leg Swings, Side-to-Side', target:'10 per leg', sets:1 },
        { name:'Glute Bridges', quick:true, target:'2 × 10 · squeeze at the top', sets:2 },
-       { name:'Bodyweight Good Mornings', target:'10 slow reps · only as deep as feels easy', sets:1 },
+       { name:'Bodyweight Good Mornings', target:'10 slow reps · only as deep as feels easy · skip in Hamstring Phase 1', sets:1 },
        { name:'Light Leg Curls', quick:true, target:'2 × 15', sets:2 },
-       { name:'RDL Ramp-Up', quick:true, target:'Set 1: 8 @ ~50% · Set 2: 5 @ ~75% of working weight', sets:2 } ],
+       { name:'First-Lift Ramp-Up', quick:true, target:'Set 1: 8 @ ~50% · Set 2: 5 @ ~75% of working weight · skip in Hamstring Phase 1', sets:2 } ],
   4: [ WU_ROLL,
        { name:'Easy Walk', quick:true, target:'3 min · 2–3% incline', sets:1 },
        { name:'Arm Circles + Leg Swings', target:'10 each way / 10 per leg', sets:1 },
@@ -965,32 +1057,37 @@ function renderWarmup(){
 function renderCardio(){
   document.getElementById('cardioToggle').classList.toggle('on', state.cardio);
   const c = CARDIO_BY_WEEK[currentWeek()];
-  document.getElementById('cardioSub').textContent = c.txt + ' · ramp up: start at 3%, add 2% each minute to target' + (state.activeDay===3 ? ' · drop 2% if knees or hamstrings are sore' : '');
+  const hp = HAM_PHASES[ham.phase];
+  document.getElementById('cardioSub').textContent = hp.walk
+    ? `${c.min} min · Hamstring Phase ${ham.phase}: ${hp.walk}` + (ham.phase > 1 ? ' · ramp up from 2%' : '')
+    : c.txt + ' · ramp up: start at 3%, add 2% each minute to target' + (state.activeDay===3 ? ' · drop 2% if knees or hamstrings are sore' : '');
   document.getElementById('cardioCues').innerHTML =
     `<button class="cue-btn" onclick="toggleCues('treadmill')">FORM ${openCues.treadmill?'▴':'▾'}</button>` +
     (openCues.treadmill ? cuesHtml('treadmill') : '');
 }
 
 function renderExercises(){
-  const plan = WORKOUT_PLAN[state.activeDay];
+  const pk = planKey(state.activeDay);
+  const plan = WORKOUT_PLAN[pk];
   const wk = currentWeek();
   const card = document.getElementById('exerciseCard');
   card.innerHTML = '';
-  plan.exercises.forEach((ex, exIdx)=>{
-    const key = `${state.activeDay}-${exIdx}`;
-    const sentry = getStreakEntry(state.activeDay, exIdx);
-    const pr = getPR(state.activeDay, exIdx);
-    const currentWeight = getExerciseWeight(state.activeDay, exIdx);
+  plan.exercises.forEach((ex0, exIdx)=>{
+    const ex = (ex0.hamAlt && ham.phase <= 2) ? { ...ex0, ...ex0.hamAlt } : ex0;
+    const key = `${pk}-${exIdx}`;
+    const sentry = getStreakEntry(pk, exIdx);
+    const pr = getPR(pk, exIdx);
+    const currentWeight = getExerciseWeight(pk, exIdx);
     const nSets = setsFor(ex, wk);
 
     let setsHtml = '';
     let doneCount = 0;
     const setWeightVals = [];
     for(let s=0;s<nSets;s++){
-      const skey = `${state.activeDay}-${exIdx}-${s}`;
+      const skey = `${pk}-${exIdx}-${s}`;
       const done = !!state.sets[skey];
       if(done) doneCount++;
-      setWeightVals.push(getSetWeight(state.activeDay, exIdx, s));
+      setWeightVals.push(getSetWeight(pk, exIdx, s));
       setsHtml += `<div class="set-box ${done?'done':''}" onclick="toggleSet('${skey}')"><div class="n">SET ${s+1}${done?' ✓':''}</div></div>`;
     }
 
@@ -1024,7 +1121,7 @@ function renderExercises(){
       ${pr!==null ? `<div class="pr-line">🏆 Best: ${pr} lbs</div>` : ''}
       <div class="weight-row">
         <label>${ex.inverse ? 'Assist (lbs)' : 'Weight (lbs)'}</label>
-        <input type="number" inputmode="decimal" placeholder="0" value="${currentWeight}" onchange="updateWeight(${state.activeDay},${exIdx},this.value)">
+        <input type="number" inputmode="decimal" placeholder="0" value="${currentWeight}" onchange="updateWeight(${pk},${exIdx},this.value)">
       </div>
       <div class="sets-row">${setsHtml}</div>
       ${suggestHtml}
@@ -1916,6 +2013,7 @@ function renderAll(){
   renderWeekTabs();
   renderDayTabs();
   renderCardio();
+  renderHam();
   renderWarmup();
   renderExercises();
   renderFuel();
