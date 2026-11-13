@@ -113,7 +113,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:.95rem}
     <div class="quote genji"><div class="label">Overwatch</div><p id="q2"></p><cite id="q2a"></cite></div>
     <div class="fact"><div class="label">Fun fact for the boys</div><p id="fact"></p></div>
     <hr>
-    <div><div class="label">Up next</div><h2 id="nextDay"></h2><div class="cardio">30 min uphill treadmill walk, then 3 sets each</div></div>
+    <div><div class="label">Up next</div><h2 id="nextDay"></h2><div class="cardio">15 min uphill treadmill walk, then 3 sets each</div></div>
     <div class="row"><button class="btn" id="goLift">Open workout</button><button class="btn ghost" id="goDnd">Today's adventure</button></div>
   </section>
 
@@ -230,7 +230,7 @@ function renderLift(){
   renderDays();
   const d=PLAN[sel];
   $("dayTitle").textContent=`Day ${sel+1}: ${d.name}`;
-  $("dayNote").textContent="30 min uphill treadmill walk first. 3 sets each, 8–12 reps, last set close to failure.";
+  $("dayNote").textContent="15 min uphill treadmill walk first. 3 sets each, 8–12 reps, last set close to failure.";
   const s=doneSets[sel]||{};
   $("exList").innerHTML=d.ex.map((e,i)=>`<div class="ex"><div class="nm"><b>${e[0]}</b><span>${e[1]}</span></div><div class="sets">${[0,1,2].map(k=>`<button class="${s[i+"-"+k]?"on":""}" data-k="${i}-${k}" aria-label="${e[0]} set ${k+1}">${k+1}</button>`).join("")}</div></div>`).join("");
   $("exList").querySelectorAll(".sets button").forEach(b=>b.onclick=()=>{
