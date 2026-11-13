@@ -1,2029 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>BERSERKR</title>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Berserkr">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#121319">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23121319'/%3E%3Ctext x='50' y='68' font-size='60' font-family='Arial Black' fill='%23FF3B30' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23121319'/%3E%3Ctext x='50' y='68' font-size='60' font-family='Arial Black' fill='%23FF3B30' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Daily Quest Log</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700&family=Alegreya+Sans:wght@400;500;700&family=JetBrains+Mono:wght@600&display=swap">
 <style>
-  :root{
-    --ink:#121319;
-    --panel:#1b1d26;
-    --panel-2:#22242f;
-    --line: rgba(255,255,255,0.07);
-    --red:#ff3b30;
-    --red-dim:#c22b22;
-    --green:#3ddc97;
-    --text:#f3f1ea;
-    --muted:#8a8c9a;
-  }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0;padding:0;background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;overscroll-behavior-y:none;}
-  body{
-    min-height:100vh;
-    min-height:100dvh;
-    display:flex;
-    flex-direction:column;
-    background-image:
-      repeating-linear-gradient(115deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 46px);
-  }
-  .display{font-family:'Bebas Neue',sans-serif; letter-spacing:0.03em;}
-  header.top{
-    padding:22px 20px 16px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    position:relative;
-    overflow:hidden;
-  }
-  header.top::before{
-    content:"";
-    position:absolute; top:0; left:-10%; width:60%; height:100%;
-    background:linear-gradient(100deg, rgba(255,59,48,0.14), transparent 70%);
-    pointer-events:none;
-  }
-  .brand{display:flex; align-items:center; gap:10px; z-index:1;}
-  .brand .mark{
-    width:34px;height:34px;border-radius:8px;
-    background:linear-gradient(160deg, var(--red), var(--red-dim));
-    display:flex;align-items:center;justify-content:center;
-    font-family:'Bebas Neue'; font-size:20px; color:#fff;
-    box-shadow:0 4px 14px rgba(255,59,48,0.35);
-    transform:skew(-6deg);
-  }
-  .brand .name{font-size:21px; line-height:1;}
-  .datepill{
-    font-size:12px; color:var(--muted); z-index:1; text-align:right;
-    display:flex; flex-direction:column; gap:2px;
-  }
-  .datepill b{color:var(--text); font-size:13px;}
+:root{
+  --bg:#eef1f0; --surface:#ffffff; --ink:#1d2a2c; --muted:#5b6b6c; --line:#d5dddc;
+  --accent:#1f6f6b; --accent-ink:#ffffff; --brass:#a87b2a; --good:#2e7d4f; --bad:#b0412e;
+  --display:"Alegreya SC",Georgia,serif; --body:"Alegreya Sans",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#121a1b; --surface:#1a2526; --ink:#e4ecea; --muted:#9aaead; --line:#2c3a3b;
+  --accent:#4fb3ac; --accent-ink:#0d1516; --brass:#d6a64e; --good:#5cc489; --bad:#e57a63; color-scheme:dark}}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:17px/1.5 var(--body);margin:0}
+.wrap{max-width:640px;margin:0 auto;padding-inline:16px;padding-block:16px 48px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;font-weight:700}
+h1{font-size:1.6rem;letter-spacing:.02em}
+h2{font-size:1.3rem}
+.date{color:var(--muted);font-size:.9rem}
+nav{display:flex;gap:6px;margin:14px 0 20px;border-bottom:1px solid var(--line)}
+nav button{flex:1;background:none;border:0;border-bottom:3px solid transparent;padding:10px 4px;font:600 1rem var(--body);color:var(--muted);cursor:pointer}
+nav button[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.label{font:600 .72rem var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--brass)}
+section{display:flex;flex-direction:column;gap:18px}
+.quote{border-left:3px solid var(--line);padding-left:14px}
+.quote p{margin:4px 0 2px;font-size:1.15rem;line-height:1.4}
+.quote cite{color:var(--muted);font-style:normal;font-size:.9rem}
+.quote.genji{border-color:var(--good)}
+.quote.exist{border-color:var(--brass)}
+hr{border:0;border-top:1px solid var(--line);margin:4px 0}
+.days{display:flex;gap:6px;flex-wrap:wrap}
+.days button{flex:1;min-width:70px;padding:8px 6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;font:600 .9rem var(--body);cursor:pointer}
+.days button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.days small{display:block;font-weight:400;opacity:.8}
+.cardio{color:var(--muted);font-size:.95rem}
+.ex{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.ex .nm{flex:1;min-width:0}
+.ex .nm b{display:block}
+.ex .nm span{color:var(--muted);font-size:.88rem}
+.sets{display:flex;gap:6px}
+.sets button{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);background:var(--surface);color:var(--muted);font:600 .85rem var(--mono);cursor:pointer}
+.sets button.on{background:var(--good);border-color:var(--good);color:var(--surface)}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:11px 16px;font:700 1rem var(--body);cursor:pointer}
+.btn.ghost{background:none;color:var(--accent);border:1px solid var(--line)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.chap{color:var(--muted);font-size:.9rem}
+.scene{font-size:1.12rem;line-height:1.55;margin:0}
 
-  main{flex:1; padding:0 16px 160px; max-width:520px; width:100%; margin:0 auto;}
-
-  .ring-card{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:20px;
-    padding:20px;
-    display:flex;
-    align-items:center;
-    gap:18px;
-    margin-bottom:18px;
-    position:relative;
-    overflow:hidden;
-  }
-  .ring-card::after{
-    content:"";
-    position:absolute; right:-30px; top:-30px; width:120px; height:120px;
-    background:radial-gradient(circle, rgba(255,59,48,0.15), transparent 70%);
-  }
-  .ring{ width:74px; height:74px; flex-shrink:0; }
-  .ring svg{ transform:rotate(-90deg); }
-  .ring-bg{ fill:none; stroke:var(--panel-2); stroke-width:8; }
-  .ring-fg{ fill:none; stroke:var(--red); stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset 0.4s ease; }
-  .ring-label{ font-family:'Bebas Neue'; font-size:20px; fill:var(--text); }
-  .ring-wrap{ position:relative; width:74px; height:74px; }
-  .ring-num{
-    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    font-family:'Bebas Neue'; font-size:19px;
-  }
-  .ring-copy .k{ font-family:'Bebas Neue'; font-size:22px; letter-spacing:0.02em; }
-  .ring-copy .d{ font-size:12.5px; color:var(--muted); margin-top:2px; }
-
-  .weather-card{
-    background:var(--panel); border:1px solid var(--line); border-radius:16px;
-    padding:14px 16px; display:flex; align-items:center; gap:14px;
-    margin-bottom:18px; cursor:pointer;
-  }
-  .weather-card .w-icon{ font-size:28px; line-height:1; flex-shrink:0; }
-  .weather-card .w-temp{ font-family:'Bebas Neue'; font-size:17px; letter-spacing:0.02em; }
-  .weather-card .w-sub{ font-size:11.5px; color:var(--muted); margin-top:1px; }
-
-  .grit-hero{
-    background:linear-gradient(160deg, #14b8a6, #0f6f66);
-    border-radius:20px; padding:24px 22px; margin-bottom:20px;
-    position:relative; overflow:hidden;
-    box-shadow:0 10px 26px rgba(20,184,166,0.28);
-  }
-  .grit-hero::after{
-    content:""; position:absolute; right:-20px; bottom:-30px; width:140px; height:140px;
-    background:radial-gradient(circle, rgba(255,255,255,0.12), transparent 70%);
-  }
-  .grit-hero .grit-icon{ font-size:30px; margin-bottom:8px; }
-  .grit-hero .grit-label{
-    font-size:15px; letter-spacing:0.08em; color:rgba(255,255,255,0.85); margin-bottom:8px;
-  }
-  .grit-hero .grit-text{
-    font-family:'Bebas Neue'; font-size:26px; line-height:1.15; color:#fff; letter-spacing:0.01em;
-  }
-
-  .section-title{
-    font-family:'Bebas Neue'; font-size:22px; letter-spacing:0.03em; color:var(--text);
-    margin:22px 0 10px; display:flex; align-items:center; gap:8px;
-  }
-  .section-title .bar{ width:5px; height:18px; background:var(--red); border-radius:2px; transform:skew(-10deg); }
-
-  .day-tabs{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:16px; }
-  .day-tab{
-    background:var(--panel); border:1px solid var(--line); color:var(--muted);
-    border-radius:12px; padding:10px 4px; font-family:'Bebas Neue'; font-size:15px;
-    text-align:center; cursor:pointer; letter-spacing:0.02em;
-  }
-  .day-tab small{ display:block; font-family:'Inter'; font-size:9.5px; letter-spacing:0; margin-top:2px; color:var(--muted); }
-  .day-tab.active{ background:linear-gradient(160deg, var(--red), var(--red-dim)); color:#fff; border-color:transparent; }
-  .day-tab.active small{ color:rgba(255,255,255,0.85); }
-
-  .card{
-    background:var(--panel); border:1px solid var(--line); border-radius:16px;
-    padding:16px; margin-bottom:12px;
-  }
-  .cardio-card{ display:flex; align-items:center; justify-content:space-between; }
-  .cardio-card .l{ font-size:14.5px; font-weight:600; }
-  .cardio-card .s{ font-size:12px; color:var(--muted); margin-top:2px; }
-
-  .toggle{
-    width:46px; height:27px; border-radius:20px; background:var(--panel-2);
-    position:relative; cursor:pointer; flex-shrink:0; border:1px solid var(--line);
-  }
-  .toggle::after{
-    content:""; position:absolute; width:21px; height:21px; border-radius:50%;
-    background:var(--muted); top:2px; left:2px; transition:all 0.2s ease;
-  }
-  .toggle.on{ background:rgba(61,220,151,0.18); border-color:rgba(61,220,151,0.4); }
-  .toggle.on::after{ background:var(--green); transform:translateX(19px); }
-
-  .exercise{ margin-bottom:14px; }
-  .exercise:last-child{ margin-bottom:0; }
-  .ex-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
-  .ex-name{ font-weight:700; font-size:14.5px; }
-  .ex-target{ font-size:11.5px; color:var(--muted); }
-  .pr-line{ font-size:11.5px; color:var(--red); font-weight:700; margin-bottom:8px; }
-  .weight-row{ display:flex; align-items:center; gap:8px; margin-bottom:8px; }
-  .weight-row label{ font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; }
-  .weight-row input{
-    width:72px; background:var(--panel-2); border:1px solid var(--line); border-radius:8px;
-    padding:6px 8px; color:var(--text); font-family:'Inter'; font-size:13px;
-  }
-  .weight-suggest{
-    font-size:11.5px; color:var(--green); margin-top:8px; font-weight:600;
-    display:flex; align-items:center; gap:5px;
-  }
-  .sets-row{ display:flex; gap:6px; }
-  .set-box{
-    flex:1; background:var(--panel-2); border:1px solid var(--line); border-radius:10px;
-    padding:12px 6px; text-align:center; cursor:pointer;
-  }
-  .set-box.done{ background:rgba(61,220,151,0.15); border-color:rgba(61,220,151,0.45); }
-  .set-box .n{ font-family:'Bebas Neue'; font-size:13px; color:var(--muted); }
-  .set-box.done .n{ color:var(--green); }
-
-  .divider-line{ height:1px; background:var(--line); margin:6px 0 14px; }
-  .ham-steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:10px 0 4px; }
-  .ham-steps div{ text-align:center; padding:6px; border-radius:8px; background:var(--panel-2); border:1px solid var(--line); font-family:'Bebas Neue'; font-size:15px; color:var(--muted); }
-  .ham-steps div.done{ background:rgba(61,220,151,0.15); color:var(--green); border-color:rgba(61,220,151,0.4); }
-  .ham-steps div.cur{ background:linear-gradient(160deg, var(--red), var(--red-dim)); color:#fff; border-color:transparent; }
-  .wu-toggle{ display:grid; grid-template-columns:1fr 1fr; gap:6px; margin:12px 0 10px; }
-  .wu-toggle div{ text-align:center; padding:8px; border-radius:10px; border:1px solid var(--line); background:var(--panel-2); color:var(--muted); font-family:'Bebas Neue'; font-size:16px; letter-spacing:0.03em; cursor:pointer; }
-  .wu-toggle div.on{ background:linear-gradient(160deg, var(--red), var(--red-dim)); color:#fff; border-color:transparent; }
-  .ss-link{ font-size:10.5px; color:var(--red); font-weight:700; letter-spacing:0.03em; text-align:center; margin:6px 0 12px; text-transform:uppercase; }
-  .ex-tag{ display:inline-block; min-width:24px; font-family:'Bebas Neue'; font-size:13px; background:var(--panel-2); border:1px solid var(--line); border-radius:6px; padding:1px 5px; margin-right:7px; text-align:center; color:var(--text); }
-  .ex-tag.ss{ border-color:rgba(255,59,48,0.5); color:var(--red); }
-  .ex-target{ margin-bottom:6px; }
-  .week-focus{ font-size:12px; color:var(--muted); margin:-6px 0 6px; }
-  .session-plan{ font-size:12.5px; color:var(--muted); line-height:1.45; }
-  .cue-btn{ background:none; border:1px solid var(--line); color:var(--muted); border-radius:8px; font-family:'Inter'; font-weight:700; font-size:10.5px; letter-spacing:0.04em; padding:4px 10px; cursor:pointer; margin:2px 0 8px; }
-  .cue-list{ background:var(--panel-2); border-radius:10px; padding:10px 12px; margin-bottom:10px; font-size:12.5px; line-height:1.45; }
-  .cue-list ol, .cue-list ul{ margin:4px 0 8px; padding-left:18px; }
-  .cue-h{ font-size:10px; color:var(--red); font-weight:800; letter-spacing:0.05em; }
-  .plan-how{ font-size:11px; color:var(--green); margin-top:2px; }
-  details.eatout{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:8px; font-size:13px; line-height:1.5; }
-  details.eatout summary{ font-weight:700; cursor:pointer; font-size:14px; }
-  details.eatout ol, details.eatout ul{ padding-left:18px; margin:8px 0; }
-  .wi-avg{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:10px; font-size:13px; }
-  .wi-avg b{ font-family:'Bebas Neue'; font-size:22px; font-weight:400; }
-  .ci-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:8px; }
-  .ci-stat{ font-size:12.5px; color:var(--muted); margin-bottom:10px; line-height:1.5; }
-  .ci-stat b{ color:var(--text); }
-  .verdict{ margin-top:12px; padding:12px; border-radius:12px; background:rgba(61,220,151,0.10); border:1px solid rgba(61,220,151,0.35); font-size:13.5px; line-height:1.45; }
-  .verdict.warn{ background:rgba(255,59,48,0.10); border-color:rgba(255,59,48,0.4); }
-  .verdict small{ display:block; color:var(--muted); margin-top:6px; font-size:11.5px; }
-
-  /* Fuel tab */
-  .macro-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:16px; }
-  .macro-box{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px 6px; text-align:center; }
-  .macro-box .v{ font-family:'Bebas Neue'; font-size:22px; }
-  .macro-box .l{ font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; }
-  .macro-box.cal .v{ color:var(--red); }
-
-  .meal-form{ display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
-  .weighin-form{ display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
-  .form-row{ display:grid; grid-template-columns:1fr; gap:8px; }
-  .form-row.four{ grid-template-columns:repeat(4,1fr); }
-  .form-row.two{ grid-template-columns:repeat(2,1fr); }
-  .weighin-item{
-    display:flex; justify-content:space-between; align-items:center;
-    background:var(--panel); border:1px solid var(--line); border-radius:14px;
-    padding:12px 14px; margin-bottom:8px;
-  }
-  .weighin-item .wi-date{ font-size:11px; color:var(--muted); margin-bottom:2px; }
-  .weighin-item .wi-stats{ font-weight:700; font-size:14px; }
-  .weighin-item .wi-delta{ font-size:11.5px; margin-top:2px; }
-  .wi-delta.down{ color:var(--green); }
-  .wi-delta.up{ color:var(--red); }
-  input[type=text], input[type=number]{
-    background:var(--panel-2); border:1px solid var(--line); border-radius:10px;
-    padding:10px 12px; color:var(--text); font-family:'Inter'; font-size:14px; width:100%;
-  }
-  input::placeholder{ color:var(--muted); }
-  .num-label{ font-size:9.5px; color:var(--muted); margin-bottom:3px; display:block; text-transform:uppercase; letter-spacing:0.03em; }
-  .add-btn{
-    background:linear-gradient(160deg, var(--red), var(--red-dim)); color:#fff; border:none;
-    border-radius:12px; padding:12px; font-family:'Bebas Neue'; font-size:16px; letter-spacing:0.03em;
-    cursor:pointer;
-  }
-  .meal-item{
-    display:flex; justify-content:space-between; align-items:center;
-    background:var(--panel); border:1px solid var(--line); border-radius:14px;
-    padding:12px 14px; margin-bottom:8px;
-  }
-  .meal-item .mi-name{ font-weight:700; font-size:14px; }
-  .meal-item .mi-macros{ font-size:11.5px; color:var(--muted); margin-top:2px; }
-  .meal-item .mi-cal{ font-family:'Bebas Neue'; font-size:18px; color:var(--red); margin-right:10px; }
-  .del-x{ background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer; padding:2px 6px; }
-
-  /* Goals tab */
-  .goal-item{
-    display:flex; align-items:center; gap:12px;
-    background:var(--panel); border:1px solid var(--line); border-radius:14px;
-    padding:13px 14px; margin-bottom:8px;
-  }
-  .goal-check{
-    width:24px; height:24px; border-radius:7px; border:2px solid var(--muted);
-    display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer;
-    font-size:14px; color:transparent;
-  }
-  .goal-check.on{ background:var(--green); border-color:var(--green); color:#0d1310; font-weight:800; }
-  .goal-text{ flex:1; font-size:14.5px; font-weight:500; }
-  .goal-text.on{ text-decoration:line-through; color:var(--muted); }
-  .goal-add{ display:flex; gap:8px; margin-bottom:16px; }
-  .goal-add input{ flex:1; }
-  .goal-add button{
-    background:var(--panel-2); border:1px solid var(--line); color:var(--text);
-    border-radius:10px; padding:0 18px; font-family:'Bebas Neue'; font-size:18px; cursor:pointer;
-  }
-  .empty{ text-align:center; color:var(--muted); font-size:13px; padding:24px 0; }
-
-  /* Meal plan checklist (Fuel tab) */
-  .plan-meal-label{
-    font-size:11px; color:var(--red); text-transform:uppercase; letter-spacing:0.05em;
-    margin:16px 0 8px; font-family:'Inter'; font-weight:700;
-  }
-  .plan-meal-label:first-child{ margin-top:0; }
-  .plan-item{
-    display:flex; align-items:center; gap:12px;
-    background:var(--panel); border:1px solid var(--line); border-radius:14px;
-    padding:13px 14px; margin-bottom:8px;
-  }
-  .plan-check{
-    width:24px; height:24px; border-radius:7px; border:2px solid var(--muted);
-    display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer;
-    font-size:14px; color:transparent;
-  }
-  .plan-check.on{ background:var(--green); border-color:var(--green); color:#0d1310; font-weight:800; }
-  .plan-body{ flex:1; }
-  .plan-food{ font-size:14.5px; font-weight:600; }
-  .plan-food.on{ text-decoration:line-through; color:var(--muted); }
-  .plan-macros{ font-size:11px; color:var(--muted); margin-top:2px; }
-  .macro-box.hit .v{ color:var(--green); }
-
-  nav.bottom{
-    position:fixed; bottom:0; left:0; right:0;
-    background:rgba(18,19,25,0.92);
-    backdrop-filter:blur(14px);
-    border-top:1px solid var(--line);
-    display:flex; justify-content:center;
-    padding:8px 12px calc(10px + env(safe-area-inset-bottom));
-    z-index:10;
-  }
-  nav.bottom .wrap{ display:flex; gap:6px; max-width:520px; width:100%; }
-  .nav-btn{
-    flex:1; background:none; border:none; color:var(--muted);
-    display:flex; flex-direction:column; align-items:center; gap:4px;
-    padding:6px 0; cursor:pointer; font-family:'Inter'; font-size:10.5px; font-weight:600;
-    letter-spacing:0.02em; border-radius:12px;
-  }
-  .nav-btn .ic{ font-size:19px; }
-  .nav-btn.active{ color:var(--red); }
-  .nav-btn.active .ic{ transform:scale(1.1); }
-
-  .tab-panel{ display:none; }
-  .tab-panel.active{ display:block; animation:fadein 0.25s ease; }
-  @keyframes fadein{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
-
-  ::-webkit-scrollbar{ display:none; }
-
-  /* Rest timer pill */
-  .rest-timer{
-    position:fixed; left:50%; bottom:calc(78px + env(safe-area-inset-bottom));
-    transform:translateX(-50%) translateY(20px);
-    background:linear-gradient(160deg, var(--red), var(--red-dim));
-    color:#fff; border-radius:30px; padding:10px 10px 10px 18px;
-    display:flex; align-items:center; gap:12px;
-    box-shadow:0 8px 22px rgba(255,59,48,0.4);
-    z-index:20; opacity:0; pointer-events:none;
-    transition:all 0.25s ease;
-  }
-  .rest-timer.active{ opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
-  .rest-timer .rt-label{ font-family:'Bebas Neue'; font-size:18px; letter-spacing:0.02em; }
-  .rest-timer .rt-skip{
-    background:rgba(255,255,255,0.2); border:none; color:#fff; font-family:'Inter'; font-weight:700;
-    font-size:11.5px; padding:7px 14px; border-radius:20px; cursor:pointer; text-transform:uppercase;
-  }
-
-  /* Quest tab */
-  .q-title{ font-size:30px; line-height:1.05; margin:4px 0 6px; }
-  .q-chapter{ font-size:11px; color:var(--red); font-weight:800; letter-spacing:0.08em; margin-top:6px; }
-  .q-sub{ font-size:13px; color:var(--muted); margin-bottom:12px; }
-  .q-label{ font-size:10.5px; color:var(--red); font-weight:800; letter-spacing:0.08em; margin-bottom:8px; }
-  .q-party{ display:flex; flex-direction:column; gap:6px; margin:6px 0 12px; }
-  .q-heroes{ display:flex; flex-wrap:wrap; gap:6px; }
-  .q-chip{ background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:5px 11px; font-size:12.5px; font-weight:700; }
-  .q-chip.turn{ border-color:var(--red); box-shadow:0 0 0 1px var(--red) inset; }
-  .q-stats{ display:flex; justify-content:space-between; font-size:13px; flex-wrap:wrap; gap:6px; }
-  .q-story{ border-left:3px solid var(--red); }
-  .q-text{ font-size:17px; line-height:1.6; }
-  .q-choice{ display:block; width:100%; text-align:left; background:var(--panel); border:1px solid var(--line); color:var(--text); border-radius:14px; padding:14px; margin-bottom:10px; cursor:pointer; font-family:'Inter'; }
-  .q-choice:active{ transform:scale(0.98); }
-  .q-choice-l{ display:block; font-size:16px; font-weight:700; margin-top:4px; }
-  .q-type{ font-size:10.5px; font-weight:800; letter-spacing:0.06em; color:var(--muted); text-transform:uppercase; }
-  .q-picked{ font-size:14px; font-weight:600; }
-  .q-foe{ font-size:14px; margin:4px 0 10px; letter-spacing:1px; }
-  .q-turn{ text-align:center; font-family:'Bebas Neue'; font-size:28px; margin-top:8px; }
-  .q-need{ text-align:center; color:var(--muted); font-size:14px; }
-  .q-need b{ color:var(--text); font-size:17px; }
-  .d20-wrap{ display:flex; justify-content:center; margin:18px 0; }
-  .d20{ width:170px; height:170px; cursor:pointer; user-select:none; -webkit-user-select:none;
-    clip-path:polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
-    background:linear-gradient(160deg, #ff5a4f, var(--red-dim)); display:flex; align-items:center; justify-content:center;
-    font-family:'Bebas Neue'; font-size:64px; color:#fff; text-shadow:0 3px 8px rgba(0,0,0,0.35); }
-  .d20:active{ transform:scale(0.95); }
-  .d20.rolling{ animation:d20spin 0.25s linear infinite; }
-  @keyframes d20spin{ 0%{transform:rotate(0) scale(1);} 50%{transform:rotate(180deg) scale(0.9);} 100%{transform:rotate(360deg) scale(1);} }
-  .q-last{ text-align:center; font-size:14px; padding:10px; border-radius:12px; margin-bottom:10px; }
-  .q-last.hit{ background:rgba(61,220,151,0.12); color:var(--green); }
-  .q-last.miss{ background:rgba(255,59,48,0.12); color:#ff8a82; }
-  .q-log{ font-size:12.5px; color:var(--muted); line-height:1.6; margin-bottom:12px; }
-  .q-banner{ text-align:center; font-family:'Bebas Neue'; font-size:32px; margin:6px 0 10px; animation:fadein 0.4s ease; }
-  .q-banner.win{ color:var(--green); }
-  .q-banner.lose{ color:#ff8a82; }
-  .q-reward{ margin-top:10px; font-weight:800; color:#ffd166; }
-  .q-hero-row{ display:grid; grid-template-columns:1fr 130px auto; gap:8px; margin-bottom:8px; align-items:center; }
-  .q-hero-row select{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:10px 8px; color:var(--text); font-family:'Inter'; font-size:13px; }
-  .q-classes{ font-size:12px; color:var(--muted); line-height:1.7; margin-top:8px; }
-  .q-parent{ display:flex; flex-direction:column; gap:6px; margin-top:22px; align-items:center; }
-  .q-parent button{ background:none; border:none; color:var(--muted); font-size:11.5px; text-decoration:underline; cursor:pointer; font-family:'Inter'; }
-
-  /* Write tab */
-  .w-head{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:6px; }
-  .w-head > div{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px 6px; text-align:center; }
-  .w-big{ font-size:30px; line-height:1; color:var(--red); }
-  .w-small{ font-size:11px; color:var(--muted); }
-  .w-stages{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:12px 0 8px; }
-  .w-stage{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:10px 2px; text-align:center; font-size:12px; font-weight:700; color:var(--muted); cursor:pointer; }
-  .w-stage.on{ background:rgba(61,220,151,0.12); border-color:rgba(61,220,151,0.35); color:var(--green); }
-  .w-stage.cur{ box-shadow:0 0 0 1px var(--green) inset; }
-  .w-tip{ font-size:13px; color:var(--muted); line-height:1.45; }
-  .w-dots{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
-  .w-dot{ aspect-ratio:1; border-radius:50%; background:var(--panel-2); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue'; font-size:15px; color:var(--muted); cursor:pointer; }
-  .w-dot.on{ background:var(--green); border-color:var(--green); color:#0d1310; }
-  .w-dot.today{ border-color:var(--red); }
-  .w-dot.future{ opacity:0.35; cursor:default; }
-  .w-link{ color:var(--text); }
-  .w-setting{ margin:22px 0 0; font-size:12.5px; color:var(--muted); text-align:center; }
-  .w-setting select{ background:var(--panel-2); border:1px solid var(--line); border-radius:8px; color:var(--text); padding:6px 8px; margin-left:6px; font-family:'Inter'; }
+/* Two-hero turns */
+.turns{display:flex;flex-direction:column;gap:16px}
+.turn{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:14px;display:flex;flex-direction:column;gap:12px}
+.turn.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.turn-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.turn-head h3{font-size:1.2rem;color:var(--accent)}
+.status{font:600 .78rem var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.status.done{color:var(--good)}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice{display:flex;justify-content:space-between;gap:12px;align-items:center;text-align:left;width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:500 1rem var(--body);cursor:pointer}
+.choice:hover:not(:disabled){border-color:var(--accent)}
+.choice:disabled{cursor:default;opacity:.55}
+.choice[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset;opacity:1}
+.choice .dc{font:600 .8rem var(--mono);color:var(--brass);white-space:nowrap;text-align:right}
+.choice .sk{display:block;color:var(--muted);font-size:.85rem}
+.tray{display:flex;align-items:center;gap:14px;padding:10px 12px;border:1px dashed var(--line);border-radius:12px}
+.die{width:84px;height:84px;flex:none;cursor:pointer;border:0;background:none;padding:0}
+.die:disabled{cursor:default}
+.die svg{width:100%;height:100%;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.die.spin svg{transform:rotate(720deg) scale(1.08)}
+.die polygon{fill:var(--accent);stroke:var(--brass);stroke-width:3}
+.die text{fill:var(--accent-ink);font:700 34px var(--mono)}
+.need{font:600 .9rem var(--mono);color:var(--muted)}
+.result{padding:12px;border-radius:10px;border:1px solid var(--line)}
+.result.win{border-color:var(--good)}
+.result.lose{border-color:var(--bad)}
+.result h4{margin:0;font:700 1.05rem var(--display)}
+.result.win h4{color:var(--good)}
+.result.lose h4{color:var(--bad)}
+.result p{margin:6px 0 0}
+.party{padding:14px;border-radius:12px;background:var(--surface);border:2px solid var(--brass)}
+.party h3{font-size:1.15rem;color:var(--brass)}
+.party p{margin:6px 0 0}
+.heroes{display:flex;gap:10px;flex-wrap:wrap}
+.heroes label{flex:1;min-width:130px;display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--muted)}
+.heroes input{font:500 1rem var(--body);padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.log{font-size:.92rem;color:var(--muted);display:flex;flex-direction:column;gap:6px;padding-left:18px;margin:0}
+details summary{cursor:pointer;color:var(--muted);font-size:.95rem}
+@media (prefers-reduced-motion:reduce){.die svg{transition:none}}
 </style>
 </head>
 <body>
+<div class="wrap">
+  <header>
+    <h1>Daily Quest Log</h1>
+    <div class="date" id="today"></div>
+  </header>
+  <nav role="tablist">
+    <button role="tab" aria-selected="true" data-tab="today">Today</button>
+    <button role="tab" aria-selected="false" data-tab="lift">Workout</button>
+    <button role="tab" aria-selected="false" data-tab="dnd">Adventure</button>
+  </nav>
 
-<header class="top">
-  <div class="brand">
-    <div class="mark">B</div>
-    <div class="name display">BERSERKR</div>
-  </div>
-  <div class="datepill">
-    <span id="dateStr">—</span>
-    <b id="streakStr">0 day streak</b>
-  </div>
-</header>
-
-<main>
-
-  <div class="ring-card">
-    <div class="ring-wrap">
-      <div class="ring">
-        <svg width="74" height="74" viewBox="0 0 74 74">
-          <circle class="ring-bg" cx="37" cy="37" r="31"></circle>
-          <circle class="ring-fg" id="ringFg" cx="37" cy="37" r="31" stroke-dasharray="194.7" stroke-dashoffset="194.7"></circle>
-        </svg>
-      </div>
-      <div class="ring-num" id="ringNum">0%</div>
-    </div>
-    <div class="ring-copy">
-      <div class="k display">TODAY'S CONQUEST</div>
-      <div class="d" id="ringDetail">Nothing logged yet — let's move.</div>
-    </div>
-  </div>
-
-  <div class="weather-card" id="weatherCard">
-    <div class="w-icon" id="weatherIcon">—</div>
-    <div class="w-body">
-      <div class="w-temp" id="weatherTemp">Weather —</div>
-      <div class="w-sub" id="weatherSub">Tap to enable location</div>
-    </div>
-  </div>
-
-  <!-- TRAIN -->
-  <section class="tab-panel" id="panel-train">
-    <div class="section-title"><span class="bar"></span>BLOCK 1 — PICK YOUR WEEK</div>
-    <div class="day-tabs" id="weekTabs"></div>
-    <div class="week-focus" id="weekFocus"></div>
-
-    <div class="section-title"><span class="bar"></span>PICK YOUR DAY</div>
-    <div class="day-tabs" id="dayTabs"></div>
-
-    <div class="card session-plan">8 min warm-up → lifting (A/B straight sets, then supersets) → uphill walk. Running late? Shorten the walk, never the lifting or the warm-up.</div>
-
-    <div class="card" id="hamCard" style="display:none"></div>
-
-    <div class="card" id="warmupCard"></div>
-
-    <div class="card" id="exerciseCard"></div>
-
-    <div class="card">
-      <div class="cardio-card">
-        <div>
-          <div class="l">Uphill Treadmill — after lifting</div>
-          <div class="s" id="cardioSub">—</div>
-        </div>
-        <div class="toggle" id="cardioToggle" onclick="toggleCardio()"></div>
-      </div>
-      <div id="cardioCues"></div>
-    </div>
+  <section id="today-p">
+    <div class="quote exist"><div class="label">Existential</div><p id="q1"></p><cite id="q1a"></cite></div>
+    <div class="quote genji"><div class="label">Genji</div><p id="q2"></p><cite>Genji, Overwatch</cite></div>
+    <hr>
+    <div><div class="label">Up next</div><h2 id="nextDay"></h2><div class="cardio">30 min uphill treadmill walk, then 3 sets each</div></div>
+    <div class="row"><button class="btn" id="goLift">Open workout</button><button class="btn ghost" id="goDnd">Today's adventure</button></div>
   </section>
 
-  <!-- FUEL -->
-  <section class="tab-panel" id="panel-fuel">
-    <div class="section-title"><span class="bar"></span>LOGGED TODAY</div>
-    <div class="macro-grid" id="macroGrid"></div>
+  <section id="lift-p" hidden>
+    <div class="days" id="days"></div>
+    <div><h2 id="dayTitle"></h2><div class="cardio" id="dayNote"></div></div>
+    <div id="exList"></div>
+    <div class="row"><button class="btn" id="finish">Mark day complete</button><button class="btn ghost" id="resetDay">Clear sets</button></div>
+  </section>
 
-    <div class="section-title"><span class="bar"></span>MEAL PLAN — <span id="mealDayLabel">TODAY</span></div>
-    <div id="mealPlanList"></div>
-
-    <div class="section-title"><span class="bar"></span>EATING OUT</div>
-    <details class="eatout">
-      <summary>4-step order (~800 cal, 50 g+ protein, replaces dinner + snack)</summary>
-      <ol>
-        <li><b>Protein first:</b> fish, shrimp or lean steak — grilled, blackened, broiled, seared. Skip fried, breaded, crispy, smothered. Sirloin/filet/flank over ribeye.</li>
-        <li><b>One carb:</b> baked potato, rice or 2–3 tortillas. Bread, chips and fries count as your carb.</li>
-        <li><b>Double the veg:</b> swap fries or a second side for vegetables or a side salad.</li>
-        <li><b>Hidden fat:</b> sauces and dressing on the side. Ask for light butter.</li>
-      </ol>
-      <ul>
-        <li><b>Steakhouse:</b> 8–9 oz sirloin/filet, plain baked potato, steamed veg</li>
-        <li><b>Seafood:</b> grilled salmon or shrimp skewers, rice, veg, no tartar</li>
-        <li><b>Mexican:</b> steak/shrimp fajitas, 2–3 tortillas, pico, beans; no chip refills, cheese, sour cream</li>
-        <li><b>Poke:</b> greens base, double shrimp + crab, ponzu</li>
-        <li><b>Burger:</b> single patty, lettuce wrap or one bun, side salad</li>
-        <li><b>Italian:</b> grilled fish/steak + veg; pasta = half, box the rest</li>
-      </ul>
-      Drinks: water, sparkling, diet soda. Alcohol max 2 (light beer / spirit + soda) and it replaces the carb. Next meal, back on plan — no making up for it.
+  <section id="dnd-p" hidden>
+    <div>
+      <div class="label">The Ember Lantern</div>
+      <h2 id="chTitle"></h2>
+      <div class="chap" id="chNum"></div>
+    </div>
+    <p class="scene" id="scene"></p>
+    <div class="turns" id="turns"></div>
+    <div class="party" id="party" hidden><h3 id="partyH"></h3><p id="partyP"></p></div>
+    <div class="row" id="nextRow" hidden><button class="btn" id="nextCh">Next chapter</button><span class="chap" id="nextHint"></span></div>
+    <hr>
+    <details id="heroBox">
+      <summary>Heroes and story so far</summary>
+      <div class="heroes" style="margin-top:12px">
+        <label for="h1">Hero one<input id="h1" maxlength="20"></label>
+        <label for="h2">Hero two<input id="h2" maxlength="20"></label>
+      </div>
+      <ol class="log" id="log" style="margin-top:14px"></ol>
+      <div class="row" style="margin-top:12px"><button class="btn ghost" id="restart">Restart campaign</button><span class="chap" id="restartMsg"></span></div>
     </details>
-
   </section>
-
-  <!-- GOALS -->
-  <section class="tab-panel" id="panel-goals">
-    <div class="grit-hero" id="quoteCard">
-      <div class="grit-icon">🛡️</div>
-      <div class="grit-label display">DAILY GRIT</div>
-      <div class="grit-text" id="quoteText">Loading...</div>
-    </div>
-
-    <div class="section-title"><span class="bar"></span>SUNDAY CHECK-IN <span id="checkinDue" style="font-family:Inter;font-size:11px;color:var(--muted);letter-spacing:0;"></span></div>
-    <div class="card" id="checkinCard"></div>
-
-    <div class="section-title"><span class="bar"></span>WEIGH-IN HISTORY</div>
-    <div id="weighinList"></div>
-  </section>
-
-  <!-- WRITE -->
-  <section class="tab-panel" id="panel-write">
-    <div id="writeRoot"></div>
-  </section>
-
-  <!-- QUEST -->
-  <section class="tab-panel" id="panel-quest">
-    <div id="questRoot"></div>
-  </section>
-
-</main>
-
-<div class="rest-timer" id="restTimer">
-  <div class="rt-label">Rest: <span id="restTimerText">60s</span></div>
-  <button class="rt-skip" onclick="skipRestTimer()">Skip</button>
 </div>
 
-<nav class="bottom">
-  <div class="wrap">
-    <button class="nav-btn" data-tab="goals" onclick="switchTab('goals')">
-      <span class="ic">🛡️</span>VAKT
-    </button>
-    <button class="nav-btn" data-tab="fuel" onclick="switchTab('fuel')">
-      <span class="ic">🍽️</span>FUEL
-    </button>
-    <button class="nav-btn" data-tab="train" onclick="switchTab('train')">
-      <span class="ic">🏋️</span>TRAIN
-    </button>
-    <button class="nav-btn" data-tab="write" onclick="switchTab('write')">
-      <span class="ic">✍️</span>WRITE
-    </button>
-    <button class="nav-btn" data-tab="quest" onclick="switchTab('quest')">
-      <span class="ic">🎲</span>QUEST
-    </button>
-  </div>
-</nav>
-
 <script>
-window.addEventListener('error', function(e){
-  try{
-    const d = document.getElementById('dateStr');
-    if(d) d.textContent = 'Error: ' + e.message;
-    const detail = document.getElementById('ringDetail');
-    if(detail) detail.textContent = 'Something broke — screenshot this and send it back.';
-  }catch(_){}
-});
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const now=new Date();
+const dayKey=now.toISOString().slice(0,10);
+const dayNum=Math.floor(now.getTime()/864e5);
+$("today").textContent=now.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
 
-/* ---------- DATA ---------- */
-/* BLOCK 1 — 4-week recomp. Weeks 1-3 build, week 4 deloads.
-   Exercise fields: tag (A, B, C1/C2 = superset), sets (week-1 base), reps, rest (seconds after this
-   exercise; 0 = go straight to the next exercise in the superset), inc (lbs to add), main (gets +1 set
-   in weeks 2-3), cues (key into FORM_CUES). */
-const BLOCK = { name:'BLOCK 1', start:'2026-10-26' }; // Monday the block starts
-const WEEK_FOCUS = {
-  1:'Learn weights, own the form · 3 reps in the tank',
-  2:'+1 set on A & B lifts · 2 reps in the tank',
-  3:'Push intensity · 1 rep in the tank, last isolation set to failure',
-  4:'Deload · 2 sets each, same weight · 3 reps in the tank',
-};
-const CARDIO_BY_WEEK = {
-  1:{ min:20, txt:'20 min · 3.0 mph · 8% incline' },
-  2:{ min:20, txt:'20 min · 3.0 mph · 10% incline' },
-  3:{ min:20, txt:'20 min · 3.2 mph · 10–12% incline' },
-  4:{ min:30, txt:'30 min · 3.0 mph · 8% incline (deload)' },
-};
-const WORKOUT_PLAN = {
-  1: { name:"PUSH", sub:"Chest / Delts / Tris", exercises:[
-        {tag:'A',  name:"Incline DB Press (30°)",          sets:3, reps:'8-10',       rest:120, inc:5,   main:true, cues:'incline'},
-        {tag:'B',  name:"Barbell Bench Press",             sets:3, reps:'8-10',       rest:120, inc:5,   main:true, cues:'bench'},
-        {tag:'C',  name:"Cable Lateral Raise (each arm)",  sets:4, reps:'12-15 / side', rest:45, inc:2.5, cues:'lateral'},
-        {tag:'D1', name:"Low-to-High Cable Fly",           sets:3, reps:'12-15',      rest:0,   inc:2.5},
-        {tag:'D2', name:"DB Lateral Raises",               sets:3, reps:'15-20',      rest:60,  inc:2.5, cues:'lateral'},
-        {tag:'E1', name:"Overhead Rope Triceps Extension", sets:3, reps:'10-12',      rest:0,   inc:2.5},
-        {tag:'E2', name:"Rope Pushdown (same rope)",       sets:2, reps:'12-15',      rest:0,   inc:2.5},
-        {tag:'E3', name:"Standing Cable Crunch (same rope)", sets:3, reps:'12-15',    rest:60,  inc:2.5, cues:'crunch'},
-      ]},
-  2: { name:"PULL", sub:"Lats / Back / Bis", exercises:[
-        {tag:'A',  name:"Lat Pulldown",                    sets:4, reps:'8-10',       rest:120, inc:5,   main:true, cues:'pulldown'},
-        {tag:'B',  name:"Chest-Supported Row",             sets:3, reps:'8-10',       rest:120, inc:5,   main:true, cues:'row'},
-        {tag:'C',  name:"Single-Arm Cable Row (each side)", sets:3, reps:'10-12 / side', rest:60, inc:2.5},
-        {tag:'D1', name:"Straight-Arm Cable Pulldown",     sets:3, reps:'12-15',      rest:0,   inc:2.5},
-        {tag:'D2', name:"Cable Face Pull / Reverse Pec Deck", sets:3, reps:'15',      rest:60,  inc:2.5},
-        {tag:'E1', name:"EZ-Bar or DB Curl",               sets:3, reps:'10-12',      rest:0,   inc:2.5},
-        {tag:'E2', name:"Hammer Curl",                     sets:2, reps:'12',         rest:0,   inc:2.5},
-        {tag:'E3', name:"Hanging Knee Raise",              sets:3, reps:'10-15',      rest:60,  inc:0},
-      ]},
-  3: { name:"LEGS", sub:"Knee-Friendly", exercises:[
-        {tag:'A',  name:"Romanian Deadlift",               sets:4, reps:'6-8',        rest:150, inc:5,   main:true, cues:'rdl'},
-        {tag:'B1', name:"Leg Press (feet high, pain-free depth)", sets:3, reps:'10-12', rest:0, inc:10, main:true, cues:'legpress'},
-        {tag:'B2', name:"Leg Press Calf Raise",            sets:3, reps:'12-15',      rest:120, inc:10},
-        {tag:'C1', name:"Barbell Hip Thrust",              sets:3, reps:'10',         rest:0,   inc:10},
-        {tag:'C2', name:"Seated / Lying Leg Curl",         sets:3, reps:'10-12',      rest:90,  inc:5},
-        {tag:'D1', name:"Side-Lying Hip Abduction",        sets:2, reps:'15-20 / side', rest:0, inc:0, cues:'abduction'},
-        {tag:'D2', name:"Dead Bug",                        sets:3, reps:'10 / side',  rest:60,  inc:0, cues:'deadbug'},
-      ]},
-  4: { name:"FULL BODY", sub:"V-Taper", exercises:[
-        {tag:'A',  name:"Neutral-Grip Pulldown",           sets:3, reps:'8-10',       rest:120, inc:5,   main:true, cues:'pulldown'},
-        {tag:'B',  name:"Seated DB Shoulder Press",        sets:3, reps:'8-10',       rest:120, inc:5,   main:true},
-        {tag:'C1', name:"Seated Cable Row",                sets:3, reps:'10-12',      rest:0,   inc:5,   cues:'row'},
-        {tag:'C2', name:"Incline Machine Press",           sets:3, reps:'10-12',      rest:90,  inc:5,   cues:'incline'},
-        {tag:'D1', name:"Cable Lateral Raise (each arm)",  sets:3, reps:'15 / side',  rest:0,   inc:2.5, cues:'lateral'},
-        {tag:'D2', name:"Back Extension",                  sets:2, reps:'12',         rest:60,  inc:0, hamAlt:{ name:'Glute Bridges (back extensions return in Phase 3)', reps:'12' }},
-        {tag:'E1', name:"Cable Curl",                      sets:2, reps:'12',         rest:0,   inc:2.5},
-        {tag:'E2', name:"Rope Pushdown",                   sets:2, reps:'12',         rest:0,   inc:2.5},
-        {tag:'E3', name:"Standing Cable Crunch",           sets:3, reps:'12-15',      rest:60,  inc:2.5, cues:'crunch'},
-      ]},
-};
-
-/* ---------- HAMSTRING REBUILD: legs day adapts to the current phase ----------
-   Phases 1-3 use their own plan keys (31-33) so weights/PRs don't mix with the full legs day.
-   Phase 4 uses the original key 3, so old RDL / leg press / hip thrust / leg curl numbers carry over. */
-WORKOUT_PLAN[31] = { name:"LEGS", sub:"Phase 1 · Calm", exercises:[
-  {tag:'A',  name:"Heel-Press Holds (lying, knees bent)", sets:5, reps:'10-sec hold · 30% → 70% effort', rest:20, inc:0, cues:'heelpress'},
-  {tag:'B',  name:"Glute Bridges",                        sets:2, reps:'10',            rest:45, inc:0},
-  {tag:'C',  name:"Standing Calf Raises (DB optional)",   sets:3, reps:'15',            rest:45, inc:0},
-  {tag:'D1', name:"Side-Lying Hip Abduction",             sets:2, reps:'15-20 / side',  rest:0,  inc:0, cues:'abduction'},
-  {tag:'D2', name:"Dead Bug",                             sets:3, reps:'10 / side',     rest:60, inc:0, cues:'deadbug'},
-]};
-WORKOUT_PLAN[32] = { name:"LEGS", sub:"Phase 2 · Rebuild", exercises:[
-  {tag:'A',  name:"Leg Press (feet high, pain-free depth)", sets:3, reps:'10-12',       rest:120, inc:10, main:true, cues:'legpress'},
-  {tag:'B1', name:"Slow Eccentric Leg Curl",              sets:3, reps:'8 / side · 4-sec lower', rest:0, inc:5, cues:'eccurl'},
-  {tag:'B2', name:"Single-Leg Glute Bridge",              sets:3, reps:'8 / side',      rest:60, inc:0},
-  {tag:'C1', name:"DB RDL — Partial (to mid-thigh)",      sets:3, reps:'12 · light',    rest:0,  inc:5, cues:'rdl'},
-  {tag:'C2', name:"Leg Press Calf Raise",                 sets:3, reps:'12-15',         rest:60, inc:10},
-  {tag:'D1', name:"Side-Lying Hip Abduction",             sets:2, reps:'15-20 / side',  rest:0,  inc:0, cues:'abduction'},
-  {tag:'D2', name:"Dead Bug",                             sets:3, reps:'10 / side',     rest:60, inc:0, cues:'deadbug'},
-]};
-WORKOUT_PLAN[33] = { name:"LEGS", sub:"Phase 3 · Load", exercises:[
-  {tag:'A',  name:"DB Romanian Deadlift (3-sec lower)",   sets:3, reps:'10',            rest:120, inc:5, main:true, cues:'rdl'},
-  {tag:'B1', name:"Leg Press (feet high, pain-free depth)", sets:3, reps:'10-12',       rest:0,  inc:10, main:true, cues:'legpress'},
-  {tag:'B2', name:"Leg Press Calf Raise",                 sets:3, reps:'12-15',         rest:90, inc:10},
-  {tag:'C1', name:"Barbell Hip Thrust",                   sets:3, reps:'10',            rest:0,  inc:10},
-  {tag:'C2', name:"Slow Eccentric Leg Curl",              sets:3, reps:'8-10 · 4-sec lower', rest:90, inc:5, cues:'eccurl'},
-  {tag:'D1', name:"Single-Leg RDL (light, hold support)", sets:2, reps:'8 / side',      rest:0,  inc:2.5, cues:'slrdl'},
-  {tag:'D2', name:"Dead Bug",                             sets:3, reps:'10 / side',     rest:60, inc:0, cues:'deadbug'},
-]};
-// Phase 4 = long-term legs day (key 3): slow eccentric curls stay forever
-WORKOUT_PLAN[3] = { name:"LEGS", sub:"Phase 4 · Strong", exercises:[
-  {tag:'A',  name:"Romanian Deadlift (3-sec lower)",      sets:3, reps:'8-10',          rest:150, inc:5, main:true, cues:'rdl'},
-  {tag:'B1', name:"Leg Press (feet high, pain-free depth)", sets:3, reps:'10-12',       rest:0,  inc:10, main:true, cues:'legpress'},
-  {tag:'B2', name:"Leg Press Calf Raise",                 sets:3, reps:'12-15',         rest:120, inc:10},
-  {tag:'C1', name:"Barbell Hip Thrust",                   sets:3, reps:'10',            rest:0,  inc:10},
-  {tag:'C2', name:"Slow Eccentric Leg Curl",              sets:3, reps:'6-8 · 4-sec lower', rest:90, inc:5, cues:'eccurl'},
-  {tag:'D1', name:"Single-Leg RDL (hold support)",        sets:2, reps:'8 / side',      rest:0,  inc:2.5, cues:'slrdl'},
-  {tag:'D2', name:"Dead Bug",                             sets:3, reps:'10 / side',     rest:60, inc:0, cues:'deadbug'},
-]};
-const HAM_PHASES = {
-  1:{ name:'Calm & activate', walk:'flat (0–2%), easy pace', inclineCap:2,
-      criteria:['Sitting and bending forward feel normal','No pain walking or on stairs','Heel-press holds at ~70% effort feel easy'] },
-  2:{ name:'Rebuild', walk:'cap incline at 5%', inclineCap:5,
-      criteria:['Everyday life pain-free for a full week','Single-leg bridges 3 × 8 with no pain','Partial DB RDLs feel easy, nothing the next morning'] },
-  3:{ name:'Load it', walk:'cap incline at 8%', inclineCap:8,
-      criteria:['Full-range DB RDL 3 × 10 pain-free','Single-leg RDL steady, no pulling','Two legs sessions in a row with a clean next morning'] },
-  4:{ name:'Keep it strong', walk:null, inclineCap:null, criteria:[] },
-};
-function planKey(day){ day = Number(day); if(day === 3) return ham.phase === 4 ? 3 : 30 + ham.phase; return day; }
-let hamDropArmed = false;
-function hamToggle(i){ ham.checks[`${ham.phase}-${i}`] = !ham.checks[`${ham.phase}-${i}`]; saveHam(); renderHam(); }
-function hamAdvance(){ if(ham.phase < 4){ ham.phase++; ham.since = todayKey(); saveHam(); renderAll(); } }
-function hamDrop(){
-  if(!hamDropArmed){ hamDropArmed = true; renderHam(); return; }
-  hamDropArmed = false;
-  if(ham.phase > 1){ ham.phase--; ham.since = todayKey(); Object.keys(ham.checks).forEach(k=>{ if(k.startsWith(ham.phase+'-')) delete ham.checks[k]; }); saveHam(); renderAll(); }
-}
-function renderHam(){
-  const el = document.getElementById('hamCard'); if(!el) return;
-  if(state.activeDay !== 3){ el.style.display = 'none'; return; }
-  el.style.display = '';
-  const ph = HAM_PHASES[ham.phase];
-  const crit = ph.criteria;
-  const allDone = crit.length && crit.every((_,i)=>ham.checks[`${ham.phase}-${i}`]);
-  el.innerHTML = `
-    <div class="q-label">HAMSTRING REBUILD · PHASE ${ham.phase} OF 4</div>
-    <div class="l" style="font-weight:700;font-size:15px">${ph.name}</div>
-    <div class="ham-steps">${[1,2,3,4].map(n=>`<div class="${n<ham.phase?'done':(n===ham.phase?'cur':'')}">${n}</div>`).join('')}</div>
-    ${crit.length ? `<div class="ex-target" style="margin:6px 0 8px">Move up when all three are true:</div>
-      ${crit.map((c,i)=>{ const on = !!ham.checks[`${ham.phase}-${i}`];
-        return `<div class="plan-item" style="margin-bottom:6px;padding:10px 12px"><div class="plan-check ${on?'on':''}" onclick="hamToggle(${i})">${on?'✓':''}</div><div class="plan-body"><div class="plan-food" style="font-size:13.5px">${c}</div></div></div>`; }).join('')}
-      <button class="add-btn" style="width:100%;margin-top:6px;${allDone?'':'opacity:0.35;pointer-events:none'}" onclick="hamAdvance()">MOVE TO PHASE ${ham.phase+1}</button>`
-    : `<div class="ex-target" style="margin:6px 0">Rebuilt. Slow eccentric leg curls stay in every legs day for good — they're your insurance.</div>`}
-    <div class="ex-target" style="margin-top:10px">Rules: discomfort ≤3/10 during, and no worse the next morning. Walk: ${ph.walk || 'normal plan'}.</div>
-    ${ham.phase > 1 ? `<div class="q-parent" style="margin-top:8px"><button onclick="hamDrop()">${hamDropArmed?'Tap again to drop to Phase '+(ham.phase-1):'Flare-up? Drop back a phase'}</button></div>` : ''}`;
-}
-
-function setsFor(ex, week){
-  if(week === 4) return Math.min(2, ex.sets);
-  if((week === 2 || week === 3) && ex.main) return ex.sets + 1;
-  return ex.sets;
-}
-
-const FORM_CUES = {
-  incline:{ cues:['Bench at 30°, feet flat, shoulder blades pinched back and down','Elbows ~45° from your body, not flared to 90°','Lower to the upper chest until you feel a stretch','Press up and slightly in; stop before the DBs touch','Wrists stacked over elbows the whole time'],
-    fixes:['Bench too steep → set it at 30° or one notch lower','Shoulders roll forward at top → keep blades pinned, end the rep earlier','Half reps → lighter weight, full stretch at the bottom'] },
-  bench:{ cues:['Eyes under the bar, feet planted, glutes on the bench','Squeeze shoulder blades back and down, grip just outside shoulders','Lower to the lower chest with elbows ~45° from your body','Light touch, then press up and slightly back over the shoulders','Wrists straight, stacked over elbows — set the safety pins'],
-    fixes:['Elbows flared to 90° → tuck to ~45°, easier on shoulders','Bouncing off the chest → 1-second controlled touch','Butt lifting off the bench → drive through feet, glutes stay down'] },
-  pulldown:{ cues:['Thighs locked under the pad, chest up, slight lean back (~15°)','Start by pulling shoulders down, away from the ears','Drive elbows down to your back pockets','Bar to upper chest','Arms fully straight at the top for the lat stretch'],
-    fixes:['Swinging the torso → drop weight 10–20%, same lean every rep','Pulling with biceps → think "elbows down", hands are hooks','Never straightening arms → pause 1 sec at the top'] },
-  row:{ cues:['Chest glued to the pad (or torso still) the whole set','Neck neutral, eyes down','Pull elbows back toward your hips','Squeeze shoulder blades together for 1 second','Let the shoulders reach forward at the bottom'],
-    fixes:['Chest lifting off pad → lighter weight','Shrugging the weight up → shoulders down first, then row','Short range → full reach forward, full squeeze back'] },
-  lateral:{ cues:['Cable at hand height/lowest, stand side-on, slight forward lean','Small locked bend in the elbow','Lead with the elbow, raise out to the side','Stop at shoulder height','Lower slowly over 3 seconds'],
-    fixes:['Too heavy, traps take over → weight you can do 15 slow reps with','Swinging → hold the machine with your free hand','Raising in front → arm slightly forward of torso, not in front of face'] },
-  rdl:{ cues:['Feet hip-width, soft knees that stay at the same bend','Push hips straight back like closing a car door','Bar slides down the thighs, close to the legs','Stop when hamstrings are tight (~mid-shin), back flat','Drive hips forward, squeeze glutes to stand'],
-    fixes:['Rounding the low back → stop at the hamstring stretch','Bending knees into a squat → knees fixed, hips do the work','Bar drifting forward → lats tight, "bend the bar" around your legs'] },
-  legpress:{ cues:['Feet high and shoulder-width or wider','Lower back pressed into the pad the whole set','Lower only as far as pain-free and hips don\'t curl','Knees track over toes, never caving in','Press through heels; stop just short of lockout'],
-    fixes:['Too deep, back rounds → shorter range, mark your stop point','Locking out knees → leave a slight bend at the top','Feet low on platform → move them up to unload the knees'] },
-  crunch:{ cues:['Rope on high pulley, face away, hands by forehead','Hips stay still — slight knee bend only','Curl ribs down toward the pelvis','Exhale hard at the bottom, squeeze 1 second','Uncurl slowly, stop before the stack rests'],
-    fixes:['Hinging at hips → roll your spine like a poster','Pulling with arms → hands glued to your head','Heavy and fast → moderate weight, 2-sec lowering'] },
-  abduction:{ cues:['Lie on your side, bottom knee bent for balance, top leg straight','Hips stacked — don\'t roll backward','Toes point slightly down, heel leads','Lift to about 45°, pause 1 second at the top','Lower slowly over 2 seconds'],
-    fixes:['Rolling back so the hip flexor lifts → stack hips, heel leads','Swinging the leg → slow 1-sec pause at the top','Too easy → hold a light plate on the top hip'] },
-  deadbug:{ cues:['On your back, arms straight up, knees bent at 90° over hips','Press your low back flat into the floor','Slowly reach one arm back and the opposite leg out','Stop before your low back lifts off the floor','Breathe out as you reach, return, switch sides'],
-    fixes:['Low back arching → shorter reach, keep it pinned','Rushing → 3 seconds out, 3 seconds back','Holding breath → exhale on every reach'] },
-  heelpress:{ cues:['Lie on your back, knees bent ~90°, heels on the floor','Dig your heels down and back, like dragging them toward you','No movement — just tension in the back of the thigh','Breathe normally through the 10 seconds','Start at 30% effort; build toward 70% as it stays quiet'],
-    fixes:['Holding your breath → count the seconds out loud','Pushing too hard too soon → it should feel easy, zero pain','Hips lifting → keep your butt on the floor'] },
-  eccurl:{ cues:['Leg curl machine, light weight','Curl the weight up with both legs','Take one leg off and lower with the other over 4 seconds','Control it all the way to straight','Alternate legs each rep'],
-    fixes:["Weight drops fast → if you can't lower in 4 sec, go lighter",'Hips lifting off the pad → press hips down','Going heavy too soon → add weight only when 4-sec lowers feel easy'] },
-  slrdl:{ cues:['Hold a rack or bench with one hand, light DB in the other','Soft knee on the standing leg','Hinge at the hip; back leg reaches straight back','Keep hips square to the floor','Stop at the hamstring stretch; stand by squeezing the glute'],
-    fixes:['Hips opening up → point the back toe at the floor','Rounding the back → shorter range','Wobbling → use more support; balance is not the goal'] },
-  treadmill:{ cues:['Hands off the rails','Tall posture, slight lean from the ankles','Short, quick steps','Land mid-foot, under your hips','Nose-breathing pace you can sustain'],
-    fixes:['Holding rails → lower incline/speed until you can let go','Incline too steep for knees → cap at 10–12%','Leaning back / over-striding → shorter steps, eyes forward'] },
-};
-
-const DAILY_TARGET = { cal:1800, p:180, c:160, f:50 };
-/* Same breakfast, 3pm meal and snack every day; dinner rotates by weekday. Meat weighed raw. */
-const FIXED_MEALS_AM = [
-  { id:'bfast-egg',   meal:'Breakfast', food:'1 whole egg + ⅔ cup (162 g) egg whites, spray oil', cal:156, p:24, c:1,  f:5 },
-  { id:'bfast-shake', meal:'Breakfast', food:'Shake: 2 scoops Ascent vanilla + 1 cup raspberries/blackberries + 1 tbsp chia', cal:362, p:54, c:26, f:8 },
-  { id:'bfast-bread', meal:'Breakfast', food:'1 slice sourdough (~2 oz), toasted — or swap 150 g air-fried breakfast potatoes', cal:130, p:5, c:25, f:1 },
-  { id:'pm-yogurt',   meal:'3PM',       food:'Protein yogurt bowl: Greek yogurt cup + 1 scoop Ascent + 1 tsp honey — 3pm, or after dinner if not hungry', cal:241, p:43, c:15, f:2 },
-  { id:'pm-popcorn',  meal:'3PM',       food:'Himalayan pink salt popcorn (1 individual bag)', cal:80, p:1, c:9, f:4 },
+/* ---------- Quotes ---------- */
+const EXIST=[
+ ["One must imagine Sisyphus happy.","Albert Camus"],
+ ["He who has a why to live can bear almost any how.","Friedrich Nietzsche"],
+ ["Life can only be understood backwards; but it must be lived forwards.","Søren Kierkegaard"],
+ ["Man is condemned to be free.","Jean-Paul Sartre"],
+ ["In the midst of winter, I found there was, within me, an invincible summer.","Albert Camus"],
+ ["Between stimulus and response there is a space. In that space is our power to choose our response.","Viktor Frankl"],
+ ["Anxiety is the dizziness of freedom.","Søren Kierkegaard"],
+ ["Existence precedes essence.","Jean-Paul Sartre"],
+ ["The struggle itself toward the heights is enough to fill a man's heart.","Albert Camus"],
+ ["Become who you are.","Friedrich Nietzsche"]
 ];
-const FIXED_MEALS_PM = [
-  { id:'snack', meal:'Snack', food:'Himalayan pink salt popcorn (1 individual bag)', cal:80, p:1, c:9, f:4 },
+const GENJI=["Measure twice, cut once.","A steady blade balances the soul.","The dragon becomes me!","Ryūjin no ken wo kurae!","I need healing.","My soul seeks balance."];
+const eq=EXIST[dayNum%EXIST.length];
+$("q1").textContent="“"+eq[0]+"”";$("q1a").textContent=eq[1];
+$("q2").textContent="“"+GENJI[dayNum%GENJI.length]+"”";
+
+/* ---------- Workout ---------- */
+const PLAN=[
+ {name:"Push",ex:[["Machine chest press","Flat, controlled 2-sec lowering"],["Machine shoulder press","Stop just short of lockout"],["Cable lateral raise","Single arm, light and strict"],["Cable rope pushdown","Spread the rope at the bottom"]]},
+ {name:"Pull",ex:[["Lat pulldown","Wide grip, chest up"],["Seated cable row","Squeeze shoulder blades 1 sec"],["Cable face pull","Rope to forehead, elbows high"],["Cable bicep curl","Straight bar, no swinging"]]},
+ {name:"Legs",ex:[["Leg press","Feet mid-platform, full depth"],["Barbell RDL","Hips back, soft knees"],["Seated leg curl","Pause at the squeeze"],["Walking lunges","Dumbbells or bodyweight"]]},
+ {name:"Chest + Back",ex:[["Incline machine press","Upper chest, the width that pops in a shirt"],["Cable fly (high to low)","Big stretch, hug at the bottom"],["Chest-supported machine row","Takes lower back out of it"],["Close-grip lat pulldown","Builds the V-taper"]]}
 ];
-// Keyed by Date.getDay(): 0=Sunday ... 6=Saturday
-const DINNERS = {
-  1:{ food:'Sirloin + sweet potato: 9 oz top sirloin · 1 medium sweet potato · 6 oz broccoli · 1 tsp olive oil', how:'Microwave potato 8 min · sear steak 4 min/side · steam broccoli', cal:642, p:63, c:52, f:21 },
-  2:{ food:'Salmon rice bowl: 8 oz sockeye · 200 g cooked jasmine rice · 5 oz asparagus · 1 tsp oil', how:'Air fry salmon 400°F 10 min · rice pouch · roast asparagus alongside', cal:632, p:59, c:62, f:16 },
-  3:{ food:'Beef taco bowl: 8 oz 93/7 ground beef · 150 g rice · ½ cup black beans · ¼ cup salsa · 2 cups romaine · 2 tbsp Greek yogurt', how:'Brown beef with taco seasoning 10 min · assemble', cal:676, p:63, c:64, f:17 },
-  4:{ food:'Lemon-garlic cod: 12 oz cod · 300 g baby potatoes · 5 oz green beans · 2 tsp olive oil', how:'Potatoes microwave 6 + air fry 10 · bake cod 400°F 12 min', cal:624, p:69, c:58, f:13 },
-  5:{ food:'Salmon onigiri + miso soup: 8 oz sockeye (flaked) · 170 g cooked sushi rice · 3 nori strips · ½ cup shelled edamame · miso soup with 3 oz firm tofu + wakame', how:'Air fry salmon 400°F 10 min · shape 3 rice balls · miso: dissolve paste in hot water, add tofu + wakame', cal:704, p:70, c:62, f:19 },
-  6:{ food:'Traeger flank steak: 9 oz flank · 280 g potatoes · 3.5 oz greens + 3.5 oz broccoli · 1 tsp oil', how:'Traeger 450°F ~12 min to 130°F · slice across the grain', cal:677, p:63, c:55, f:23 },
-  0:{ food:'Fish tacos: 12 oz tilapia/cod · 3 corn tortillas · 1 cup slaw + lime · ¼ avocado · 2 tbsp Greek yogurt · ½ cup black beans', how:'Chili-lime fish, air fry 400°F 10 min', cal:688, p:84, c:60, f:14 },
-};
-function todaysMeals(){
-  const d = DINNERS[new Date().getDay()];
-  return [...FIXED_MEALS_AM, { id:'dinner', meal:'Dinner', ...d }, ...FIXED_MEALS_PM];
+let sel=store.get("dq_next",0);
+let doneSets=store.get("dq_sets",{});
+function renderDays(){
+  $("days").innerHTML=PLAN.map((d,i)=>`<button aria-pressed="${i===sel}" data-i="${i}">Day ${i+1}<small>${d.name}</small></button>`).join("");
+  $("days").querySelectorAll("button").forEach(b=>b.onclick=()=>{sel=+b.dataset.i;renderLift()});
 }
-let MEAL_PLAN = todaysMeals();
-
-/* ---------- STATE / STORAGE ---------- */
-const todayKey = () => {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,'0');
-  const day = String(d.getDate()).padStart(2,'0');
-  return `${y}-${m}-${day}`; // uses local time, not UTC, so the day rolls over at local midnight
-};
-let _memoryStore = {}; // in-memory fallback if localStorage is unavailable/blocked
-const load = (k, fallback) => {
-  try{
-    const v = (typeof localStorage !== 'undefined') ? localStorage.getItem(k) : _memoryStore[k];
-    return v ? JSON.parse(v) : fallback;
-  }catch(e){ return fallback; }
-};
-const save = (k, v) => {
-  try{
-    const s = JSON.stringify(v);
-    if(typeof localStorage !== 'undefined') localStorage.setItem(k, s);
-    _memoryStore[k] = s;
-  }catch(e){
-    try{ _memoryStore[k] = JSON.stringify(v); }catch(e2){ /* give up silently */ }
-  }
-};
-
-let state = load('berserkr_day_' + todayKey(), {
-  activeDay: 1,
-  cardio: false,
-  sets: {},          // "day-exIndex-setIndex": true
-  mealChecks: {},     // mealPlanId: true
-  streakCounted: {},  // "day-exIndex": true (guards against double-counting weight progression same day)
-});
-let meta = load('berserkr_meta', { lastDate:null, streak:0 });
-let setWeights = load('berserkr_set_weights', {}); // "day-exIndex-setIndex": weight value actually used when that set was checked (for PR/streak accuracy)
-function saveSetWeights(){ save('berserkr_set_weights', setWeights); }
-let exerciseWeights = load('berserkr_exercise_weights', {}); // "day-exIndex": current weight shown in the single shared input, persists forever
-function saveExerciseWeights(){ save('berserkr_exercise_weights', exerciseWeights); }
-function getExerciseWeight(day, exIdx){
-  const key = `${day}-${exIdx}`;
-  return exerciseWeights[key] !== undefined ? exerciseWeights[key] : '';
-}
-let prs = load('berserkr_prs', {}); // "day-exIndex": { best: number } — highest weight ever logged, never resets
-function savePRs(){ save('berserkr_prs', prs); }
-let streaks = load('berserkr_streaks', {}); // "day-exIndex": { streak: number } — progression suggestion counter, never resets
-function saveStreaks(){ save('berserkr_streaks', streaks); }
-let weighins = load('berserkr_weighins', []); // [{date, weight, waist}], persists across all time (not daily-reset)
-function saveWeighins(){ save('berserkr_weighins', weighins); }
-function getSetWeight(day, exIdx, setIdx){
-  const key = `${day}-${exIdx}-${setIdx}`;
-  return setWeights[key] !== undefined ? setWeights[key] : '';
-}
-function getStreakEntry(day, exIdx){
-  const key = `${day}-${exIdx}`;
-  if(!streaks[key]) streaks[key] = { streak:0 };
-  return streaks[key];
-}
-function getPR(day, exIdx){
-  const key = `${day}-${exIdx}`;
-  return prs[key] ? prs[key].best : null;
-}
-
-/* one-time cleanup: PUSH day slot 2 changed from Machine Shoulder Press to DB Lateral Raises,
-   so any old weight/PR/streak data there belongs to a different exercise and would be misleading */
-if(!meta.migratedLateralRaise){
-  const staleKey = '1-2'; // day 1 (PUSH), exercise index 2
-  delete prs[staleKey];
-  delete streaks[staleKey];
-  Object.keys(setWeights).forEach(k=>{ if(k.startsWith(staleKey+'-')) delete setWeights[k]; });
-  savePRs(); saveStreaks(); saveSetWeights();
-  meta.migratedLateralRaise = true;
-  save('berserkr_meta', meta);
-}
-
-/* one-time migration to BLOCK 1: exercise slots moved, so carry weights/PRs over by exercise
-   (old "day-index" -> new "day-index"), drop exercises that no longer exist, archive the originals */
-if(!meta.migratedBlock1){
-  const MAP = {
-    '1-2':'1-4', // DB Lateral Raises
-    '1-3':'1-6', // Cable Triceps Pushdown -> Rope Pushdown
-    '2-0':'2-0', // Lat Pulldown
-    '2-1':'4-2', // Seated Cable Row (now Full Body)
-    '2-2':'4-6', // Cable Bicep Curl -> Cable Curl (now Full Body)
-    '2-3':'2-4', // Rear Delt Machine -> Face Pull / Reverse Pec Deck
-    '3-0':'3-1', // Leg Press
-    '3-2':'3-4', // Seated Leg Curl
-    '3-3':'3-2', // Leg Press Calf Raise
-    '4-3':'3-0', // Barbell RDL (now Legs A)
-  };
-  save('berserkr_archive_pre_block1', { prs, exerciseWeights, setWeights, streaks });
-  const remap = obj => { const out = {}; Object.keys(MAP).forEach(o=>{ if(obj[o]!==undefined) out[MAP[o]] = obj[o]; }); return out; };
-  prs = remap(prs);
-  exerciseWeights = remap(exerciseWeights);
-  setWeights = {};
-  streaks = {}; // rep ranges changed, so progression streaks restart
-  savePRs(); saveExerciseWeights(); saveSetWeights(); saveStreaks();
-  state.sets = {}; state.streakCounted = {};
-  meta.migratedBlock1 = true;
-  save('berserkr_meta', meta);
-}
-let ham = load('berserkr_ham', { phase:1, since:todayKey(), checks:{} }); // hamstring rebuild phase (data + UI live with the workout plan)
-function saveHam(){ save('berserkr_ham', ham); }
-let checkins = load('berserkr_checkins', []); // [{date, weight, waist, logged, sessions, energy, hunger, sleep}]
-function saveCheckins(){ save('berserkr_checkins', checkins); }
-let openCues = {}; // which form-cue panels are expanded (not persisted)
-
-function currentWeek(){
-  if(state.week) return state.week;
-  const start = new Date(BLOCK.start + 'T00:00:00');
-  const days = Math.floor((new Date() - start) / 86400000);
-  return Math.max(1, Math.min(4, Math.floor(days/7) + 1));
-}
-
-function persist(){ save('berserkr_day_' + todayKey(), state); }
-
-/* streak check on load */
-(function checkStreak(){
-  const today = todayKey();
-  if(meta.lastDate !== today){
-    meta.lastDate = today;
-    save('berserkr_meta', meta);
-  }
-})();
-
-/* ---------- HEADER ---------- */
-function renderHeader(){
-  const d = new Date();
-  document.getElementById('dateStr').textContent = d.toLocaleDateString(undefined,{weekday:'long', month:'short', day:'numeric'});
-  document.getElementById('streakStr').textContent = meta.streak + (meta.streak===1?' day streak':' day streak');
-}
-
-/* ---------- RING ---------- */
-function updateRing(){
-  const pk = planKey(state.activeDay);
-  const exs = WORKOUT_PLAN[pk].exercises;
-  const wk = currentWeek();
-  let totalSets = 0, doneSets = 0;
-  exs.forEach((ex, e)=>{
-    const n = setsFor(ex, wk);
-    totalSets += n;
-    for(let s=0;s<n;s++) if(state.sets[`${pk}-${e}-${s}`]) doneSets++;
+function renderLift(){
+  renderDays();
+  const d=PLAN[sel];
+  $("dayTitle").textContent=`Day ${sel+1}: ${d.name}`;
+  $("dayNote").textContent="30 min uphill treadmill walk first. 3 sets each, 8–12 reps, last set close to failure.";
+  const s=doneSets[sel]||{};
+  $("exList").innerHTML=d.ex.map((e,i)=>`<div class="ex"><div class="nm"><b>${e[0]}</b><span>${e[1]}</span></div><div class="sets">${[0,1,2].map(k=>`<button class="${s[i+"-"+k]?"on":""}" data-k="${i}-${k}" aria-label="${e[0]} set ${k+1}">${k+1}</button>`).join("")}</div></div>`).join("");
+  $("exList").querySelectorAll(".sets button").forEach(b=>b.onclick=()=>{
+    doneSets[sel]=doneSets[sel]||{};doneSets[sel][b.dataset.k]=!doneSets[sel][b.dataset.k];store.set("dq_sets",doneSets);b.classList.toggle("on");
   });
-  const mealsChecked = MEAL_PLAN.filter(m => state.mealChecks[m.id]).length;
-  const mealsLogged = mealsChecked / MEAL_PLAN.length;
+  $("finish").textContent="Mark day complete";
+}
+$("finish").onclick=()=>{doneSets[sel]={};store.set("dq_sets",doneSets);sel=(sel+1)%PLAN.length;store.set("dq_next",sel);renderLift();renderNext();$("finish").textContent="Logged. Next up: "+PLAN[sel].name};
+$("resetDay").onclick=()=>{doneSets[sel]={};store.set("dq_sets",doneSets);renderLift()};
+function renderNext(){const n=store.get("dq_next",0);$("nextDay").textContent=`Day ${n+1}: ${PLAN[n].name}`}
 
-  const parts = [
-    { w:1, v: doneSets/totalSets },
-    { w:1, v: mealsLogged },
-    { w:1, v: state.cardio ? 1 : 0 },
-  ];
-  const pct = Math.round(100 * parts.reduce((a,p)=>a+p.w*p.v,0) / parts.reduce((a,p)=>a+p.w,0));
-
-  const circumference = 194.7;
-  const offset = circumference - (pct/100)*circumference;
-  document.getElementById('ringFg').style.strokeDashoffset = offset;
-  document.getElementById('ringNum').textContent = pct + '%';
-
-  let detail = "Nothing logged yet — let's move.";
-  if(pct >= 100) detail = "Fully forged today. Elite work.";
-  else if(pct > 0) detail = "Progress logged — keep stacking.";
-  document.getElementById('ringDetail').textContent = detail;
-
-  if(pct===100 && !state._streakCounted){
-    meta.streak += 1;
-    state._streakCounted = true;
-    save('berserkr_meta', meta);
-    renderHeader();
-  }
-}
-
-/* ---------- TRAIN TAB ---------- */
-function renderWeekTabs(){
-  const wk = currentWeek();
-  const wrap = document.getElementById('weekTabs');
-  wrap.innerHTML = [1,2,3,4].map(w =>
-    `<div class="day-tab${w===wk?' active':''}" onclick="setWeek(${w})">WEEK ${w}<small>${w===4?'Deload':(w===1?'Base':(w===2?'Volume':'Intensity'))}</small></div>`
-  ).join('');
-  document.getElementById('weekFocus').textContent = WEEK_FOCUS[wk];
-}
-function setWeek(w){ state.week = w; persist(); renderAll(); }
-function fmtRest(sec){
-  if(!sec) return 'no rest → next';
-  const m = Math.floor(sec/60), s = sec%60;
-  return 'rest ' + (m ? `${m}:${String(s).padStart(2,'0')}` : `${s}s`);
-}
-function cuesHtml(key){
-  const c = FORM_CUES[key];
-  if(!c) return '';
-  return `<div class="cue-list">
-      <div class="cue-h">5 CUES</div><ol>${c.cues.map(x=>`<li>${x}</li>`).join('')}</ol>
-      <div class="cue-h">MISTAKE → FIX</div><ul>${c.fixes.map(x=>`<li>${x}</li>`).join('')}</ul>
-    </div>`;
-}
-function toggleCues(id){ openCues[id] = !openCues[id]; renderExercises(); renderCardio(); }
-
-function renderDayTabs(){
-  const wrap = document.getElementById('dayTabs');
-  wrap.innerHTML = '';
-  ['1','2','3','4'].forEach(dayNum=>{
-    const plan = WORKOUT_PLAN[dayNum === '3' ? planKey(3) : dayNum];
-    const btn = document.createElement('div');
-    btn.className = 'day-tab' + (state.activeDay == dayNum ? ' active':'');
-    btn.innerHTML = `${plan.name}<small>${plan.sub}</small>`;
-    btn.onclick = ()=>{ state.activeDay = Number(dayNum); persist(); renderAll(); };
-    wrap.appendChild(btn);
-  });
-}
-
-function toggleCardio(){
-  state.cardio = !state.cardio;
-  persist();
-  renderCardio();
-  updateRing();
-}
-
-/* ---------- WARM-UPS (per training day) ---------- */
-// ~8 min each, shown like the workouts: name, target, tap-off set boxes. Moving warm-ups, not long static stretches.
-const WU_ROLL = { name:'Foam Roll (optional)', target:'2 min · 30–60 sec each: calves, quads, glutes, upper back · skip any strained spot', sets:1 };
-const WARMUPS = {
-  1: [ WU_ROLL,
-       { name:'Easy Walk', quick:true, target:'3 min · 2–3% incline', sets:1 },
-       { name:'Arm Circles', target:'10 forward + 10 back', sets:1 },
-       { name:'Incline Push-Ups (hands on a bench)', target:'10 reps', sets:1 },
-       { name:'Light Cable Face Pulls', quick:true, target:'15 reps', sets:1 },
-       { name:'Light DB Lateral Raises', target:'12 reps', sets:1 },
-       { name:'Incline DB Press Ramp-Up', quick:true, target:'Set 1: 8 @ ~50% · Set 2: 5 @ ~75% of working weight', sets:2 } ],
-  2: [ WU_ROLL,
-       { name:'Easy Walk', quick:true, target:'3 min · 2–3% incline', sets:1 },
-       { name:'Arm Circles', target:'10 forward + 10 back', sets:1 },
-       { name:'Scap Pull-Downs (lat pulldown, arms straight)', quick:true, target:'10 reps · pull shoulders down, not elbows', sets:1 },
-       { name:'Light Straight-Arm Cable Pulldown', target:'15 reps', sets:1 },
-       { name:'Light Cable Face Pulls', target:'15 reps', sets:1 },
-       { name:'Lat Pulldown Ramp-Up', quick:true, target:'Set 1: 8 @ ~50% · Set 2: 5 @ ~75% of working weight', sets:2 } ],
-  3: [ WU_ROLL,
-       { name:'Easy Walk', quick:true, target:'5 min · flat', sets:1 },
-       { name:'Leg Swings, Front-to-Back', target:'10 per leg · start small, hold something', sets:1 },
-       { name:'Leg Swings, Side-to-Side', target:'10 per leg', sets:1 },
-       { name:'Glute Bridges', quick:true, target:'2 × 10 · squeeze at the top', sets:2 },
-       { name:'Bodyweight Good Mornings', target:'10 slow reps · only as deep as feels easy · skip in Hamstring Phase 1', sets:1 },
-       { name:'Light Leg Curls', quick:true, target:'2 × 15', sets:2 },
-       { name:'First-Lift Ramp-Up', quick:true, target:'Set 1: 8 @ ~50% · Set 2: 5 @ ~75% of working weight · skip in Hamstring Phase 1', sets:2 } ],
-  4: [ WU_ROLL,
-       { name:'Easy Walk', quick:true, target:'3 min · 2–3% incline', sets:1 },
-       { name:'Arm Circles + Leg Swings', target:'10 each way / 10 per leg', sets:1 },
-       { name:'Glute Bridges', target:'10 reps', sets:1 },
-       { name:'Light Cable Face Pulls', quick:true, target:'15 reps', sets:1 },
-       { name:'Neutral-Grip Pulldown Ramp-Up', quick:true, target:'Set 1: 8 @ ~50% · Set 2: 5 @ ~75% of working weight', sets:2 } ],
-};
-let warmOpen = true;
-let warmQuick = load('berserkr_warm_quick', false); // QUICK (~4 min) vs FULL (~8 min)
-function setWarmQuick(v){ warmQuick = v; save('berserkr_warm_quick', v); renderWarmup(); }
-function toggleWarmSet(i, si){ const k = `${state.activeDay}-${i}-${si}`; state.warm = state.warm || {}; state.warm[k] = !state.warm[k]; persist(); renderWarmup(); }
-function renderWarmup(){
-  const el = document.getElementById('warmupCard'); if(!el) return;
-  const all = WARMUPS[state.activeDay];
-  const items = all.map((w,i)=>({...w, i})).filter(w => !warmQuick || w.quick);
-  state.warm = state.warm || {};
-  let total = 0, done = 0;
-  items.forEach(w=>{ for(let si=0; si<w.sets; si++){ total++; if(state.warm[`${state.activeDay}-${w.i}-${si}`]) done++; } });
-  const body = items.map((w,n)=>{
-    const i = w.i;
-    let boxes = '';
-    for(let si=0; si<w.sets; si++){
-      const on = !!state.warm[`${state.activeDay}-${i}-${si}`];
-      const lbl = w.sets === 1 ? 'DONE' : `SET ${si+1}`;
-      boxes += `<div class="set-box ${on?'done':''}" onclick="toggleWarmSet(${i},${si})"><div class="n">${lbl}${on?' ✓':''}</div></div>`;
-    }
-    return `<div class="exercise">
-        <div class="ex-head"><div class="ex-name"><span class="ex-tag">W${n+1}</span>${w.name}</div></div>
-        <div class="ex-target">${w.target}</div>
-        <div class="sets-row">${boxes}</div>
-        ${n < items.length-1 ? '<div class="divider-line" style="margin-top:12px"></div>' : ''}
-      </div>`;
-  }).join('');
-  el.innerHTML = `
-    <div class="cardio-card" style="cursor:pointer" onclick="warmOpen=!warmOpen;renderWarmup()">
-      <div><div class="l">Warm-Up · ~${warmQuick ? (state.activeDay===3?6:4) : 8} min</div><div class="s">${done}/${total} done${done===total?' · ready to lift 💪':''} · tap to ${warmOpen?'hide':'show'}</div></div>
-      <div class="s">${warmOpen?'▴':'▾'}</div>
-    </div>
-    ${warmOpen ? `<div class="wu-toggle"><div class="${warmQuick?'on':''}" onclick="setWarmQuick(true)">QUICK</div><div class="${!warmQuick?'on':''}" onclick="setWarmQuick(false)">FULL</div></div>${warmQuick && state.activeDay===3 ? '<div class="ex-target" style="margin-bottom:10px">Legs stays ~6 min: the bridges and curls protect your hamstring.</div>' : ''}<div style="margin-top:6px">${body}</div>` : ''}`;
-}
-
-function renderCardio(){
-  document.getElementById('cardioToggle').classList.toggle('on', state.cardio);
-  const c = CARDIO_BY_WEEK[currentWeek()];
-  const hp = HAM_PHASES[ham.phase];
-  document.getElementById('cardioSub').textContent = hp.walk
-    ? `${c.min} min · Hamstring Phase ${ham.phase}: ${hp.walk}` + (ham.phase > 1 ? ' · ramp up from 2%' : '')
-    : c.txt + ' · ramp up: start at 3%, add 2% each minute to target' + (state.activeDay===3 ? ' · drop 2% if knees or hamstrings are sore' : '');
-  document.getElementById('cardioCues').innerHTML =
-    `<button class="cue-btn" onclick="toggleCues('treadmill')">FORM ${openCues.treadmill?'▴':'▾'}</button>` +
-    (openCues.treadmill ? cuesHtml('treadmill') : '');
-}
-
-function renderExercises(){
-  const pk = planKey(state.activeDay);
-  const plan = WORKOUT_PLAN[pk];
-  const wk = currentWeek();
-  const card = document.getElementById('exerciseCard');
-  card.innerHTML = '';
-  plan.exercises.forEach((ex0, exIdx)=>{
-    const ex = (ex0.hamAlt && ham.phase <= 2) ? { ...ex0, ...ex0.hamAlt } : ex0;
-    const key = `${pk}-${exIdx}`;
-    const sentry = getStreakEntry(pk, exIdx);
-    const pr = getPR(pk, exIdx);
-    const currentWeight = getExerciseWeight(pk, exIdx);
-    const nSets = setsFor(ex, wk);
-
-    let setsHtml = '';
-    let doneCount = 0;
-    const setWeightVals = [];
-    for(let s=0;s<nSets;s++){
-      const skey = `${pk}-${exIdx}-${s}`;
-      const done = !!state.sets[skey];
-      if(done) doneCount++;
-      setWeightVals.push(getSetWeight(pk, exIdx, s));
-      setsHtml += `<div class="set-box ${done?'done':''}" onclick="toggleSet('${skey}')"><div class="n">SET ${s+1}${done?' ✓':''}</div></div>`;
-    }
-
-    // count progression streak once per day when all sets are completed at the same, non-empty weight
-    const allSameWeight = setWeightVals[0] !== '' && setWeightVals.every(w => w === setWeightVals[0]);
-    if(wk !== 4 && doneCount === nSets && allSameWeight && !state.streakCounted[key]){
-      sentry.streak += 1;
-      state.streakCounted[key] = true;
-      saveStreaks();
-      persist();
-    }
-
-    let suggestHtml = '';
-    if(sentry.streak >= 2 && wk !== 4){
-      suggestHtml = ex.inc === 0
-        ? `<div class="weight-suggest">🔼 Top of the rep range 2x in a row? Add 2 reps or a 3-sec lowering</div>`
-        : `<div class="weight-suggest">🔼 Top of the rep range on every set 2x in a row? Add ${ex.inc} lbs, restart at the bottom of the range</div>`;
-    }
-    const isSuperset = /\d$/.test(ex.tag);
-    const nextEx = plan.exercises[exIdx+1];
-    const linksNext = nextEx && isSuperset && nextEx.tag[0] === ex.tag[0];
-
-    const wrap = document.createElement('div');
-    wrap.className = 'exercise';
-    wrap.innerHTML = `
-      <div class="ex-head">
-        <div class="ex-name"><span class="ex-tag${isSuperset?' ss':''}">${ex.tag}</span>${ex.name}</div>
-      </div>
-      <div class="ex-target">${nSets} × ${ex.reps} · ${fmtRest(ex.rest)}${ex.main && (wk===2||wk===3) ? ' · +1 set this week' : ''}</div>
-      ${ex.cues ? `<button class="cue-btn" onclick="toggleCues('${key}')">FORM ${openCues[key]?'▴':'▾'}</button>${openCues[key]?cuesHtml(ex.cues):''}` : ''}
-      ${pr!==null ? `<div class="pr-line">🏆 Best: ${pr} lbs</div>` : ''}
-      <div class="weight-row">
-        <label>${ex.inverse ? 'Assist (lbs)' : 'Weight (lbs)'}</label>
-        <input type="number" inputmode="decimal" placeholder="0" value="${currentWeight}" onchange="updateWeight(${pk},${exIdx},this.value)">
-      </div>
-      <div class="sets-row">${setsHtml}</div>
-      ${suggestHtml}
-      ${exIdx < plan.exercises.length-1 ? (linksNext ? '<div class="ss-link">↓ superset — go straight to next</div>' : '<div class="divider-line"></div>') : ''}
-    `;
-    card.appendChild(wrap);
-  });
-}
-function updateWeight(day, exIdx, val){
-  const key = `${day}-${exIdx}`;
-  exerciseWeights[key] = val;
-  saveExerciseWeights();
-  // manually changing weight resets the progression streak, assuming the suggestion was taken
-  const sentry = getStreakEntry(day, exIdx);
-  sentry.streak = 0;
-  saveStreaks();
-  renderExercises();
-}
-function toggleSet(key){
-  ensureAudioContext(); // unlock audio during this user gesture so the rest-timer beep works later on iOS
-  const wasDone = !!state.sets[key];
-  state.sets[key] = !wasDone;
-  persist();
-  if(!wasDone){
-    const parts = key.split('-');
-    const day = parts[0], exIdx = parts[1], setIdx = parts[2];
-    // capture whatever weight is currently showing for this exercise as this set's recorded weight
-    const currentWeight = getExerciseWeight(day, exIdx);
-    setWeights[key] = currentWeight;
-    saveSetWeights();
-    const wVal = Number(currentWeight);
-    if(wVal > 0){
-      const prKey = `${day}-${exIdx}`;
-      if(!prs[prKey] || wVal > prs[prKey].best){
-        prs[prKey] = { best: wVal };
-        savePRs();
-      }
-    }
-  }
-  renderExercises();
-  updateRing();
-  if(!wasDone){ // just marked complete -> start this exercise's rest (supersets go straight to the next move)
-    const k = key.split('-');
-    const ex = WORKOUT_PLAN[k[0]].exercises[k[1]];
-    if(ex && ex.rest > 0) startRestTimer(ex.rest);
-  }
-}
-
-/* ---------- REST TIMER ---------- */
-let restInterval = null;
-let audioCtx = null;
-function ensureAudioContext(){
-  // Must be created/resumed during a user gesture (like a tap) to work reliably on iOS Safari
-  if(!audioCtx){
-    const AC = window.AudioContext || window.webkitAudioContext;
-    if(AC) audioCtx = new AC();
-  }
-  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-}
-function playBeep(){
-  if(!audioCtx) return;
-  const now = audioCtx.currentTime;
-  [0, 0.22, 0.44].forEach(offset=>{
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.value = 880;
-    gain.gain.setValueAtTime(0.001, now + offset);
-    gain.gain.exponentialRampToValueAtTime(0.3, now + offset + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.18);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start(now + offset);
-    osc.stop(now + offset + 0.2);
-  });
-}
-function startRestTimer(seconds){
-  clearInterval(restInterval);
-  let remaining = seconds;
-  const pill = document.getElementById('restTimer');
-  const text = document.getElementById('restTimerText');
-  pill.classList.add('active');
-  text.textContent = remaining + 's';
-  restInterval = setInterval(()=>{
-    remaining--;
-    if(remaining <= 0){
-      clearInterval(restInterval);
-      pill.classList.remove('active');
-      playBeep();
-      return;
-    }
-    text.textContent = remaining + 's';
-  }, 1000);
-}
-function skipRestTimer(){
-  clearInterval(restInterval);
-  document.getElementById('restTimer').classList.remove('active');
-}
-
-/* ---------- FUEL TAB ---------- */
-function renderMacros(){
-  const totals = MEAL_PLAN.reduce((a,m)=>{
-    if(!state.mealChecks[m.id]) return a;
-    return { cal:a.cal+m.cal, p:a.p+m.p, c:a.c+m.c, f:a.f+m.f };
-  }, {cal:0,p:0,c:0,f:0});
-  const grid = document.getElementById('macroGrid');
-  const hit = (v,t) => v >= t ? ' hit' : '';
-  grid.innerHTML = `
-    <div class="macro-box cal${hit(totals.cal,DAILY_TARGET.cal)}"><div class="v">${Math.round(totals.cal)}</div><div class="l">/ ${DAILY_TARGET.cal} Cal</div></div>
-    <div class="macro-box${hit(totals.p,DAILY_TARGET.p)}"><div class="v">${Math.round(totals.p)}g</div><div class="l">/ ${DAILY_TARGET.p}g Pro</div></div>
-    <div class="macro-box${hit(totals.c,DAILY_TARGET.c)}"><div class="v">${Math.round(totals.c)}g</div><div class="l">/ ${DAILY_TARGET.c}g Carb</div></div>
-    <div class="macro-box${hit(totals.f,DAILY_TARGET.f)}"><div class="v">${Math.round(totals.f)}g</div><div class="l">/ ${DAILY_TARGET.f}g Fat</div></div>
-  `;
-}
-function toggleMealCheck(id){
-  state.mealChecks[id] = !state.mealChecks[id];
-  persist();
-  renderFuel();
-  updateRing();
-}
-function renderMealPlanList(){
-  const list = document.getElementById('mealPlanList');
-  let lastMeal = null;
-  list.innerHTML = MEAL_PLAN.map(m => {
-    const done = !!state.mealChecks[m.id];
-    const label = m.meal !== lastMeal ? `<div class="plan-meal-label">${m.meal}</div>` : '';
-    lastMeal = m.meal;
-    return `
-      ${label}
-      <div class="plan-item">
-        <div class="plan-check ${done?'on':''}" onclick="toggleMealCheck('${m.id}')">${done?'✓':''}</div>
-        <div class="plan-body">
-          <div class="plan-food ${done?'on':''}">${m.food}</div>
-          ${m.how ? `<div class="plan-how">⏱ ${m.how}</div>` : ''}
-          <div class="plan-macros">${m.cal} cal · P ${m.p}g · C ${m.c}g · F ${m.f}g</div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-function renderFuel(){
-  document.getElementById('mealDayLabel').textContent = new Date().toLocaleDateString(undefined,{weekday:'long'}).toUpperCase();
-  renderMacros(); renderMealPlanList(); renderWeighins();
-}
-
-function daysAgo(dateStr){
-  const d = new Date(dateStr + 'T00:00:00');
-  const t = new Date(todayKey() + 'T00:00:00');
-  return Math.round((t - d) / 86400000);
-}
-// weighins are sorted newest first, so find() returns the most recent entry in the window
-function weightNear(minDays, maxDays){
-  const w = weighins.find(x => x.weight!=null && daysAgo(x.date) >= minDays && daysAgo(x.date) <= maxDays);
-  return w ? w.weight : null;
-}
-function waistNear(minDays, maxDays){
-  const w = weighins.find(x => x.waist!=null && daysAgo(x.date) >= minDays && daysAgo(x.date) <= maxDays);
-  return w ? w.waist : null;
-}
-
-/* ---------- WEIGH-IN HISTORY (entered in the Sunday check-in) ---------- */
-function renderWeighins(){
-  const list = document.getElementById('weighinList');
-  if(weighins.length === 0){
-    list.innerHTML = '<div class="empty">Your Sunday weigh-ins show up here.</div>';
-    return;
-  }
-  list.innerHTML = weighins.slice(0, 8).map((w, i) => { // last 8 weeks
-    const prev = weighins[i+1]; // next in array = previous in time, since sorted most-recent-first
-    let deltaHtml = '';
-    if(prev){
-      const parts = [];
-      if(w.weight!=null && prev.weight!=null){
-        const d = w.weight - prev.weight;
-        const cls = d < 0 ? 'down' : (d > 0 ? 'up' : '');
-        parts.push(`<span class="wi-delta ${cls}">${d===0?'±0':(d>0?'+':'')+d.toFixed(1)} lbs</span>`);
-      }
-      if(w.waist!=null && prev.waist!=null){
-        const d = w.waist - prev.waist;
-        const cls = d < 0 ? 'down' : (d > 0 ? 'up' : '');
-        parts.push(`<span class="wi-delta ${cls}">${d===0?'±0':(d>0?'+':'')+d.toFixed(1)}in waist</span>`);
-      }
-      deltaHtml = parts.join(' &nbsp;·&nbsp; ');
-    }
-    const statsParts = [];
-    if(w.weight!=null) statsParts.push(`${w.weight} lbs`);
-    if(w.waist!=null) statsParts.push(`${w.waist}in waist`);
-    return `
-      <div class="weighin-item">
-        <div>
-          <div class="wi-date">${w.date}</div>
-          <div class="wi-stats">${statsParts.join(' · ')}</div>
-          ${deltaHtml ? `<div>${deltaHtml}</div>` : ''}
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-/* ---------- SUNDAY CHECK-IN ---------- */
-// One weigh-in + waist per week. Decisions use the 2-week change, never a single week (water swings 1-3 lb).
-function checkinVerdict(c){
-  const now = weightNear(0,2);
-  if(now === null) return { warn:false, txt:"Enter this morning's weight to get a verdict." };
-  const twoAgo = weightNear(12,16), oneAgo = weightNear(5,9);
-  let perWeek, weeks;
-  if(twoAgo !== null){ perWeek = (now - twoAgo) / 2; weeks = 2; }
-  else if(oneAgo !== null){ perWeek = now - oneAgo; weeks = 1; }
-  else return { warn:false, txt:'Baseline logged. Follow the plan as written — first comparison in 2 weeks.' };
-  const loss = -perWeek;
-  const waistNow = waistNear(0,2), waistThen = weeks===2 ? waistNear(12,16) : waistNear(5,9);
-  const waistDelta = (waistNow!=null && waistThen!=null) ? waistNow - waistThen : null;
-  const rate = weeks===2 ? `Down ${loss.toFixed(1)} lb/week over 2 weeks.` : `${loss>=0?'Down':'Up'} ${Math.abs(loss).toFixed(1)} lb since last Sunday.`;
-  let extra = '';
-  if((c.sleep && c.sleep <= 2) || (c.energy && c.energy <= 2)) extra += ' Sleep/energy is low: protect 7+ hours.';
-  if(c.hunger && c.hunger >= 4) extra += ' Hunger is high: double the veg at dinner and eat the yogurt bowl earlier.';
-  let v;
-  if(loss > 1.5 && c.energy && c.energy <= 2) v = { warn:true, txt:`${rate} Too aggressive — add 150–200 cal of carbs (≈100–150 g extra rice or potatoes at dinner).` };
-  else if(weeks < 2) v = { warn:false, txt:`${rate} One week is mostly water noise. Keep the plan — real verdict next Sunday.` };
-  else if(loss >= 0.75) v = { warn:false, txt:`${rate} Working — change nothing.` };
-  else if(waistDelta !== null && waistDelta <= -0.25) v = { warn:false, txt:`${rate} Waist down ${Math.abs(waistDelta).toFixed(1)}" — you're losing fat. Change nothing.` };
-  else if(c.logged < 6) v = { warn:true, txt:`${rate} Fix logging first: 6–7 days, oils and sauces included. No plan change.` };
-  else if(c.sessions < 4) v = { warn:true, txt:`${rate} Hit all 4 lifts before changing food.` };
-  else v = { warn:true, txt:`${rate} True plateau — cut 150 cal (≈100 g less rice/potatoes at dinner) OR add a 15-min walk after dinner on 3 non-gym days. One, not both.` };
-  v.txt += extra;
-  return v;
-}
-function renderCheckin(){
-  const isSunday = new Date().getDay() === 0;
-  document.getElementById('checkinDue').textContent = isSunday ? '· due today (2 min)' : '· every Sunday';
-  const today = todayKey();
-  const c = checkins.find(x => x.date === today) || {};
-  const wi = weighins.find(x => x.date === today) || {};
-  const last = checkins.find(x => x.date !== today);
-  const val = (k) => c[k] !== undefined && c[k] !== null ? c[k] : '';
-  let verdictHtml = '';
-  if(c.date){
-    const v = checkinVerdict(c);
-    verdictHtml = `<div class="verdict ${v.warn?'warn':''}">${v.txt}</div>`;
-  } else if(last){
-    verdictHtml = `<div class="verdict">Last check-in: ${last.date}. Next one Sunday morning.</div>`;
-  }
-  document.getElementById('checkinCard').innerHTML = `
-    <div class="ci-stat">Sunday morning, after the bathroom, before food. Waist at the navel, relaxed.</div>
-    <div class="ci-row" style="grid-template-columns:1fr 1fr;">
-      <div><span class="num-label">Weight (lbs)</span><input type="number" id="ciWeight" inputmode="decimal" placeholder="0" value="${wi.weight ?? ''}"></div>
-      <div><span class="num-label">Waist (in)</span><input type="number" id="ciWaist" inputmode="decimal" placeholder="0" value="${wi.waist ?? ''}"></div>
-    </div>
-    <div class="ci-row">
-      <div><span class="num-label">Days logged /7</span><input type="number" id="ciLogged" inputmode="numeric" placeholder="0" value="${val('logged')}"></div>
-      <div><span class="num-label">Lifts done /4</span><input type="number" id="ciSessions" inputmode="numeric" placeholder="0" value="${val('sessions')}"></div>
-      <div><span class="num-label">Energy 1-5</span><input type="number" id="ciEnergy" inputmode="numeric" placeholder="3" value="${val('energy')}"></div>
-    </div>
-    <div class="ci-row" style="grid-template-columns:1fr 1fr;">
-      <div><span class="num-label">Hunger 1-5</span><input type="number" id="ciHunger" inputmode="numeric" placeholder="3" value="${val('hunger')}"></div>
-      <div><span class="num-label">Sleep 1-5</span><input type="number" id="ciSleep" inputmode="numeric" placeholder="3" value="${val('sleep')}"></div>
-    </div>
-    <button class="add-btn" style="width:100%" onclick="saveCheckin()">${c.date?'UPDATE':'SAVE'} CHECK-IN</button>
-    ${verdictHtml}
-    <div class="ci-stat" style="margin:10px 0 0;font-size:11.5px;">First Sunday of the month: front + side photo, same lighting. Don't weigh in on other days.</div>
-  `;
-}
-function saveCheckin(){
-  const n = id => { const v = document.getElementById(id).value; return v === '' ? null : Number(v); };
-  const today = todayKey();
-  const weight = n('ciWeight'), waist = n('ciWaist');
-  if(weight !== null || waist !== null){
-    const i = weighins.findIndex(w => w.date === today);
-    const entry = { date:today, weight, waist };
-    if(i >= 0) weighins[i] = entry; else weighins.push(entry);
-    weighins.sort((a,b)=> a.date < b.date ? 1 : -1);
-    saveWeighins();
-  }
-  const entry = { date: today, weight, waist,
-    logged:n('ciLogged') ?? 0, sessions:n('ciSessions') ?? 0,
-    energy:n('ciEnergy'), hunger:n('ciHunger'), sleep:n('ciSleep') };
-  const i = checkins.findIndex(x => x.date === today);
-  if(i >= 0) checkins[i] = entry; else checkins.unshift(entry);
-  checkins.sort((a,b)=> a.date < b.date ? 1 : -1);
-  saveCheckins();
-  renderCheckin();
-  renderWeighins();
-}
-
-/* ---------- QUEST: CAMPAIGN DATA ---------- */
-/* Each chapter: read-aloud text + 3 choices. type = combat | action | sneak | talk.
-   Non-combat choices roll a d20 vs dc. Combat choices fight a foe (hp, ac) over several rolls.
-   s = success outcome, f = fail outcome (both move the story forward). goldFail overrides fail gold. */
-const CAMPAIGN = {
-  name: 'The Winter Lantern',
-  chapters: [
-    { title:'The Stolen Lantern',
-      text:`In the snowy village of Lindholm, the Winter Lantern has glowed in the town square for a hundred years. Its golden light keeps the Endless Frost away. But this morning, the heroes wake up to silence. The lantern is GONE! Frost is already creeping across the windows, and the chickens have tiny icicles on their beaks. Elder Astrid bangs her walking stick on the ground. "Whoever took it left in the night. If the lantern isn't back in twelve days, Lindholm will freeze forever!" She looks right at you. "You are the bravest heroes we have. Where will you start?"`,
-      choices:[
-        { label:'Follow the strange footprints in the snow', type:'action', dc:10,
-          s:`The footprints are huge, with three toes and long claws. They lead north toward the Whispering Woods. Stuck in the snow, you find a shiny blue scale, cold as ice. Whatever took the lantern has scales!`,
-          f:`The wind blows snow over the tracks before you can follow them very far. After an hour of searching, you guess they went north, toward the Whispering Woods. Your toes are VERY cold.` },
-        { label:'Ask the goat herder what he saw', type:'talk', dc:8,
-          s:`Old Gunnar stops shaking long enough to whisper: "A shadow with wings flew north, toward the mountain! The lantern swung from its claws!" He gives you a warm loaf of bread for the road.`,
-          f:`Gunnar is so scared he only says "Baaah!", just like his goats. But all his goats are pointing their noses north. That's a clue... probably.` },
-        { label:'Climb the bell tower to look around', type:'action', dc:12,
-          s:`From the very top, you spot a faint golden glow far to the north, beyond the Whispering Woods, high on Frost Mountain. Now you know where to go!`,
-          f:`Halfway up, a pigeon lands on your head and you slide all the way back down into a pile of snow. Everyone laughs, but a kind villager points north. "Strange lights up there last night," she says.` },
-      ]},
-    { title:'The Whispering Woods',
-      text:`The trees of the Whispering Woods are so tall they scratch the clouds. As you walk, the branches whisper: "Turn back... turn back..." Then you hear a growl. Three frost wolves step onto the path, with fur like snowdrifts and eyes like blue candles. The biggest wolf shows its teeth. They are hungry, and they are blocking the only path north.`,
-      choices:[
-        { label:'Fight the frost wolves', type:'combat', foe:{ name:'Frost Wolf Pack', hp:3, ac:10 },
-          s:`With one last brave strike, the wolves yelp and run off into the trees with their tails tucked. One drops a sparkly collar. These wolves belong to someone... but who?`,
-          f:`The wolves knock you into a snowbank and steal your lunch! Hungry but not hurt, you dig yourselves out and keep heading north.` },
-        { label:'Sneak around through the bushes', type:'sneak', dc:12,
-          s:`Quiet as falling snow, you creep past the pack. The wolves never even sniff you. One of them yawns a big, sleepy yawn.`,
-          f:`SNAP! A twig breaks under your boot. The wolves chase you all the way to the edge of the woods. You're totally out of breath, but you made it!` },
-        { label:'Toss them your lunch', type:'talk', dc:10,
-          s:`The wolves gobble up the sandwiches, wag their tails, and one licks your face. They trot away happily. You might have made some new friends!`,
-          f:`The wolves eat the lunch... then look at you for more. You back away slowly, then RUN! Everyone escapes, but now your tummies are rumbling.` },
-      ]},
-    { title:"Näcken's River",
-      text:`The path ends at a wide, rushing river. The water is so cold it sings. On a rock in the middle sits Näcken, the river spirit, playing a fiddle made of ice. "Nobody crosses MY river," he says with a grin, "unless they impress me first!" The old bridge has fallen into the water. You'll need to get across somehow.`,
-      choices:[
-        { label:'Swing across on a long vine', type:'action', dc:12,
-          s:`WHEEEE! You swing over the water like true adventurers and land on the far bank. Näcken claps. "Bravo! Not bad at all, little heroes!"`,
-          f:`SPLASH! You land in the shallow part and climb out dripping wet. Näcken laughs so hard he falls off his rock, then kindly dries you off with a warm wind.` },
-        { label:'Sing Näcken a song', type:'talk', dc:11,
-          s:`Your song is so silly and so LOUD that Näcken giggles until he cries. Then he freezes a sparkling ice bridge across the river, just for you.`,
-          f:`Your song is... very loud. Näcken covers his ears. He builds you an ice bridge anyway, mostly so you'll stop singing.` },
-        { label:'Build a raft from fallen logs', type:'action', dc:10,
-          s:`You tie the logs together tight and paddle across as a team. Näcken plays a victory song on his ice fiddle as you land.`,
-          f:`The raft spins around three times before bumping into the other bank. You're dizzy, but you made it across!` },
-      ]},
-    { title:'The Goblin Toll Bridge',
-      text:`Past the river, a narrow stone bridge crosses a deep canyon. A gang of goblins in mismatched armor blocks the way. One is wearing a cooking pot as a helmet. "TOLL BRIDGE!" squeaks their leader, Snikkit. "Pay ten gold or turn around!" Behind him, another goblin is holding a shiny blue scale... just like the one from the village.`,
-      choices:[
-        { label:'Charge the goblins', type:'combat', foe:{ name:'Goblin Gang', hp:4, ac:11 },
-          s:`The goblins scatter, squeaking, and Snikkit loses his pot-helmet. As he runs away he yells, "The flying lizard PAID us to guard this bridge! Don't tell her we lost!"`,
-          f:`The goblins pelt you with snowballs and rotten turnips until you have to back off. But while they're busy celebrating, you tiptoe across the bridge behind them.` },
-        { label:'Challenge Snikkit to a riddle', type:'talk', dc:12,
-          s:`"What gets wetter the more it dries?" you ask. Snikkit thinks so hard his ears start to smoke. "A towel!" you finally tell him. He stomps his feet, but a deal's a deal. As you pass, he mutters, "The ice wyrm won't like you either..."`,
-          f:`"A TOWEL! Easy!" Snikkit shouts, and does a silly victory dance. While all the goblins are dancing, you sneak across the bridge. Not quite the plan, but it worked!` },
-        { label:'Haggle over the toll', type:'talk', dc:8, goldFail:-10,
-          s:`You haggle them all the way down to two shiny buttons and a pinecone. The goblins are thrilled with the deal. You keep all your gold!`,
-          f:`They take ten whole gold coins. Ouch! But they also give you a goblin cookie. It tastes like socks.` },
-      ]},
-    { title:'The Vittra Ring',
-      text:`In a hidden valley, you find a perfect circle of glowing mushrooms. Inside it, tiny vittra are dancing. Vittra are little people no taller than your boot, and they know every secret path in the mountains. But vittra can also be tricksters. Their queen, Lilla Lin, points at you with a twig. "Big ones! What do you want?"`,
-      choices:[
-        { label:'Join their dance', type:'action', dc:10,
-          s:`You dance so well that the vittra cheer and crown you with tiny flower crowns. Lilla Lin shows you a secret tunnel that goes halfway up the mountain!`,
-          f:`You trip and squish a mushroom. The vittra gasp... then burst out laughing. Lilla Lin points the way, but warns, "Watch those big feet!"` },
-        { label:'Politely ask for directions', type:'talk', dc:9,
-          s:`Lilla Lin loves your good manners. "An ice wyrm named Isvinge took your lantern," she says. "She lives in the Frozen Hall at the top of the mountain." Now you know who you're looking for!`,
-          f:`The vittra give you directions... in a rhyme... backwards. It takes a long time to figure out, but you get there in the end.` },
-        { label:'Sneak a glowing mushroom for light', type:'sneak', dc:13,
-          s:`You slip a glowing mushroom into your pocket without anyone noticing. It will light up dark caves later!`,
-          f:`"THIEF!" squeaks a vittra. You give the mushroom back and say sorry. Lilla Lin forgives you, but first you have to sing the whole Vittra Song.` },
-      ]},
-    { title:'Avalanche!',
-      text:`The mountain path is steep and slippery. Halfway up, you hear a deep RUMBLE. You look up. Snow is sliding down from the peak, faster and faster. An AVALANCHE is coming straight at you! You have only seconds to act!`,
-      choices:[
-        { label:'Sprint for the nearby cave', type:'action', dc:11,
-          s:`You dive into the cave just as the snow thunders past the entrance. Safe! And deep in the cave, something is glittering...`,
-          f:`The edge of the avalanche knocks you over, and you tumble into the cave like rolling snowballs. A little bumped and bruised, but safe.` },
-        { label:'Duck behind a giant boulder', type:'action', dc:10,
-          s:`The snow roars right over the boulder, and you're left in a perfect little snow fort. Cozy!`,
-          f:`The boulder wobbles and rolls, and you end up sliding halfway down the mountain. You'll have to climb that part again!` },
-        { label:'Shout a magic word to split the snow', type:'talk', dc:13,
-          s:`"STOP!" you shout with all your might. The avalanche splits around you like a river around a rock. Even the mountain looks impressed.`,
-          f:`Your shout makes even MORE snow fall. Oops! You're buried up to your noses, and it takes ages to dig yourselves out.` },
-      ]},
-    { title:'The Great Snow Bear',
-      text:`At the top of the pass, a cave breathes out warm air. Inside sleeps an enormous white bear, as big as a house, snoring like thunder. The only way forward is right past her. Then one huge eye opens. The bear sniffs the air... and smells the honey cakes in your backpack.`,
-      choices:[
-        { label:'Face the snow bear', type:'combat', foe:{ name:'Great Snow Bear', hp:5, ac:11 },
-          s:`The bear grunts, bows her big head and steps aside. "You are strong, little ones," she rumbles. "Strong enough, maybe, to face the wyrm."`,
-          f:`The bear sits on you. Not hard, but bears are VERY heavy. When she gets bored, she wanders off for a nap and you squeeze past.` },
-        { label:'Offer her the honey cakes', type:'talk', dc:11,
-          s:`The bear munches the honey cakes happily, then gives you a ride on her back up the next steep hill. Best. Ride. EVER.`,
-          f:`She eats the honey cakes AND chews up your backpack straps. You tie your packs together with string, but she lets you pass.` },
-        { label:'Tiptoe past while she yawns', type:'sneak', dc:12,
-          s:`You time it perfectly. While her huge mouth is open in a giant yawn, you tiptoe right past her nose. She never notices a thing.`,
-          f:`Achoo! Someone sneezes. The bear growls and chases you up the trail, but she's too sleepy to keep up for long.` },
-      ]},
-    { title:'The Rune Door',
-      text:`Inside the mountain stands a giant door made of blue ice, covered in glowing runes. In the center are three symbols: a sun, a moon, and a star. A deep voice echoes through the tunnel: "Only those who bring LIGHT may pass." The floor in front of the door is pure, slippery ice.`,
-      choices:[
-        { label:'Study the runes and solve the puzzle', type:'talk', dc:12,
-          s:`You press the sun. The runes flash gold and the great door swings open. Light is the answer, of course!`,
-          f:`You press the moon. The floor tilts and you slide all the way back to the entrance! On your second try, you press the sun, and the door opens.` },
-        { label:'Slide across the ice and push the door', type:'action', dc:11,
-          s:`You get a running start and slide across the ice like hockey pucks, crashing into the door together. It creaks open!`,
-          f:`You slide... right past the door and into a snowdrift. It takes three tries, but you finally push it open.` },
-        { label:'Melt the door with a torch', type:'action', dc:10,
-          s:`Your torch glows bright, and the door melts into a doorway-shaped hole. You brought the light!`,
-          f:`The torch makes a tiny hole, just big enough to crawl through. It's a tight squeeze, but everyone fits.` },
-      ]},
-    { title:'Grumbold the Troll',
-      text:`Beyond the door, the tunnel opens into a huge cavern with an underground lake. On an island in the middle sits Grumbold, a troll with a nose like a potato and moss growing out of his ears. He's holding a map with a big red X on it. "MINE!" he grumbles. "Map to the Frozen Hall. You want it? You have to beat me!"`,
-      choices:[
-        { label:'Battle Grumbold', type:'combat', foe:{ name:'Grumbold the Troll', hp:6, ac:12 },
-          s:`Grumbold flops down with a big THUD. "Fine, fine. Take the map," he sulks. "Nobody ever wants to play with me anyway." You promise to come back and play on your way home.`,
-          f:`Grumbold tosses you into the lake. Luckily, it's only knee-deep! While he's busy laughing, you grab the map and run.` },
-        { label:'Challenge him to a riddle contest', type:'talk', dc:13,
-          s:`"What has to be broken before you can use it?" you ask. Grumbold scratches his mossy head for ten whole minutes. "An EGG," you tell him. He hands over the map, grumbling but impressed.`,
-          f:`Grumbold beats you at riddles. He's so happy that he dances around and drops the map. You pick it up while he's not looking.` },
-        { label:'Sneak around the lake to grab the map', type:'sneak', dc:12,
-          s:`You creep along the edge of the lake, quiet as shadows, and slip the map right out of his hand while he picks his nose.`,
-          f:`Splash! Someone slips on a wet rock. Grumbold roars and chases you around the lake three times before he gets dizzy and sits down. You grab the map.` },
-      ]},
-    { title:"The Frost Giant's Kitchen",
-      text:`The map leads straight through the kitchen of Snorre, a frost giant chef. Pots as big as swimming pools bubble with icy soup. Snorre is humming a song and chopping icicle carrots with a knife as big as a door. To get through, you have to cross his kitchen without getting noticed... or become his dinner guests.`,
-      choices:[
-        { label:'Hide in the bread basket and wait', type:'sneak', dc:12,
-          s:`Snorre carries the bread basket right through the dining hall and out the back door. A free ride!`,
-          f:`Snorre finds you in the basket. "Little croutons!" he booms. But he's actually friendly, and he sets you down gently by the back door.` },
-        { label:'Knock over a pot as a distraction', type:'action', dc:11,
-          s:`CLANG! A pot crashes on the other side of the kitchen. While Snorre stomps over to look, you run straight through.`,
-          f:`The pot lands on YOUR side of the kitchen. Snorre spots you, but he's too busy cleaning up the soup to chase you. You slip out.` },
-        { label:'Offer to help him cook', type:'talk', dc:10,
-          s:`Snorre loves your cooking help and shares a meatball the size of a pumpkin. He tells you a secret: "Isvinge only took the lantern because she's cold and lonely."`,
-          f:`You add WAY too much pepper. Snorre sneezes so hard that you're blown right out the back door. Well, that works!` },
-      ]},
-    { title:'The Ice Golem',
-      text:`At the top of a frozen staircase, a guardian made of giant ice blocks stands in front of the Frozen Hall. The Ice Golem's eyes glow bright blue. "NONE SHALL WAKE THE WYRM," it booms. Behind it, through a crack in the wall, you can see a golden glow. The lantern is close!`,
-      choices:[
-        { label:'Fight the Ice Golem', type:'combat', foe:{ name:'Ice Golem', hp:6, ac:12 },
-          s:`CRACK! The golem tumbles into a pile of ice cubes. A tiny voice from the pile says, "Okay. You may pass."`,
-          f:`The golem pushes you all the way down the stairs. On your way back up, you find a side door the golem forgot to guard.` },
-        { label:'Bounce light into its eyes with your shield', type:'action', dc:12,
-          s:`You catch the glow from the lantern on your shiny shield and flash it into the golem's eyes. "TOO BRIGHT!" it cries, and steps aside.`,
-          f:`You flash the light into your OWN eyes. Everything is spots for a minute! The golem feels sorry for you and lets you pass.` },
-        { label:'Tell it a joke', type:'talk', dc:11,
-          s:`"Why did the snowman name his dog Frost? Because Frost BITES!" The golem laughs so hard that it cracks right in half. Still giggling, it waves you through.`,
-          f:`The golem groans. "TERRIBLE." But it lets you pass anyway, out of pity.` },
-      ]},
-    { title:'Isvinge, the Ice Wyrm',
-      text:`The Frozen Hall glitters like the inside of a diamond. Curled around the Winter Lantern is Isvinge, a young ice wyrm with wings like frosted glass. Her eyes snap open and she hisses. "Go away! It's MINE! It's the only warm thing on this whole cold mountain!" She hugs the lantern tighter, and a single icy tear rolls down her nose. This is your moment, heroes. How will you save Lindholm?`,
-      choices:[
-        { label:'Battle the ice wyrm', type:'combat', foe:{ name:'Isvinge the Ice Wyrm', hp:8, ac:13 },
-          s:`With one last brave move, Isvinge drops the lantern and flies up to her perch. As you lift the lantern, you call up to her: "Come to Lindholm! It's warm there, and you won't be alone!" She looks down at you for a long moment... and nods.`,
-          f:`Isvinge's icy breath knocks you over, but the lantern slips from her claws, and you catch it! As you turn to leave, you see her crying. You hold out your hand. "Come with us," you say. And she does.` },
-        { label:'Invite her to live in Lindholm', type:'talk', dc:14,
-          s:`Isvinge's eyes go wide. "A real home? With friends?" She carries you AND the lantern all the way home on her back, flying over the mountains. Lindholm has a brand-new guardian!`,
-          f:`At first she doesn't believe you. You keep talking for a whole hour, telling her about the bakery, the goats and the warm fires. Finally, she smiles and agrees to try it.` },
-        { label:'Give her your warmest scarf', type:'action', dc:12,
-          s:`You wrap your warmest scarf around Isvinge's neck. She sighs happily. "So THIS is what warm feels like." She gives the lantern back and asks if she can come home with you.`,
-          f:`The scarf gets tangled on her horns, and everyone ends up in a big giggling heap. When you finally untangle it, Isvinge is laughing too. She hands you the lantern.` },
-      ]},
-  ],
-  epilogue:`The heroes return to Lindholm with the Winter Lantern, and with Isvinge flying overhead. The whole village cheers as the lantern is placed back in the town square. Golden light spreads across the rooftops, the frost melts away, and the chickens finally lose their icicles. That night there is a great feast. Isvinge curls up by the lantern, warm at last, and Elder Astrid makes her the official Guardian of Lindholm. As for the heroes, their names will be sung in Lindholm for a hundred years. THE END... for now.`,
-};
-
-/* ---------- QUEST: ENGINE ---------- */
-const QUEST_CLASSES = {
-  warrior:{ label:'Warrior', icon:'⚔️', bonus:'combat', desc:'+2 when fighting' },
-  ranger: { label:'Ranger',  icon:'🏹', bonus:'action', desc:'+2 on action rolls' },
-  rogue:  { label:'Rogue',   icon:'🗝️', bonus:'sneak',  desc:'+2 when sneaking' },
-  wizard: { label:'Wizard',  icon:'✨', bonus:'talk',   desc:'+2 on clever rolls' },
-};
-const QUEST_TYPES = {
-  combat:{ icon:'⚔️', label:'Fight' }, action:{ icon:'🏃', label:'Action' },
-  sneak:{ icon:'🤫', label:'Sneak' },  talk:{ icon:'🗣️', label:'Clever' },
-};
-const MAX_HEARTS = 10;
-let quest = load('berserkr_quest', null);
-function saveQuest(){ save('berserkr_quest', quest); }
-let questDraft = [{ name:'', cls:'warrior' }, { name:'', cls:'wizard' }];
-let questRolling = false;
-let questArmed = null; // two-tap confirm for parent actions: 'unlock' | 'reset'
-
-function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function questHero(){ return quest.heroes[quest.turn % quest.heroes.length]; }
-function heartsHtml(n){ return '❤️'.repeat(Math.max(0,n)) + '🤍'.repeat(Math.max(0, MAX_HEARTS - n)); }
-
-/* sounds — reuse the rest-timer audio context */
-function questTone(freq, at, dur, vol){
-  if(!audioCtx) return;
-  const t = audioCtx.currentTime + at;
-  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-  o.type = 'triangle'; o.frequency.value = freq;
-  g.gain.setValueAtTime(0.001, t); g.gain.exponentialRampToValueAtTime(vol||0.25, t+0.02);
-  g.gain.exponentialRampToValueAtTime(0.001, t+dur);
-  o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t+dur+0.02);
-}
-function questSound(kind){
-  if(kind==='tick') questTone(700, 0, 0.04, 0.08);
-  if(kind==='win')  [523,659,784,1047].forEach((f,i)=>questTone(f, i*0.12, 0.25));
-  if(kind==='lose') [392,330,262].forEach((f,i)=>questTone(f, i*0.16, 0.3));
-  if(kind==='crit') [523,659,784,1047,1319].forEach((f,i)=>questTone(f, i*0.09, 0.3, 0.3));
-}
-
-/* ----- setup ----- */
-function questSetupHtml(){
-  const rows = questDraft.map((h,i)=>`
-    <div class="q-hero-row">
-      <input type="text" placeholder="Hero ${i+1} name" value="${esc(h.name)}" oninput="questDraft[${i}].name=this.value">
-      <select onchange="questDraft[${i}].cls=this.value">
-        ${Object.entries(QUEST_CLASSES).map(([k,c])=>`<option value="${k}" ${h.cls===k?'selected':''}>${c.icon} ${c.label}</option>`).join('')}
-      </select>
-      ${questDraft.length>1 ? `<button class="del-x" onclick="questDraft.splice(${i},1);renderQuest()">×</button>` : ''}
-    </div>`).join('');
-  return `
-    <div class="q-title display">THE WINTER LANTERN</div>
-    <div class="q-sub">A 12-day adventure. One chapter a day.</div>
-    <div class="card">
-      <div class="q-label">CREATE YOUR HEROES</div>
-      ${rows}
-      ${questDraft.length<4 ? `<button class="cue-btn" onclick="questDraft.push({name:'',cls:'ranger'});renderQuest()">+ ADD HERO</button>` : ''}
-      <div class="q-classes">${Object.values(QUEST_CLASSES).map(c=>`<div>${c.icon} <b>${c.label}</b> ${c.desc}</div>`).join('')}</div>
-      <button class="add-btn" style="width:100%;margin-top:12px" onclick="questStart()">BEGIN THE ADVENTURE</button>
-    </div>`;
-}
-function questStart(){
-  const heroes = questDraft.map(h=>({ name:h.name.trim(), cls:h.cls })).filter(h=>h.name);
-  if(!heroes.length) return;
-  quest = { heroes, chapter:0, lastDone:null, hearts:MAX_HEARTS, gold:0, turn:0, scene:null, lastRest:todayKey(), lastOutcome:null };
-  saveQuest(); renderQuest();
-}
-
-/* ----- play ----- */
-function questPick(i){
-  const ch = CAMPAIGN.chapters[quest.chapter], c = ch.choices[i];
-  if(quest.lastRest !== todayKey()){ quest.hearts = Math.min(MAX_HEARTS, quest.hearts + 3); quest.lastRest = todayKey(); } // a night's rest heals
-  quest.scene = { choice:i, foeHp: c.type==='combat' ? c.foe.hp : null, misses:0, log:[], result:null, last:null, crit:false, rescued:false };
-  saveQuest(); renderQuest();
-  document.getElementById('questRoot').scrollIntoView({behavior:'smooth'});
-}
-function questRoll(){
-  if(questRolling || !quest.scene || quest.scene.result) return;
-  ensureAudioContext();
-  questRolling = true;
-  const die = document.getElementById('d20'), num = document.getElementById('d20num');
-  die.classList.add('rolling');
-  let ticks = 0;
-  const iv = setInterval(()=>{
-    num.textContent = 1 + Math.floor(Math.random()*20);
-    questSound('tick');
-    if(++ticks >= 14){
-      clearInterval(iv);
-      die.classList.remove('rolling');
-      questRolling = false;
-      questResolve(1 + Math.floor(Math.random()*20));
-    }
-  }, 70);
-}
-function questResolve(n){
-  const sc = quest.scene, ch = CAMPAIGN.chapters[quest.chapter], c = ch.choices[sc.choice];
-  const hero = questHero();
-  const bonus = QUEST_CLASSES[hero.cls].bonus === c.type ? 2 : 0;
-  const rally = sc.misses >= 2 ? 2 : 0; // after 2 misses in a row the team rallies
-  const total = n + bonus + rally;
-  const target = c.type==='combat' ? c.foe.ac : c.dc;
-  const hit = n === 20 || (n !== 1 && total >= target);
-  sc.last = { hero:hero.name, n, bonus, rally, total, target, hit };
-  if(c.type === 'combat'){
-    if(hit){
-      const dmg = n===20 ? 2 : 1;
-      sc.foeHp = Math.max(0, sc.foeHp - dmg);
-      sc.misses = 0;
-      sc.log.unshift(`${hero.name} ${n===20?'lands a LEGENDARY blow':'hits'}! ${c.foe.name}: ${sc.foeHp} left`);
-      if(sc.foeHp === 0){ questEnd(true, n===20); return; }
-      questSound(n===20?'crit':'tick');
-    } else {
-      quest.hearts -= 1; sc.misses += 1;
-      sc.log.unshift(`${hero.name} ${n===1?'trips over their own feet':'misses'}! ${c.foe.name} strikes back. -1 ❤️`);
-      if(quest.hearts <= 0){ quest.hearts = 5; sc.rescued = true; questEnd(false); return; }
-      questSound('lose');
-    }
-    quest.turn++;
-    saveQuest(); renderQuest();
-  } else {
-    if(!hit){ quest.hearts -= 1; if(quest.hearts <= 0){ quest.hearts = 5; sc.rescued = true; } }
-    questEnd(hit, n===20);
-  }
-}
-function questEnd(success, crit){
-  const sc = quest.scene, c = CAMPAIGN.chapters[quest.chapter].choices[sc.choice];
-  sc.result = success ? 'success' : 'fail';
-  sc.crit = !!crit;
-  const gold = success ? (crit ? 20 : 10) : (c.goldFail !== undefined ? c.goldFail : 2);
-  quest.gold = Math.max(0, quest.gold + gold);
-  sc.gold = gold;
-  quest.turn++;
-  saveQuest(); renderQuest();
-  questSound(success ? (crit?'crit':'win') : 'lose');
-}
-function questFinish(){
-  const ch = CAMPAIGN.chapters[quest.chapter], sc = quest.scene, c = ch.choices[sc.choice];
-  quest.lastOutcome = { title:ch.title, text: sc.result==='success' ? c.s : c.f };
-  quest.chapter++;
-  quest.lastDone = todayKey();
-  quest.scene = null;
-  saveQuest(); renderQuest();
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-function questParent(action){
-  if(questArmed !== action){ questArmed = action; renderQuest(); return; }
-  questArmed = null;
-  if(action === 'unlock') quest.lastDone = null;
-  if(action === 'reset'){ questDraft = quest.heroes.map(h=>({...h})); quest = null; }
-  saveQuest(); renderQuest();
-}
-
-/* ----- render ----- */
-function questPartyHtml(){
-  const turnHero = questHero();
-  return `<div class="q-party">
-      <div class="q-heroes">${quest.heroes.map(h=>`<span class="q-chip${h===turnHero?' turn':''}">${QUEST_CLASSES[h.cls].icon} ${esc(h.name)}</span>`).join('')}</div>
-      <div class="q-stats"><span>${heartsHtml(quest.hearts)}</span><span>🪙 ${quest.gold}</span></div>
-    </div>`;
-}
-function questParentLinks(){
-  return `<div class="q-parent">
-      ${quest.lastDone===todayKey() && quest.chapter < CAMPAIGN.chapters.length ? `<button onclick="questParent('unlock')">${questArmed==='unlock'?'Tap again to unlock':'Parent: play next chapter now'}</button>` : ''}
-      <button onclick="questParent('reset')">${questArmed==='reset'?'Tap again — this restarts the campaign':'Parent: new heroes / restart'}</button>
-    </div>`;
-}
-function renderQuest(){
-  const root = document.getElementById('questRoot');
-  if(!root) return;
-  if(!quest){ root.innerHTML = questSetupHtml(); return; }
-  const total = CAMPAIGN.chapters.length;
-
-  if(quest.chapter >= total){
-    root.innerHTML = `
-      <div class="q-title display">VICTORY!</div>
-      ${questPartyHtml()}
-      <div class="card q-story"><div class="q-label">READ ALOUD · EPILOGUE</div><div class="q-text">${CAMPAIGN.epilogue}</div></div>
-      <div class="card q-sub">The heroes finished with 🪙 ${quest.gold} gold.</div>
-      ${questParentLinks()}`;
-    return;
-  }
-
-  if(quest.lastDone === todayKey() && !quest.scene){
-    const lo = quest.lastOutcome;
-    root.innerHTML = `
-      <div class="q-title display">TODAY'S QUEST IS DONE</div>
-      <div class="q-sub">Chapter ${quest.chapter + 1} of ${total} unlocks tomorrow.</div>
-      ${questPartyHtml()}
-      ${lo ? `<div class="card q-story"><div class="q-label">LAST TIME · ${esc(lo.title).toUpperCase()}</div><div class="q-text">${lo.text}</div></div>` : ''}
-      ${questParentLinks()}`;
-    return;
-  }
-
-  const ch = CAMPAIGN.chapters[quest.chapter];
-  const sc = quest.scene;
-  let body = '';
-  if(!sc){
-    body = `
-      <div class="q-label" style="margin:14px 0 8px">WHAT DO THE HEROES DO?</div>
-      ${ch.choices.map((c,i)=>`
-        <button class="q-choice" onclick="questPick(${i})">
-          <span class="q-type">${QUEST_TYPES[c.type].icon} ${QUEST_TYPES[c.type].label}</span>
-          <span class="q-choice-l">${c.label}</span>
-        </button>`).join('')}`;
-  } else {
-    const c = ch.choices[sc.choice];
-    const hero = questHero();
-    const target = c.type==='combat' ? c.foe.ac : c.dc;
-    const heroBonus = QUEST_CLASSES[hero.cls].bonus === c.type;
-    const foeBar = c.type==='combat' ? `<div class="q-foe"><b>${c.foe.name}</b> ${'🟥'.repeat(sc.foeHp)}${'⬛'.repeat(c.foe.hp - sc.foeHp)}</div>` : '';
-    const lastHtml = sc.last ? `<div class="q-last ${sc.last.hit?'hit':'miss'}">${esc(sc.last.hero)} rolled <b>${sc.last.n}</b>${sc.last.bonus?' +2 class':''}${sc.last.rally?' +2 rally':''} = ${sc.last.total} vs ${sc.last.target} → ${sc.last.n===20?'NATURAL 20!':(sc.last.n===1?'Natural 1...':(sc.last.hit?'SUCCESS':'MISS'))}</div>` : '';
-    if(!sc.result){
-      body = `
-        <div class="card q-picked"><span class="q-type">${QUEST_TYPES[c.type].icon} ${QUEST_TYPES[c.type].label}</span> ${c.label}</div>
-        ${foeBar}
-        <div class="q-turn">${QUEST_CLASSES[hero.cls].icon} <b>${esc(hero.name).toUpperCase()}'S TURN!</b></div>
-        <div class="q-need">Roll <b>${target}</b> or higher${heroBonus?' · +2 '+QUEST_CLASSES[hero.cls].label+' bonus':''}${sc.misses>=2?' · +2 RALLY!':''}</div>
-        <div class="d20-wrap"><div class="d20" id="d20" onclick="questRoll()"><span id="d20num">${sc.last?sc.last.n:'TAP'}</span></div></div>
-        ${lastHtml}
-        ${sc.log.length ? `<div class="q-log">${sc.log.slice(0,6).map(l=>`<div>${esc(l)}</div>`).join('')}</div>` : ''}`;
-    } else {
-      const ok = sc.result === 'success';
-      body = `
-        <div class="card q-picked"><span class="q-type">${QUEST_TYPES[c.type].icon} ${QUEST_TYPES[c.type].label}</span> ${c.label}</div>
-        ${lastHtml}
-        <div class="q-banner ${ok?'win':'lose'}">${ok ? (sc.crit?'⭐ LEGENDARY SUCCESS! ⭐':'SUCCESS!') : 'IT DIDN\'T GO AS PLANNED...'}</div>
-        <div class="card q-story"><div class="q-label">READ ALOUD</div><div class="q-text">${ok ? c.s : c.f}</div>
-          ${sc.rescued ? `<div class="q-text" style="margin-top:10px">Out of hearts! A friendly reindeer pulls the heroes to safety and they catch their breath. (Hearts back to 5.)</div>` : ''}
-          <div class="q-reward">${sc.gold>=0?'+':''}${sc.gold} 🪙 gold</div></div>
-        <button class="add-btn" style="width:100%" onclick="questFinish()">${quest.chapter+1 < total ? "FINISH TODAY'S ADVENTURE" : 'RETURN TO LINDHOLM'}</button>`;
-    }
-  }
-  root.innerHTML = `
-    <div class="q-chapter">CHAPTER ${quest.chapter + 1} OF ${total}</div>
-    <div class="q-title display">${ch.title.toUpperCase()}</div>
-    ${questPartyHtml()}
-    <div class="card q-story"><div class="q-label">READ ALOUD</div><div class="q-text">${ch.text}</div></div>
-    ${body}
-    ${questParentLinks()}`;
-}
-
-/* ---------- WRITE: weekly Substack accountability ---------- */
-/* Goal: publish 1 story per week (weeks run Monday-Sunday). Four stages, a "wrote today" check,
-   an idea bank and an archive. Kept deliberately light: no word counts, no daily quotas. */
-const WRITE_STAGES = [
-  { key:'idea',  label:'Idea',      tip:'Pick the story. One sentence: who wants what, and what stands in the way?' },
-  { key:'draft', label:'Draft',     tip:'Write the ugly first draft. Done beats good — fix it Friday.' },
-  { key:'edit',  label:'Edit',      tip:'One pass for story, one for sentences. Read it out loud. Pick a title.' },
-  { key:'pub',   label:'Published', tip:'Shipped. Rest, read, collect ideas for next week.' },
+/* ---------- Adventure ---------- */
+const STORY=[
+ {t:"The Stolen Lantern",s:"Hollowbrook wakes cold. The Ember Lantern, the warm light that has kept winter away from the village for a hundred years, is gone from the town square. Small muddy footprints lead toward the forest, and the miller is acting very nervous.",
+  c:[["Follow the muddy tracks","Survival",10,"The tracks are tiny, three-toed, and lead straight to the Whispering Woods. You also find a scrap of red cloth snagged on a branch.","The rain smears the tracks and you lose an hour. By the time you find the trail again the sun is low."],
+     ["Question the nervous miller","Persuasion",12,"The miller admits he saw a small cloaked figure at midnight, carrying a glow 'like a captured sunrise.' He gives you a sack of bread for the road.","The miller clams up and shoos you out. You leave with flour on your boots and no answers."],
+     ["Climb the bell tower to look around","Athletics",13,"From the top you spot a thin trail of smoke deep in the woods. Now you know exactly where to head.","Your foot slips on an icy rung and you dangle for a scary moment. You make it down safely, but your pride is bruised."]]},
+ {t:"The Whispering Woods",s:"The trees here whisper your names. In the path sits a silver fox with three tails. 'No one passes,' it says, 'unless they give me something I want.'",
+  c:[["Answer its riddle","Intelligence",12,"'What has roots no one sees, is taller than trees, yet never grows?' You answer: a mountain! The fox bows and shows you a hidden shortcut.","You guess 'a shadow.' The fox laughs and makes you take the long way around a briar patch."],
+     ["Offer it food","Animal Handling",9,"The fox gobbles the bread and decides it likes you. It promises to help you once, when you need it most.","The fox sniffs the food, sneezes, and runs off with your spare boot."],
+     ["Sneak past it","Stealth",14,"You tiptoe through the ferns without a sound. The fox never even turns its head.","A twig snaps. The fox yips and every bird in the woods screeches. Anyone ahead now knows you are coming."]]},
+ {t:"Goblin Toll Bridge",s:"A rickety rope bridge crosses a ravine. Four goblins in pot-helmets block it. 'Toll is three shinies or one good joke!'",
+  c:[["Tell them a joke","Performance",11,"Your joke lands so hard one goblin falls over laughing. They let you cross and give you a dented but useful shield.","Silence. A goblin coughs. They charge you double and you hand over your last copper coins."],
+     ["Trick them into a fight with each other","Deception",13,"You convince them one of them is hiding shinies in his helmet. They pile on each other while you stroll across.","They see right through it and chase you across the bridge, throwing pinecones."],
+     ["Charge straight across","Strength",14,"You bowl through them like a battering ram. Goblins tumble harmlessly into a soft snowbank below.","The bridge sways and you have to grab the ropes. The goblins steal your map while you hang on."]]},
+ {t:"The Ruined Watchtower",s:"A blizzard rolls in, so you take shelter in a crumbling tower. On the wall is a faded painting of a dragon made of ice, sleeping under a mountain.",
+  c:[["Study the mural","History",11,"The mural tells of a frost dragon that sleeps as long as the Ember Lantern burns far away. If the lantern moves near it, it will wake.","The paint is too faded to read. You have an uneasy feeling about the dragon's open eye."],
+     ["Search for supplies","Investigation",10,"You find an old chest with two warm cloaks and a healing potion.","You find a chest full of very angry spiders. Nobody is hurt, but nobody sleeps much."],
+     ["Keep watch through the night","Perception",13,"At midnight you spot a tiny glowing figure on the ridge heading toward Ember Hill. Now you know the thief's destination.","You doze off. In the morning there are tiny footprints all around the tower. Someone visited."]]},
+ {t:"The River of Glass",s:"The river ahead is frozen solid, but cracks are spreading across it like spider webs. The other side is your only path.",
+  c:[["Cross carefully, one step at a time","Dexterity",12,"Light-footed and steady, you reach the far bank just as the ice behind you groans and splits.","Your leg plunges through. You scramble out, soaked and shivering, and need a fire before moving on."],
+     ["Build a raft from fallen logs","Intelligence",13,"Your raft is ugly but brilliant. It slides over the ice and floats over the cracks.","The raft falls apart halfway. You make it across by jumping log to log like a frog."],
+     ["Look for another way","Survival",11,"Downstream you find an old stone bridge buried in snow. Safe and dry.","You find a bridge, but a grumpy troll lives under it and charges you a snack to pass."]]},
+ {t:"The Tinker Owl",s:"A brass owl lies in the snow, one wing bent. Its eyes flicker weakly. A tiny map is etched on its chest, but it is broken.",
+  c:[["Repair the owl","Tinkering (Intelligence)",13,"With a few twists the owl whirs to life, hoots, and becomes your guide. Its name tag says 'Bolt.'","A spring flies off and pokes you in the nose. The owl still works, but it only flies backwards."],
+     ["Talk to it kindly","Charisma",11,"The owl clicks happily and projects a glowing map of the mine tunnels on the snow.","The owl blinks at you, says 'Error,' and goes back to sleep."],
+     ["Follow its flashing eyes","Perception",12,"Its eyes blink in a pattern pointing to a secret entrance in the hillside.","You follow the flashes in circles for an hour. They were just blinking."]]},
+ {t:"Mines of Ember Hill",s:"Inside Ember Hill the tunnels twist in every direction. Far below, you see warm orange light flickering off the walls.",
+  c:[["Light a torch and push deeper","Constitution",10,"You march through the smoky tunnels without slowing down and reach a huge cavern.","The smoke makes you cough and you have to rest. Something small scurries away in the dark."],
+     ["Map the tunnels as you go","Wisdom",12,"Your careful map keeps you from getting lost and shows a safe path down.","You take three wrong turns and end up right back at the entrance. Twice."],
+     ["Press an ear to the walls","Perception",13,"You hear many tiny voices singing a sad song, and follow the sound.","All you hear is your own heartbeat. And something very large breathing, far, far below."]]},
+ {t:"The Thief Revealed",s:"In the cavern you find a clan of small, shivering kobolds huddled around the Ember Lantern. A young kobold named Pip steps forward. 'Please! Our fire went out. Without the lantern, my family will freeze.'",
+  c:[["Talk it out and find a deal","Persuasion",12,"Pip agrees to bring the lantern home if you help her clan find another source of warmth. A new friend joins the story.","Pip panics and hides the lantern behind her back. The clan doesn't trust you yet."],
+     ["Grab the lantern and run","Dexterity",14,"You snatch it and dash, but Pip's crying face stays with you. Is this the right thing?","Pip is faster. She scrambles up a wall with the lantern and glares down at you."],
+     ["Find another heat source in the mine","Nature",13,"You discover a vein of glowing fire-crystals. The kobolds cheer, and Pip hands you the lantern with a hug.","The crystals you find are just shiny rocks. The kobolds are disappointed."]]},
+ {t:"The Frost Dragon Wakes",s:"The ground shakes. The lantern's light has reached deep enough to wake the frost wyrmling from the mural. Its icy breath fills the cavern. The kobolds scream.",
+  c:[["Shield the kobolds","Constitution",13,"You stand firm in front of the little ones. The frost washes over you and you don't budge an inch. Pip looks at you like a hero.","The cold knocks you back, but every kobold makes it to safety. You are freezing but proud."],
+     ["Distract the dragon","Acrobatics",12,"You flip, dodge, and taunt it across the cavern while everyone escapes. The dragon gets dizzy and flops over.","You trip over a rock. The dragon sniffs you, sneezes, and you are covered in frost."],
+     ["Shine the lantern in its eyes","Arcana",14,"The magic light blazes. The dragon blinks, yawns, and curls up back to sleep, snoring like a kettle.","The light only makes it grumpier. It flies off into the mountains. You'll see it again someday."]]},
+ {t:"Homecoming",s:"You return to Hollowbrook with the Ember Lantern glowing bright. Pip and the kobolds come with you, holding fire-crystals. The whole village pours into the square.",
+  c:[["Lead the celebration","Performance",10,"You tell the whole tale around the lantern and the village crowns you Wardens of Hollowbrook.","You trip over the speech, but everyone cheers anyway. Heroes don't need perfect words."],
+     ["Make a pact between the village and the kobolds","Persuasion",11,"The village and the kobold clan promise to share warmth every winter. Pip becomes your official sidekick.","The mayor is nervous, but agrees to try. It's a start."],
+     ["Look for signs of the next adventure","Insight",12,"Bolt the owl lands on your shoulder with a new map. A red X marks a sunken castle. Book Two awaits.","Nothing yet. But the frost dragon's roar echoes from the far mountains."]]}
 ];
-const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-let write = load('berserkr_write', { publishDay:5, weeks:{}, ideas:[] }); // publishDay uses Date.getDay(); 5 = Friday
-function saveWrite(){ save('berserkr_write', write); }
 
-function dateKey(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
-function weekStart(d){ const x = new Date(d); const off = (x.getDay() + 6) % 7; x.setDate(x.getDate() - off); x.setHours(0,0,0,0); return x; }
-function weekKey(d){ return dateKey(weekStart(d || new Date())); }
-function thisWeek(){
-  const k = weekKey();
-  if(!write.weeks[k]) write.weeks[k] = { title:'', stage:0, link:'', sessions:{}, pubDate:null };
-  return write.weeks[k];
-}
-function deadlineDate(){ const ws = weekStart(new Date()); const d = new Date(ws); d.setDate(ws.getDate() + ((write.publishDay + 6) % 7)); return d; }
-function writeStreak(){
-  let n = 0; const d = weekStart(new Date());
-  if(!(write.weeks[dateKey(d)] && write.weeks[dateKey(d)].stage === 3)) d.setDate(d.getDate() - 7); // this week still open: count from last week
-  while(write.weeks[dateKey(d)] && write.weeks[dateKey(d)].stage === 3){ n++; d.setDate(d.getDate() - 7); }
-  return n;
-}
-function writeStatus(w){
-  if(w.stage === 3) return { cls:'ok', txt:"Published. This week's done — enjoy it." };
-  const today = new Date(); today.setHours(0,0,0,0);
-  const daysLeft = Math.round((deadlineDate() - today) / 86400000);
-  const total = (write.publishDay + 6) % 7 + 1;              // days from Monday through publish day
-  const elapsed = Math.min(1, (total - Math.max(daysLeft,0)) / total);
-  const expected = elapsed < 0.35 ? 0 : (elapsed < 0.7 ? 1 : 2); // where you'd want to be by now
-  if(daysLeft < 0) return { cls:'warn', txt:`Past your ${DAY_NAMES[write.publishDay]} target. Publish what you have — a finished short story beats a perfect unfinished one.` };
-  if(w.stage >= expected) return { cls:'ok', txt: daysLeft===0 ? 'Publish day. Ship it.' : `On track · ${daysLeft} day${daysLeft===1?'':'s'} to ${DAY_NAMES[write.publishDay]}.` };
-  return { cls:'warn', txt:`A bit behind · ${daysLeft} day${daysLeft===1?'':'s'} left. Next step: ${WRITE_STAGES[w.stage+1].label.toLowerCase()}. 25 minutes today gets you there.` };
+const fresh=()=>({ch:0,log:[],picks:[null,null],rolls:[null,null],day:null});
+let camp=store.get("dq_camp2",null)||fresh();
+if(!Array.isArray(camp.picks))camp=fresh();
+let heroes=store.get("dq_heroes",["Hero one","Hero two"]);
+$("h1").value=heroes[0];$("h2").value=heroes[1];
+if(heroes[0]==="Hero one"&&heroes[1]==="Hero two")$("heroBox").open=true;
+["h1","h2"].forEach((id,i)=>$(id).oninput=e=>{heroes[i]=e.target.value.trim()||("Hero "+(i?"two":"one"));store.set("dq_heroes",heroes);renderDnd()});
+const save=()=>store.set("dq_camp2",camp);
+const bothDone=()=>camp.rolls[0]!=null&&camp.rolls[1]!=null;
+
+function heroResult(h){
+  const o=STORY[camp.ch].c[camp.picks[h]],r=camp.rolls[h],win=r>=o[2];
+  const head=r===20?"Natural 20! Critical success!":r===1?"Natural 1! Oh no...":win?`Success (${r} vs DC ${o[2]})`:`Failed (${r} vs DC ${o[2]})`;
+  const body=(win?o[3]:o[4])+(r===20?" The gods smile on you!":r===1?" Somewhere, a goblin laughs.":"");
+  return `<div class="result ${win?"win":"lose"}"><h4>${head}</h4><p>${esc(body)}</p></div>`;
 }
 
-function writeSetStage(i){
-  const w = thisWeek();
-  w.stage = (w.stage === i && i > 0) ? i - 1 : i; // tap the current stage again to step back
-  w.pubDate = w.stage === 3 ? todayKey() : null;
-  saveWrite(); renderWrite();
-}
-function writeField(field, val){ thisWeek()[field] = val; saveWrite(); }
-function writeToggleSession(dk){ const w = thisWeek(); w.sessions[dk] = !w.sessions[dk]; saveWrite(); renderWrite(); }
-function writeAddIdea(){
-  const el = document.getElementById('ideaInput'); const v = el.value.trim();
-  if(!v) return; write.ideas.unshift(v); el.value=''; saveWrite(); renderWrite();
-}
-function writeUseIdea(i){
-  const w = thisWeek(); const idea = write.ideas.splice(i,1)[0];
-  if(w.title && w.stage < 3) write.ideas.unshift(w.title); // swap the old one back into the bank
-  w.title = idea; saveWrite(); renderWrite();
-}
-function writeDelIdea(i){ write.ideas.splice(i,1); saveWrite(); renderWrite(); }
-function writeSetDay(v){ write.publishDay = Number(v); saveWrite(); renderWrite(); }
-
-function renderWrite(){
-  const root = document.getElementById('writeRoot'); if(!root) return;
-  const w = thisWeek(); const st = writeStatus(w);
-  const ws = weekStart(new Date()); const todayK = todayKey();
-  const dots = [0,1,2,3,4,5,6].map(i=>{
-    const d = new Date(ws); d.setDate(ws.getDate()+i); const dk = dateKey(d);
-    const future = dk > todayK; const on = !!w.sessions[dk];
-    return `<div class="w-dot${on?' on':''}${dk===todayK?' today':''}${future?' future':''}" ${future?'':`onclick="writeToggleSession('${dk}')"`}>${'MTWTFSS'[i]}</div>`;
-  }).join('');
-  const sessions = Object.values(w.sessions).filter(Boolean).length;
-  const archive = Object.entries(write.weeks).filter(([k,x])=>x.stage===3).sort((a,b)=>a[0]<b[0]?1:-1);
-  const streak = writeStreak();
-  root.innerHTML = `
-    <div class="w-head">
-      <div><div class="w-big display">${streak}</div><div class="w-small">week streak</div></div>
-      <div><div class="w-big display">${archive.length}</div><div class="w-small">stories published</div></div>
-      <div><div class="w-big display">${sessions}</div><div class="w-small">sessions this week</div></div>
-    </div>
-
-    <div class="section-title"><span class="bar"></span>THIS WEEK'S STORY</div>
-    <div class="card">
-      <span class="num-label">Working title</span>
-      <input type="text" id="wTitle" placeholder="What's this week's story?" value="${esc(w.title)}" onchange="writeField('title', this.value)">
-      <div class="w-stages">${WRITE_STAGES.map((s,i)=>`<div class="w-stage${i<=w.stage?' on':''}${i===w.stage?' cur':''}" onclick="writeSetStage(${i})">${i<w.stage?'✓ ':''}${s.label}</div>`).join('')}</div>
-      <div class="w-tip">${WRITE_STAGES[w.stage].tip}</div>
-      ${w.stage===3 ? `<span class="num-label" style="margin-top:10px">Substack link</span><input type="text" placeholder="https://…substack.com/p/…" value="${esc(w.link)}" onchange="writeField('link', this.value)">` : ''}
-      <div class="verdict ${st.cls==='warn'?'warn':''}">${st.txt}</div>
-    </div>
-
-    <div class="section-title"><span class="bar"></span>DID YOU WRITE TODAY?</div>
-    <div class="card">
-      <div class="w-dots">${dots}</div>
-      <div class="w-small" style="margin-top:8px">Tap a day you sat down and wrote — any amount counts. Aim for 3–4 sessions a week, not 7.</div>
-    </div>
-
-    <div class="section-title"><span class="bar"></span>IDEA BANK</div>
-    <div class="goal-add"><input type="text" id="ideaInput" placeholder="Jot an idea before it's gone" onkeydown="if(event.key==='Enter')writeAddIdea()"><button onclick="writeAddIdea()">+</button></div>
-    ${write.ideas.length ? write.ideas.map((t,i)=>`
-      <div class="goal-item">
-        <div class="goal-text">${esc(t)}</div>
-        <button class="cue-btn" style="margin:0" onclick="writeUseIdea(${i})">USE</button>
-        <button class="del-x" onclick="writeDelIdea(${i})">×</button>
-      </div>`).join('') : '<div class="empty">No ideas saved yet.</div>'}
-
-    <div class="section-title"><span class="bar"></span>PUBLISHED</div>
-    ${archive.length ? archive.slice(0,12).map(([k,x])=>`
-      <div class="weighin-item"><div>
-        <div class="wi-date">Week of ${k}</div>
-        <div class="wi-stats">${x.link ? `<a class="w-link" href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.title||'Untitled')}</a>` : esc(x.title||'Untitled')}</div>
-      </div></div>`).join('') : '<div class="empty">Your first published story lands here.</div>'}
-
-    <div class="w-setting">Publish day:
-      <select onchange="writeSetDay(this.value)">${[1,2,3,4,5,6,0].map(d=>`<option value="${d}" ${write.publishDay===d?'selected':''}>${DAY_NAMES[d]}</option>`).join('')}</select>
-    </div>`;
-}
-
-/* ---------- TABS ---------- */
-function switchTab(tab){
-  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('panel-'+tab).classList.add('active');
-  document.querySelector(`.nav-btn[data-tab="${tab}"]`).classList.add('active');
-  document.getElementById('weatherCard').style.display = (tab === 'goals') ? 'flex' : 'none';
-  document.querySelector('.ring-card').style.display = (tab === 'quest' || tab === 'write') ? 'none' : 'flex';
-  if(tab === 'quest') renderQuest();
-  if(tab === 'write') renderWrite();
-}
-
-/* ---------- WEATHER ---------- */
-function weatherLabel(code){
-  // WMO weather codes -> simple label + emoji
-  if(code === 0) return { icon:'☀️', label:'Clear' };
-  if(code <= 2) return { icon:'🌤️', label:'Partly cloudy' };
-  if(code === 3) return { icon:'☁️', label:'Cloudy' };
-  if([45,48].includes(code)) return { icon:'🌫️', label:'Foggy' };
-  if([51,53,55,56,57].includes(code)) return { icon:'🌦️', label:'Drizzle' };
-  if([61,63,65,80,81,82].includes(code)) return { icon:'🌧️', label:'Rain' };
-  if([66,67].includes(code)) return { icon:'🌧️', label:'Freezing rain' };
-  if([71,73,75,77,85,86].includes(code)) return { icon:'❄️', label:'Snow' };
-  if([95,96,99].includes(code)) return { icon:'⛈️', label:'Thunderstorms' };
-  return { icon:'🌡️', label:'—' };
-}
-function loadWeather(){
-  const tempEl = document.getElementById('weatherTemp');
-  const subEl = document.getElementById('weatherSub');
-  const iconEl = document.getElementById('weatherIcon');
-  if(!navigator.geolocation){
-    subEl.textContent = 'Location not available';
-    return;
+function turnHTML(h){
+  const c=STORY[camp.ch],p=camp.picks[h],r=camp.rolls[h];
+  const name=esc(heroes[h]);
+  const active=r==null&&(h===0||camp.rolls[0]!=null||p!=null);
+  const status=r!=null?"Done":p==null?"Choose":"Roll!";
+  let html=`<div class="turn ${r==null&&active?"active":""}" data-h="${h}">
+    <div class="turn-head"><h3>${name}'s turn</h3><span class="status ${r!=null?"done":""}">${status}</span></div>`;
+  html+=`<div class="choices">${c.c.map((o,i)=>`<button class="choice" data-h="${h}" data-i="${i}" aria-pressed="${p===i}" ${r!=null?"disabled":""}><span>${esc(o[0])}<span class="sk">${esc(o[1])} check</span></span><span class="dc">DC ${o[2]}</span></button>`).join("")}</div>`;
+  if(p!=null){
+    html+=`<div class="tray"><button class="die" data-h="${h}" aria-label="${name}: roll the d20" ${r!=null?"disabled":""}><svg viewBox="0 0 100 100"><polygon points="50,4 93,28 93,72 50,96 7,72 7,28"/><text x="50" y="62" text-anchor="middle">${r??20}</text></svg></button>
+      <div class="need">${r==null?`${name}, tap the die.<br>Need ${c.c[p][2]} or higher.`:`${name} rolled ${r}`}</div></div>`;
   }
-  navigator.geolocation.getCurrentPosition(async (pos)=>{
-    const { latitude, longitude } = pos.coords;
-    try{
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,precipitation_probability_max,weathercode&temperature_unit=fahrenheit&timezone=auto`;
-      const res = await fetch(url);
-      const data = await res.json();
-      const hi = Math.round(data.daily.temperature_2m_max[0]);
-      const pop = data.daily.precipitation_probability_max[0];
-      const code = data.daily.weathercode[0];
-      const w = weatherLabel(code);
-      iconEl.textContent = w.icon;
-      tempEl.textContent = `${hi}°F High`;
-      subEl.textContent = `${w.label} · ${pop}% chance precip`;
-    }catch(e){
-      subEl.textContent = 'Weather unavailable';
+  if(r!=null)html+=heroResult(h);
+  return html+`</div>`;
+}
+
+function renderDnd(){
+  $("restartMsg").textContent="";
+  if(camp.ch>=STORY.length){
+    $("chTitle").textContent="Campaign complete";
+    $("chNum").textContent=`${STORY.length} chapters finished`;
+    $("scene").textContent=`${heroes[0]} and ${heroes[1]} saved Hollowbrook. Restart below to play it again with new choices.`;
+    $("turns").innerHTML="";$("party").hidden=true;$("nextRow").hidden=true;
+    renderLog();return;
+  }
+  const c=STORY[camp.ch];
+  $("chTitle").textContent=c.t;
+  $("chNum").textContent=`Chapter ${camp.ch+1} of ${STORY.length} · both heroes choose and roll`;
+  $("scene").textContent=c.s;
+  $("turns").innerHTML=turnHTML(0)+turnHTML(1);
+  $("turns").querySelectorAll(".choice").forEach(b=>b.onclick=()=>{const h=+b.dataset.h;if(camp.rolls[h]!=null)return;camp.picks[h]=+b.dataset.i;save();renderDnd()});
+  $("turns").querySelectorAll(".die").forEach(b=>b.onclick=()=>roll(+b.dataset.h,b));
+  renderParty();renderLog();
+}
+
+function renderParty(){
+  if(!bothDone()){$("party").hidden=true;$("nextRow").hidden=true;return}
+  const c=STORY[camp.ch];
+  const wins=[0,1].filter(h=>camp.rolls[h]>=c.c[camp.picks[h]][2]).length;
+  const [a,b]=heroes;
+  let H,P;
+  if(wins===2){H="Party victory!";P=`${a} and ${b} both pulled it off. The party moves on in style.`}
+  else if(wins===1){const w=camp.rolls[0]>=c.c[camp.picks[0]][2]?a:b,l=w===a?b:a;H="Teamwork saves the day";P=`${w} came through, so ${l} gets a hand up. The party presses on together.`}
+  else{H="A rough day for the party";P=`${a} and ${b} both stumbled, but heroes don't quit. The story goes on, just a bit messier.`}
+  if(camp.rolls[0]===20&&camp.rolls[1]===20)P+=" DOUBLE NATURAL 20! Legendary!";
+  $("party").hidden=false;$("partyH").textContent=H;$("partyP").textContent=P;
+  $("nextRow").hidden=false;
+  $("nextHint").textContent=camp.day===dayKey?"Or save it for tomorrow.":"";
+}
+
+function roll(h,btn){
+  if(camp.rolls[h]!=null||camp.picks[h]==null)return;
+  const txt=btn.querySelector("text");btn.classList.add("spin");btn.disabled=true;let n=0;
+  const tick=setInterval(()=>{txt.textContent=1+Math.floor(Math.random()*20);if(++n>12)clearInterval(tick)},50);
+  setTimeout(()=>{
+    const a=new Uint32Array(1);crypto.getRandomValues(a);camp.rolls[h]=1+(a[0]%20);camp.day=dayKey;
+    if(bothDone()){
+      const c=STORY[camp.ch];
+      const part=k=>{const o=c.c[camp.picks[k]];return `${heroes[k]}: ${o[0]} (rolled ${camp.rolls[k]}, ${camp.rolls[k]>=o[2]?"success":"fail"})`};
+      camp.log.push(`${c.t} — ${part(0)}; ${part(1)}`);
     }
-  }, ()=>{
-    subEl.textContent = 'Enable location for weather';
-  });
+    save();renderDnd();
+  },700);
 }
-document.getElementById('weatherCard').addEventListener('click', loadWeather);
 
-/* ---------- DAILY GRIT QUOTE ---------- */
-const GRIT_QUOTES = [
-  "Stand tall today. Your shield is discipline, and it never runs out.",
-  "The hammer falls not from anger, but from resolve.",
-  "A steady wall holds more ground than a wild swing.",
-  "Protect what matters — your work, your family, your word.",
-  "Every rep, every rest, every choice — armor for tomorrow.",
-  "The strongest gate is the one you show up to guard daily.",
-  "Small victories, stacked, become an unbreakable line.",
-  "Lead with your chest up. Others are watching how you carry weight.",
-  "Rest is not retreat — it's how the wall stays standing.",
-  "Discipline today is the shield your future self leans on.",
-  "Hold the line, even when no one's cheering.",
-  "Strength serves best when it protects someone else.",
-];
-function loadGritQuote(){
-  const dayIndex = Math.floor(Date.now() / 86400000); // days since epoch, stable all day
-  const quote = GRIT_QUOTES[dayIndex % GRIT_QUOTES.length];
-  document.getElementById('quoteText').textContent = quote;
-}
-loadGritQuote();
+$("nextCh").onclick=()=>{camp.ch++;camp.picks=[null,null];camp.rolls=[null,null];save();renderDnd();window.scrollTo({top:0,behavior:"smooth"})};
+let armed=false;
+$("restart").onclick=()=>{
+  if(!armed){armed=true;$("restartMsg").textContent="Tap again to wipe progress";setTimeout(()=>{armed=false;$("restartMsg").textContent=""},3000);return}
+  armed=false;camp=fresh();save();renderDnd();
+};
+function renderLog(){$("log").innerHTML=camp.log.length?camp.log.map(l=>`<li>${esc(l)}</li>`).join(""):"<li>No chapters played yet.</li>"}
 
-/* ---------- INIT ---------- */
-function renderAll(){
-  renderHeader();
-  renderWeekTabs();
-  renderDayTabs();
-  renderCardio();
-  renderHam();
-  renderWarmup();
-  renderExercises();
-  renderFuel();
-  renderCheckin();
-  renderQuest();
-  updateRing();
+/* ---------- Tabs ---------- */
+function tab(n){
+  document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===n));
+  ["today","lift","dnd"].forEach(t=>$(t+"-p").hidden=t!==n);
 }
-renderAll();
-switchTab('goals'); // VAKT is the default landing tab
-loadWeather();
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>tab(b.dataset.tab));
+$("goLift").onclick=()=>tab("lift");$("goDnd").onclick=()=>tab("dnd");
+renderNext();renderLift();renderDnd();
 </script>
 </body>
 </html>
