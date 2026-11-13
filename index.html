@@ -16,6 +16,7 @@
   --bg:#121a1b; --surface:#1a2526; --ink:#e4ecea; --muted:#9aaead; --line:#2c3a3b;
   --accent:#4fb3ac; --accent-ink:#0d1516; --brass:#d6a64e; --good:#5cc489; --bad:#e57a63; color-scheme:dark}}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font:17px/1.5 var(--body);margin:0}
 .wrap{max-width:640px;margin:0 auto;padding-inline:16px;padding-block:16px 48px}
 h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;font-weight:700}
@@ -33,6 +34,8 @@ section{display:flex;flex-direction:column;gap:18px}
 .quote cite{color:var(--muted);font-style:normal;font-size:.9rem}
 .quote.genji{border-color:var(--good)}
 .quote.exist{border-color:var(--brass)}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.fact p{margin:6px 0 0;font-size:1.08rem;line-height:1.45}
 hr{border:0;border-top:1px solid var(--line);margin:4px 0}
 .days{display:flex;gap:6px;flex-wrap:wrap}
 .days button{flex:1;min-width:70px;padding:8px 6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;font:600 .9rem var(--body);cursor:pointer}
@@ -107,7 +110,8 @@ details summary{cursor:pointer;color:var(--muted);font-size:.95rem}
 
   <section id="today-p">
     <div class="quote exist"><div class="label">Existential</div><p id="q1"></p><cite id="q1a"></cite></div>
-    <div class="quote genji"><div class="label">Genji</div><p id="q2"></p><cite>Genji, Overwatch</cite></div>
+    <div class="quote genji"><div class="label">Overwatch</div><p id="q2"></p><cite id="q2a"></cite></div>
+    <div class="fact"><div class="label">Fun fact for the boys</div><p id="fact"></p></div>
     <hr>
     <div><div class="label">Up next</div><h2 id="nextDay"></h2><div class="cardio">30 min uphill treadmill walk, then 3 sets each</div></div>
     <div class="row"><button class="btn" id="goLift">Open workout</button><button class="btn ghost" id="goDnd">Today's adventure</button></div>
@@ -165,10 +169,49 @@ const EXIST=[
  ["The struggle itself toward the heights is enough to fill a man's heart.","Albert Camus"],
  ["Become who you are.","Friedrich Nietzsche"]
 ];
-const GENJI=["Measure twice, cut once.","A steady blade balances the soul.","The dragon becomes me!","Ryūjin no ken wo kurae!","I need healing.","My soul seeks balance."];
-const eq=EXIST[dayNum%EXIST.length];
+const OW=[
+ ["The world could always use more heroes!","Tracer"],
+ ["Heroes never die!","Mercy"],
+ ["Cheers, love! The cavalry's here!","Tracer"],
+ ["Our world is worth fighting for.","Mei"],
+ ["Imagination is the essence of discovery.","Winston"],
+ ["Oh, let's break it down!","Lúcio"],
+ ["Experience tranquility.","Zenyatta"],
+ ["I am your shield!","Reinhardt"],
+ ["Don't worry, I've got your back!","Brigitte"],
+ ["A steady blade balances the soul.","Genji"]
+];
+const FACTS=[
+ "Octopuses have three hearts and blue blood.",
+ "A group of flamingos is called a flamboyance.",
+ "Sea otters hold hands while they sleep so they don't float away from each other.",
+ "Blue whales are the biggest animals that have ever lived, even bigger than any dinosaur.",
+ "Butterflies taste with their feet.",
+ "Wombat poop comes out shaped like little cubes.",
+ "There are more trees on Earth than stars in our galaxy, the Milky Way.",
+ "A day on Venus is longer than a whole year on Venus.",
+ "Hummingbirds are the only birds that can fly backwards.",
+ "Sharks have been around longer than trees.",
+ "Lightning is about five times hotter than the surface of the Sun.",
+ "Polar bears have black skin under their fur, and their fur isn't really white, it's see-through.",
+ "Elephants are the only mammals that can't jump.",
+ "Owls can't move their eyes, so they turn their heads almost all the way around instead.",
+ "Antarctica is the biggest desert in the world. A desert just means very little rain or snow falls there.",
+ "Bananas count as berries, but strawberries don't.",
+ "Babies are born with about 300 bones. Some join together as they grow, so adults have 206.",
+ "Crows can remember human faces for years, and they can tell other crows about you.",
+ "A shrimp's heart is in its head.",
+ "Saturn is so light for its size that it would float in a giant enough bathtub.",
+ "Dolphins sleep with half of their brain at a time, so they can keep swimming and breathing.",
+ "Mount Everest grows a tiny bit taller every year.",
+ "Honey never goes bad. Honey found in ancient Egyptian tombs was still good to eat.",
+ "Sloths can hold their breath for up to 40 minutes underwater.",
+ "Gentoo penguins give their favorite penguin a special pebble to say 'I like you.'"
+];
+const eq=EXIST[dayNum%EXIST.length],oq=OW[dayNum%OW.length];
 $("q1").textContent="“"+eq[0]+"”";$("q1a").textContent=eq[1];
-$("q2").textContent="“"+GENJI[dayNum%GENJI.length]+"”";
+$("q2").textContent="“"+oq[0]+"”";$("q2a").textContent=oq[1]+", Overwatch";
+$("fact").textContent=FACTS[dayNum%FACTS.length];
 
 /* ---------- Workout ---------- */
 const PLAN=[
