@@ -23,8 +23,8 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;font-weight:700}
 h1{font-size:1.6rem;letter-spacing:.02em}
 h2{font-size:1.3rem}
 .date{color:var(--muted);font-size:.9rem}
-nav{display:flex;gap:6px;margin:14px 0 20px;border-bottom:1px solid var(--line)}
-nav button{flex:1;background:none;border:0;border-bottom:3px solid transparent;padding:10px 4px;font:600 1rem var(--body);color:var(--muted);cursor:pointer}
+nav{display:flex;gap:2px;margin:14px 0 20px;border-bottom:1px solid var(--line)}
+nav button{flex:1;background:none;border:0;border-bottom:3px solid transparent;padding:10px 0;font:600 .95rem var(--body);color:var(--muted);cursor:pointer;white-space:nowrap}
 nav button[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
 button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 .label{font:600 .72rem var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--brass)}
@@ -36,6 +36,16 @@ section{display:flex;flex-direction:column;gap:18px}
 .quote.exist{border-color:var(--brass)}
 .fact{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
 .fact p{margin:6px 0 0;font-size:1.08rem;line-height:1.45}
+.teaser{display:flex;align-items:center;gap:12px}
+.teaser>div{flex:1;min-width:0}
+.anchor{font:700 1.15rem/1.4 var(--display);color:var(--accent);margin:0;text-wrap:balance}
+.read{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.read p{margin:0}
+.read .txt{font-size:1.1rem;line-height:1.55}
+.practice{border-left:3px solid var(--good);padding-left:12px}
+.practice p{margin-top:4px}
+.src{color:var(--muted);font-size:.85rem}
+.note{color:var(--muted);font-size:.85rem;margin:0}
 hr{border:0;border-top:1px solid var(--line);margin:4px 0}
 .days{display:flex;gap:6px;flex-wrap:wrap}
 .days button{flex:1;min-width:70px;padding:8px 6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;font:600 .9rem var(--body);cursor:pointer}
@@ -50,6 +60,7 @@ hr{border:0;border-top:1px solid var(--line);margin:4px 0}
 .sets button{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);background:var(--surface);color:var(--muted);font:600 .85rem var(--mono);cursor:pointer}
 .sets button.on{background:var(--good);border-color:var(--good);color:var(--surface)}
 .btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:11px 16px;font:700 1rem var(--body);cursor:pointer}
+.btn:disabled{opacity:.6;cursor:default}
 .btn.ghost{background:none;color:var(--accent);border:1px solid var(--line)}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .chap{color:var(--muted);font-size:.9rem}
@@ -94,6 +105,41 @@ hr{border:0;border-top:1px solid var(--line);margin:4px 0}
 .log{font-size:.92rem;color:var(--muted);display:flex;flex-direction:column;gap:6px;padding-left:18px;margin:0}
 details summary{cursor:pointer;color:var(--muted);font-size:.95rem}
 @media (prefers-reduced-motion:reduce){.die svg{transition:none}}
+
+/* Fuel */
+.mono{font:600 .78rem var(--mono);color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 6px;text-align:center}
+.stat b{display:block;font:700 1.15rem var(--mono);color:var(--accent);font-variant-numeric:tabular-nums}
+.stat span{font-size:.8rem;color:var(--muted)}
+.meal{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.meal .when{width:76px;flex:none;font:600 .72rem var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--brass);padding-top:3px}
+.meal .nm{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.meal .nm>span{color:var(--muted);font-size:.9rem}
+.meal.dinner b{color:var(--accent)}
+.tag{display:inline-block;font:600 .7rem var(--mono);text-transform:uppercase;letter-spacing:.05em;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted)}
+.bars{display:flex;flex-direction:column;gap:8px}
+.bar-top{display:flex;justify-content:space-between;font-size:.88rem}
+.track{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.fill{height:100%;background:var(--accent);border-radius:4px}
+.warn{margin:0;padding:10px 12px;border-left:3px solid var(--brass);background:var(--surface);font-size:.95rem}
+.wkl{display:flex;flex-direction:column}
+.wk{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:.95rem}
+.wk .dw{width:36px;flex:none;font:600 .8rem var(--mono);color:var(--muted)}
+.wk .dn{flex:1;min-width:0}
+.wk.now .dw,.wk.now .dn{color:var(--accent);font-weight:700}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.card h3{font-size:1.2rem}
+.card .per{color:var(--ink)}
+.ing,.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.steps{gap:8px}
+.rec{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.rec summary{display:flex;flex-direction:column;gap:2px;color:var(--ink);list-style:none}
+.rec summary::-webkit-details-marker{display:none}
+.rec[open] summary{margin-bottom:10px}
+.rec .steps{margin-top:10px}
+.fold summary{font:600 1rem var(--body);color:var(--accent)}
+.fold>div{margin-top:10px;display:flex;flex-direction:column;gap:6px}
 </style>
 </head>
 <body>
@@ -104,7 +150,9 @@ details summary{cursor:pointer;color:var(--muted);font-size:.95rem}
   </header>
   <nav role="tablist">
     <button role="tab" aria-selected="true" data-tab="today">Today</button>
+    <button role="tab" aria-selected="false" data-tab="body">Body</button>
     <button role="tab" aria-selected="false" data-tab="lift">Workout</button>
+    <button role="tab" aria-selected="false" data-tab="fuel">Fuel</button>
     <button role="tab" aria-selected="false" data-tab="dnd">Adventure</button>
   </nav>
 
@@ -112,9 +160,25 @@ details summary{cursor:pointer;color:var(--muted);font-size:.95rem}
     <div class="quote exist"><div class="label">Existential</div><p id="q1"></p><cite id="q1a"></cite></div>
     <div class="quote genji"><div class="label">Overwatch</div><p id="q2"></p><cite id="q2a"></cite></div>
     <div class="fact"><div class="label">Fun fact for the boys</div><p id="fact"></p></div>
+    <div class="fact teaser"><div><div class="label">Body read</div><p id="bTeaser"></p></div><button class="btn ghost" id="goBody">Read</button></div>
+    <div class="fact teaser"><div><div class="label">Tonight's dinner</div><p id="fTeaser"></p></div><button class="btn ghost" id="goFuel">Plan</button></div>
     <hr>
     <div><div class="label">Up next</div><h2 id="nextDay"></h2><div class="cardio">15 min uphill treadmill walk, then 3 sets each</div></div>
     <div class="row"><button class="btn" id="goLift">Open workout</button><button class="btn ghost" id="goDnd">Today's adventure</button></div>
+  </section>
+
+  <section id="body-p" hidden>
+    <p class="anchor">I am healthy. My body heals itself every day. A sensation is a signal, not an emergency.</p>
+    <article class="read">
+      <div class="label" id="bLabel"></div>
+      <h2 id="bTitle"></h2>
+      <p class="txt" id="bText"></p>
+      <div class="practice"><div class="label">Today's practice</div><p id="bPrac"></p></div>
+      <p class="src" id="bSrc"></p>
+    </article>
+    <div class="row"><button class="btn" id="bDone">I read it today</button><span class="chap" id="bStreak"></span></div>
+    <div class="row"><button class="btn ghost" id="bPrev">‹ Previous</button><button class="btn ghost" id="bNext">Next ›</button><button class="btn ghost" id="bBack">Back to today</button></div>
+    <p class="note">A new set of reads every month, one for each day. These support the work on worry. They don't replace a doctor for something new that lasts or keeps getting worse.</p>
   </section>
 
   <section id="lift-p" hidden>
@@ -122,6 +186,23 @@ details summary{cursor:pointer;color:var(--muted);font-size:.95rem}
     <div><h2 id="dayTitle"></h2><div class="cardio" id="dayNote"></div></div>
     <div id="exList"></div>
     <div class="row"><button class="btn" id="finish">Mark day complete</button><button class="btn ghost" id="resetDay">Clear sets</button></div>
+  </section>
+
+  <section id="fuel-p" hidden>
+    <div><div class="label">Mediterranean plan</div><h2>Daily targets</h2></div>
+    <div class="stats" id="fTargets"></div>
+    <p class="note">Fish and turkey most nights, red meat once a week, lentils and beans where they fit, and olive oil as the main fat. About 30 g of fiber or more a day.</p>
+    <div><div class="label">Today</div><div id="fToday"></div></div>
+    <div class="bars" id="fTotals"></div>
+    <p class="warn" id="fGap" hidden></p>
+    <hr>
+    <div><div class="label">This week's dinners</div><div class="wkl" id="fWeek"></div></div>
+    <div><div class="label">Sunday meal prep</div><p class="note" style="margin-top:4px">It rotates weekly. Tap another one to swap it in for this week.</p></div>
+    <div class="days" id="fPick"></div>
+    <article class="card" id="fPrep"></article>
+    <div><div class="label">Cook-fresh nights</div></div>
+    <div id="fFresh" style="display:flex;flex-direction:column;gap:10px"></div>
+    <details class="fold"><summary>This week's grocery list</summary><div id="fGrocery"></div></details>
   </section>
 
   <section id="dnd-p" hidden>
@@ -376,14 +457,227 @@ $("restart").onclick=()=>{
 };
 function renderLog(){$("log").innerHTML=camp.log.length?camp.log.map(l=>`<li>${esc(l)}</li>`).join(""):"<li>No chapters played yet.</li>"}
 
+/* ---------- Body (health anxiety daily read) ----------
+   One set of reads per month, keyed "YYYY-MM". Read N shows on day N of the month.
+   If the current month has no set yet, the newest set is used. */
+const BODY_SETS={};
+BODY_SETS["2026-11"]=[
+ {t:"Your body is mostly new",b:"The lining of your gut replaces itself every 3 to 5 days. Red blood cells live about 120 days, and your bone marrow makes fresh ones every second of your life. The outer layer of your skin renews itself roughly every month. Your body isn't a machine slowly wearing out. It's a system that rebuilds itself all day, every day, without being asked.",p:"When you notice a sensation today, tell yourself: “My body is rebuilding right now.”",s:"Lodish et al., Molecular Cell Biology (intestinal stem cells); standard human physiology"},
+ {t:"Repair is happening in every cell",b:"The DNA in each of your cells is damaged tens of thousands of times a day, just from normal metabolism. Repair systems find and fix almost all of it, continuously, in the background. Scientists won the 2015 Nobel Prize in Chemistry for mapping how this works. Damage is constant, and so is repair. That's what a healthy body looks like.",p:"Picture the repair crews already working. You don't have to supervise them.",s:"Nobel Prize in Chemistry 2015 (Lindahl, Modrich, Sancar); DNA repair reviews"},
+ {t:"Healthy people have symptoms",b:"In a large Norwegian population study, ordinary adults reported an average of about 5 to 7 different symptoms from a list of 23, like aches, tiredness, dizziness and stomach upset. Researchers concluded symptoms are a common daily experience and, in most cases, aren't linked to serious illness. Feeling things in your body is normal. It's not evidence that something is wrong.",p:"Count one ordinary sensation today and label it “normal body noise.”",s:"Kjeldsberg et al., Scand J Prim Health Care, 2013 (Ullensaker study); Petrie et al., BMJ Open, 2014"},
+ {t:"Skipped heartbeats are common",b:"A Swiss study put 24-hour heart monitors on 2,048 healthy adults aged 25 to 41. 69% had at least one extra or skipped beat (a PVC) during the day. In people with healthy hearts, occasional extra beats carry the same outlook as everyone else. Caffeine, stress, poor sleep and anxiety all make them more noticeable.",p:"If you feel a flutter, notice it, then keep doing exactly what you were doing.",s:"von Rotz et al., Heart, 2017; StatPearls: Premature Ventricular Contraction"},
+ {t:"Your heart is supposed to change speed",b:"Your heart speeds up a little every time you breathe in and slows down every time you breathe out. This is called respiratory sinus arrhythmia, and it's a sign of a flexible, healthy nervous system. A heart rate that shifts with breathing, movement and emotion is a heart that's responding well, not one that's failing.",p:"Breathe in for 4, out for 6, for two minutes. Feel your heart slow on each exhale.",s:"Respiratory sinus arrhythmia and heart rate variability, standard cardiovascular physiology"},
+ {t:"Adrenaline is a protector",b:"A racing heart, tight chest, tingling hands, shaky legs and lightheadedness are what adrenaline does. It sends blood to your muscles and speeds up your breathing so you can act. It feels alarming, but it's your body working exactly as designed, and it fades within minutes as your body clears it. These sensations are uncomfortable, not dangerous.",p:"Next time it hits, name it out loud: “That's adrenaline. It'll pass.”",s:"Fight-or-flight response, standard physiology; CBT models of panic (Clark, 1986)"},
+ {t:"Attention turns up the volume",b:"Psychologist James Pennebaker found that people notice more body sensations when there's less going on around them. In one study, joggers on a varied cross-country trail ran faster and reported less fatigue than on a plain lap track. The body sends signals constantly. What changes is how many your brain lets through, and focus turns the volume up.",p:"When a sensation grabs you, name 5 things you can see. Watch the volume drop.",s:"Pennebaker & Lightner, J Pers Soc Psychol, 1980; Pennebaker, The Psychology of Physical Symptoms"},
+ {t:"Your brain predicts what you feel",b:"Modern neuroscience shows that what you feel is partly your brain's best guess, built from incoming signals plus what it expects. When your brain expects danger, ordinary signals feel more threatening. That's why the same twinge can feel like nothing on a busy day and like an emergency at 2 a.m. Change the expectation and the experience changes too.",p:"Ask: “Is this the signal, or my brain's prediction about the signal?”",s:"Predictive processing models of interoception (Barrett & Simmons, Nat Rev Neurosci, 2015)"},
+ {t:"Expectation can create real symptoms",b:"In the SAMSON trial, published in the New England Journal of Medicine in 2020, people who'd quit statins because of side effects took statins, placebo pills and no pills in rotation. About 90% of the symptoms they felt on the statin showed up on the sugar pill too. That's the nocebo effect: expecting harm creates real, physical sensations. Your symptoms are real, and some of them are made by worry.",p:"When a symptom shows up after a worry, ask: “How much of this is expectation?”",s:"Wood et al., N Engl J Med, 2020 (SAMSON trial)"},
+ {t:"Googling makes it worse",b:"Microsoft researchers studied millions of health searches. Searches for common symptoms like headache, chest pain and muscle twitches often escalated to pages about rare, serious diseases. They called it “cyberchondria.” Search engines show you what's dramatic and clicked, not what's likely, so the rare explanation looks common.",p:"No symptom searching today. If the urge comes, wait 30 minutes and see if it passes.",s:"White & Horvitz, ACM Transactions on Information Systems, 2009"},
+ {t:"Checking keeps the worry alive",b:"The leading model of health anxiety, from Salkovskis and Warwick at Oxford, found that checking your body and asking for reassurance are what keep the worry going. Each check brings relief for a moment, which teaches your brain that the threat was real and checking is what saved you. Then the doubt comes back stronger. Fewer checks means less fuel.",p:"Pick one check you'll skip today, like pressing, scanning, the mirror or asking someone.",s:"Salkovskis & Warwick, Behav Res Ther, 1986; Warwick & Salkovskis, 1990"},
+ {t:"This is very treatable, and Sweden leads the research",b:"Some of the strongest research on health anxiety comes from Karolinska Institutet in Stockholm. Their trials found exposure-based CBT produced large improvements in severe health anxiety, and that internet-delivered CBT worked as well as face-to-face therapy. Health anxiety isn't a life sentence. It's one of the more treatable anxiety problems.",p:"Exposure means letting a sensation be there fully, without checking or fixing it. Try it for one minute.",s:"Axelsson et al., JAMA Psychiatry, 2020; Hedman et al., Br J Psychiatry, 2014"},
+ {t:"Less anxiety, healthier you feel",b:"In a Karolinska trial, people who completed 12 weeks of exposure-based CBT rated their own health as better, even though their bodies hadn't changed. The improvement came from lower health anxiety. Much of feeling unwell came from the worry itself, not from the body. When the alarm quiets, the body feels like what it is: healthy.",p:"Rate your health 1–10 today. Then ask: how much of that number is worry?",s:"Hedman-Lagerlöf et al., Psychol Med (self-rated health in exposure-based CBT)"},
+ {t:"Lifting is damage your body repairs",b:"Every time you lift, you create tiny tears in your muscle fibers. Your body repairs them and builds them back thicker and stronger. That's the whole reason training works. The soreness that peaks a day or two after a hard session is repair in progress. You prove your body heals every time you train.",p:"Next time you're sore, label it out loud: “Rebuilding.”",s:"Exercise physiology: muscle damage, repair and hypertrophy; delayed-onset muscle soreness (DOMS)"},
+ {t:"Strength training protects you",b:"A 2022 meta-analysis in the British Journal of Sports Medicine pooled 16 studies. Regular muscle-strengthening was linked to a 10 to 17% lower risk of early death, heart disease, cancer and diabetes, with the biggest benefit around 30 to 60 minutes a week. Pairing it with aerobic activity lowered risk further. Lifting plus walking is exactly that pairing.",p:"Before your next workout, remind yourself: “This is one of the most protective things I can do.”",s:"Momma et al., Br J Sports Med, 2022"},
+ {t:"The liver grows back",b:"Surgeons can remove up to about two-thirds of a healthy liver, and the rest regrows to near-full size within weeks. Living liver donation depends on this. One person gives part of their liver, and both people end up with a working, full-size organ. That's how much repair capacity your body holds in reserve.",p:"Think of one injury or illness your body has already recovered from.",s:"Michalopoulos, Am J Pathol, 2010 (liver regeneration); living-donor liver transplantation"},
+ {t:"Your skeleton rebuilds itself",b:"Bone isn't static. Your body tears down and rebuilds about 10% of your skeleton every year, which adds up to roughly a new skeleton every decade. When a bone breaks, repair starts within hours: a clot, then soft cartilage, then new hard bone. Lifting tells this system to build bone denser.",p:"Feel the weight on the bar today as a signal to build, not a strain.",s:"Bone remodeling, standard physiology; fracture healing stages"},
+ {t:"Wounds close themselves",b:"Within seconds of a cut, the blood vessels nearby narrow and platelets rush in to plug the gap. Within minutes, a clot forms. Over the following days immune cells clean the area, new tissue fills in, and skin grows across the top. You never had to decide any of it. Your body heals on its own.",p:"Notice one small scrape, bruise or scar. Your body handled it without you.",s:"Phases of wound healing (hemostasis, inflammation, proliferation, remodeling)"},
+ {t:"Fever and swollen glands mean it's working",b:"A fever makes your body a worse home for germs and speeds up your immune cells. Swollen lymph nodes during a cold are immune cells multiplying to fight it. These are signs of defense, not damage, and they usually settle once the infection clears. Feeling sick is often what fighting off an illness feels like.",p:"Next time you're run down, reframe it: “That's my defense system on duty.”",s:"Evans et al., Nat Rev Immunol, 2015 (fever and immunity); lymph node physiology"},
+ {t:"Your immune system remembers",b:"After you fight off an infection or get vaccinated, your body keeps memory B cells and T cells that recognize that threat. Many of these last for years, and some for decades. Every illness you've recovered from has left your body better trained. You aren't fragile. You've been building defenses your whole life.",p:"Think of how many colds and bugs you've already beaten. That's your track record.",s:"Immunological memory (Crotty & Ahmed, Immunol Rev; Hammarlund et al., Nat Med, 2003)"},
+ {t:"Sleep is repair time",b:"Deep sleep is when your body releases its biggest pulses of growth hormone, which drives tissue and muscle repair. Studies in mice found the brain clears waste much faster during sleep. Poor sleep also makes ordinary sensations feel bigger and makes anxiety louder the next day. Protecting sleep is part of healing.",p:"Tonight, put the phone away 30 minutes before bed. No symptom reading in bed.",s:"Xie et al., Science, 2013; Van Cauter, growth hormone and sleep"},
+ {t:"Slow breathing is a real lever",b:"Slowing your breathing to about six breaths a minute activates the vagus nerve, which signals your body to calm down. A 2018 systematic review found slow breathing reliably increases relaxation and lowers anxiety. This isn't a trick. It's a direct line from your lungs to your nervous system's brake pedal.",p:"Do 2 minutes now: in for 4, out for 6.",s:"Zaccaro et al., Front Hum Neurosci, 2018"},
+ {t:"A thought is not a diagnosis",b:"Acceptance and Commitment Therapy teaches defusion: noticing a thought as a thought. Saying “I'm having the thought that this is serious” instead of “this is serious” lowers how believable and upsetting the thought feels, and studies back this up. Your mind will offer scary stories. You don't have to buy them.",p:"Catch one health worry today and add: “I'm having the thought that…”",s:"Hayes et al., Acceptance and Commitment Therapy; Masuda et al., Behav Res Ther, 2004"},
+ {t:"Certainty isn't the goal",b:"No one, not even a doctor with every test, gets 100% certainty about their health. Research shows that struggling to tolerate uncertainty is a core driver of health anxiety. Recovery doesn't come from finally getting proof you're fine. It comes from getting comfortable living without proof, the way healthy people do every day without thinking about it.",p:"When a “what if” shows up, answer: “Maybe, maybe not,” and get back to your day.",s:"Fergus & Bardeen, J Anxiety Disord (intolerance of uncertainty and health anxiety)"},
+ {t:"Give worry an appointment",b:"Worry postponement means picking a set 15-minute window each day for worrying. When a worry shows up outside it, you note it and save it for later. Studies going back to Borkovec in the 1980s show this reduces how much people worry. By the time worry time comes, many worries have already lost their grip.",p:"Pick a 15-minute worry time today. Save every health worry for it.",s:"Borkovec et al., Behav Res Ther, 1983; McGowan & Behar, Behav Modif, 2013"},
+ {t:"Muscle twitches are common",b:"Small muscle twitches in your eyelid, calf, thumb or anywhere else are extremely common in healthy people. Caffeine, stress, hard training, poor sleep and anxiety all make them worse. Twitching with normal strength is overwhelmingly benign. Neurologists call it benign fasciculation, and benign is the key word.",p:"If you notice a twitch, don't test your strength. Let it twitch and keep going.",s:"Benign fasciculation syndrome, neurology literature; Blexrud et al., Ann Neurol, 1993"},
+ {t:"Normal is a range, not a number",b:"Body temperature naturally shifts by around half a degree to a degree Celsius over the day. It's lowest in the early morning and highest in the late afternoon. The famous 37.0°C (98.6°F) comes from the 1800s, and a 2020 Stanford study found today's average is a bit lower. Your body is always moving within a healthy range.",p:"When a number or a feeling is a little different from yesterday, say: “Normal is a range.”",s:"Protsiv et al., eLife, 2020; circadian temperature rhythm"},
+ {t:"Hope is good for your health",b:"Harvard and Boston University researchers followed about 70,000 women and 1,400 men for decades. The most optimistic people lived 11 to 15% longer on average and were more likely to reach 85. The study shows a link, not proof that optimism causes long life. But choosing the realistic, hopeful story about your body is a reasonable bet.",p:"Write down one thing your body did well this week.",s:"Lee et al., PNAS, 2019"},
+ {t:"Anxiety is learned, so it can be unlearned",b:"Fear responses are learned through repetition, and the brain can learn new responses the same way. This is called extinction learning, and it's how exposure therapy works. Each time you feel a sensation and don't check, Google or panic, your brain logs a new lesson: this is safe. Every repetition makes the new lesson stronger.",p:"Count how many times today you let a sensation pass without acting on it.",s:"Craske et al., Behav Res Ther, 2014 (inhibitory learning and exposure)"},
+ {t:"Checkups beat checking",b:"Healthy people still see doctors. The difference is planning. They get routine checkups on a schedule and have a clear rule for when to call, like a new symptom that lasts a couple of weeks or clearly gets worse, or anything sudden and severe. Outside of that, there's no checking. CBT for health anxiety uses this approach: decide the rule once so your brain doesn't have to decide every day.",p:"Write your “when I'd call the doctor” rule once. Then trust it.",s:"CBT for health anxiety treatment protocols (Furer & Walker; Taylor & Asmundson, Treating Health Anxiety)"}
+];
+/* NEXT_MONTH_SETS_GO_HERE */
+const bMonth=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0");
+const BODY=BODY_SETS[bMonth]||BODY_SETS[Object.keys(BODY_SETS).filter(k=>k<=bMonth).sort().pop()||Object.keys(BODY_SETS).sort()[0]];
+const bToday=(now.getDate()-1)%BODY.length;
+let bView=bToday;
+let bDays=store.get("dq_body_days",[]);
+function bStreak(){
+  const set=new Set(bDays);let n=0;const d=new Date(dayKey+"T00:00:00Z");
+  if(!set.has(dayKey))d.setUTCDate(d.getUTCDate()-1);
+  while(set.has(d.toISOString().slice(0,10))){n++;d.setUTCDate(d.getUTCDate()-1)}
+  return n;
+}
+function renderBody(){
+  const r=BODY[bView];
+  $("bLabel").textContent=bView===bToday?"Today's read":"Read "+(bView+1)+" of "+BODY.length;
+  $("bTitle").textContent=r.t;$("bText").textContent=r.b;$("bPrac").textContent=r.p;$("bSrc").textContent="Source: "+r.s;
+  $("bBack").hidden=bView===bToday;
+  const done=bDays.includes(dayKey);
+  $("bDone").textContent=done?"Read today ✓":"I read it today";$("bDone").disabled=done;
+  const s=bStreak();$("bStreak").textContent=s?`${s}-day streak`:"";
+  $("bTeaser").textContent=BODY[bToday].t;
+}
+$("bPrev").onclick=()=>{bView=(bView-1+BODY.length)%BODY.length;renderBody()};
+$("bNext").onclick=()=>{bView=(bView+1)%BODY.length;renderBody()};
+$("bBack").onclick=()=>{bView=bToday;renderBody()};
+$("bDone").onclick=()=>{if(!bDays.includes(dayKey)){bDays.push(dayKey);bDays=bDays.slice(-120);store.set("dq_body_days",bDays)}renderBody()};
+renderBody();
+
+/* ---------- Fuel (Mediterranean plan) ---------- */
+/* Nutrition per base amount: [per, kcal, protein, carbs, fat, fiber] */
+const FOOD={
+ oats:[40,150,5,27,3,4], bsugar:[4,15,0,4,0,0], chia:[12,58,2,5,3.7,4], milk:[1,102,8,12,2.4,0],
+ egg:[1,72,6.3,0.4,4.8,0], whites:[0.5,63,13,1,0,0], toast:[1,100,5,17,1.5,3],
+ almonds:[1,164,6,6,14,3.5], whey:[1,120,25,3,1.5,0], apple:[1,95,0.5,25,0.3,4.4],
+ yogurt:[1,130,23,9,0,0], berries:[0.5,42,0.5,11,0.2,1.8],
+ turkey:[100,150,18.7,0,8.3,0],
+ salmon:[100,208,20,0,13,0], shrimp:[100,85,20,0,0.5,0], cod:[100,82,18,0,0.7,0], trout:[100,141,20,0,6,0],
+ csalmon:[100,136,23,0,4.9,0], tbreast:[100,114,23.7,0,1.5,0],
+ sirloin:[100,155,22,0,7.5,0], beef93:[100,152,21,0,7,0], pork:[100,120,21,0,3.5,0], flank:[100,155,21,0,7.2,0],
+ chickpeas:[1,334,16.8,54,6.2,15], lentils:[100,352,24.6,63,1.1,10.7], cannellini:[1,300,20,54,1,14],
+ farro:[100,333,13.3,71,2.2,8.9], rice:[100,367,7.5,76,2.7,3.5], orzo:[100,350,14,72,2.5,9],
+ couscous:[100,355,13,75,1,11], quinoa:[100,370,14,64,6,7], pita:[1,170,6,35,1.7,5],
+ potato:[100,77,2,17,0.1,2.2], sweetpot:[100,86,1.6,20,0.1,3],
+ veg:[100,30,1.2,6,0.3,2], spinach:[100,23,2.9,3.6,0.4,2.2], greenbean:[100,31,1.8,7,0.2,2.7],
+ broccoli:[100,34,2.8,6.6,0.4,2.6], asparagus:[100,20,2.2,3.9,0.1,2.1],
+ crushed:[1,260,12,52,1.5,13], broth:[1,40,4,4,0,0], oil:[1,119,0,0,13.5,0],
+ feta:[1,75,4,1,6,0], parm:[10,39,3.5,0.3,2.6,0], hummus:[2,70,2,4,5,1], olives:[6,35,0.3,1.9,3.3,1]
+};
+function macros(items,serv=1){
+  const t=[0,0,0,0,0];
+  items.forEach(([k,a])=>{if(!k)return;const f=FOOD[k];const m=a/f[0];for(let i=0;i<5;i++)t[i]+=f[i+1]*m});
+  return t.map(v=>v/serv);
+}
+const TARGET={k:1900,p:155,c:180,f:60,fi:30};
+
+/* Daily fixed meals */
+const FIXED=[
+ {when:"Breakfast",name:"Oats + eggs and toast",
+  detail:"½ cup oats cooked in 1 cup 1% milk (or water), 1 tsp brown sugar, 1 tbsp chia. Then 2 eggs + ½ cup egg whites and 1 slice whole-grain toast.",
+  items:[["oats",40],["bsugar",4],["chia",12],["milk",1],["egg",2],["whites",0.5],["toast",1]]},
+ {when:"Lunch",name:"Lightly salted almonds",detail:"1 oz, about 23 almonds. That's lunch when you're not hungry.",items:[["almonds",1]]},
+ {when:"Afternoon",name:"Protein shake + an apple",detail:"1 scoop whey in water. Swap the apple for an orange or pear anytime.",items:[["whey",1],["apple",1]]},
+ {when:"Evening",name:"Greek yogurt + berries",detail:"1 cup plain nonfat Greek yogurt, ½ cup berries. After dinner or whenever you get hungry.",items:[["yogurt",1],["berries",0.5]]}
+];
+
+/* Sunday meal prep: 4 servings, eaten Sun, Mon, Tue, Thu */
+const PREP=[
+ {id:"salmoncakes",name:"Greek Salmon Cakes with Farro & Tzatziki",tag:"Fish",time:"45 min",serv:4,
+  ing:[["2 cans (14.75 oz) wild salmon, drained, skin and big bones removed","csalmon",680],["2 eggs + ½ cup oats (binder)","egg",2],["","oats",45],["1 tbsp olive oil (for the pan)","oil",1],["1 cup dry farro","farro",200],["Roasted veg: 2 bell peppers, 1 red onion, 1 zucchini","veg",500],["1 tbsp olive oil (for the veg)","oil",1],["Tzatziki: 1 cup plain nonfat Greek yogurt, ½ grated cucumber, 1 garlic clove, lemon, dill","yogurt",1],["","veg",100],["2 lemons, dill, 2 green onions, 1 tsp Dijon, salt, pepper",null,0]],
+  steps:["Heat the oven to 425°F. Toss the chopped vegetables with 1 tbsp olive oil and salt and roast 25 minutes.","Mix the salmon, eggs, oats, chopped green onion, dill, Dijon, lemon zest and pepper. Shape 12 patties and chill 10 minutes so they hold together.","Brown the patties in 1 tbsp olive oil, 3–4 minutes per side. Meanwhile simmer the farro 25–30 minutes and drain.","Stir the tzatziki together. Pack 3 cakes, farro and vegetables per container, with the tzatziki in a small separate cup."],
+  store:"Microwave 90 seconds, or 10 minutes in a 375°F oven or air fryer to keep them crisp. Add the tzatziki cold. The cakes freeze well."},
+ {id:"lentil",name:"Mediterranean Lentil & Spinach Stew",tag:"Plant",time:"50 min",serv:4,
+  ing:[["1½ cups dry green or brown lentils, rinsed","lentils",290],["1 can chickpeas, drained","chickpeas",1],["1 onion, 2 carrots, 2 celery stalks, diced","veg",350],["1 tbsp olive oil","oil",1],["1 can (28 oz) crushed tomatoes","crushed",1],["4 cups low-sodium vegetable broth","broth",1],["5 oz baby spinach","spinach",140],["4 oz feta (1 oz per bowl)","feta",4],["4 whole-wheat pitas","pita",4],["3 garlic cloves, 2 tsp cumin, 1 tsp smoked paprika, 1 lemon",null,0]],
+  steps:["Sauté the onion, carrot and celery in the olive oil over medium heat for 6–8 minutes. Add the garlic, cumin and paprika and cook 1 minute.","Add the lentils, tomatoes and broth. Cover and simmer 30–35 minutes, until the lentils are tender.","Stir in the chickpeas and spinach until the spinach wilts. Finish with lemon juice and salt.","Portion into 4 containers. Add the feta when you serve it and warm the pita on the side."],
+  store:"Microwave 2–3 minutes, stirring halfway. This one freezes well.",
+  note:"Plant week is about 25 g short on protein. Add a second scoop of whey or another cup of Greek yogurt."},
+ {id:"turkey",name:"Turkey Meatballs in Tomato–White Bean Sauce",tag:"Turkey",time:"45 min",serv:4,
+  ing:[["1½ lb 93% lean ground turkey","turkey",680],["1 egg + ¼ cup oats (binder)","egg",1],["","oats",25],["1 can (28 oz) crushed tomatoes","crushed",1],["1 can cannellini beans, drained","cannellini",1],["4 oz baby spinach","spinach",115],["1 tbsp olive oil","oil",1],["1¼ cups dry whole-wheat orzo","orzo",225],["¼ cup grated parmesan","parm",25],["3 garlic cloves, 1 tsp Italian seasoning, salt, pepper",null,0]],
+  steps:["Heat the oven to 400°F. Mix the turkey, egg, oats, 1 garlic clove, Italian seasoning and salt. Roll 16 meatballs and bake 18–20 minutes, to 165°F.","In a pot, warm the olive oil with the rest of the garlic. Add the tomatoes and beans and simmer 10 minutes.","Add the meatballs and spinach and simmer 5 more minutes.","Cook the orzo, then portion it with 4 meatballs and sauce per container. Add the parmesan when you serve it."],
+  store:"Microwave 2–3 minutes. The meatballs and sauce freeze well."},
+ {id:"shawarma",name:"Turkey Shawarma Bowls",tag:"Turkey",time:"40 min + marinate",serv:4,
+  ing:[["2 lb turkey breast tenderloins, cut in strips","tbreast",907],["2 tbsp olive oil (1 for turkey, 1 for salad)","oil",2],["1¼ cups dry brown rice","rice",235],["Salad: 1 cucumber, 2 tomatoes, ¼ red onion, parsley, lemon","veg",350],["½ cup hummus (2 tbsp per bowl)","hummus",8],["¾ cup plain nonfat Greek yogurt + garlic + lemon (sauce)","yogurt",0.75],["2 tsp cumin, 2 tsp paprika, 1 tsp turmeric, ½ tsp cinnamon, garlic, salt",null,0]],
+  steps:["Toss the turkey strips with 1 tbsp olive oil, the spices, garlic, lemon juice and salt. Marinate at least 15 minutes, or overnight.","Spread on a sheet pan and roast at 425°F for 15–18 minutes, until it reaches 165°F. Turkey breast is lean, so don't overcook it.","Cook the rice. Chop the salad and dress it with the other 1 tbsp olive oil, lemon and salt.","Portion the turkey and rice. Keep the salad, hummus and yogurt sauce in separate cups so they stay fresh."],
+  store:"Microwave the turkey and rice 90 seconds with a splash of water so the turkey stays moist. Add the salad and sauces cold."}
+];
+
+/* Fish nights (Wed + Fri), single serving, cooked fresh */
+const FISH=[
+ {name:"Sheet-Pan Salmon & Potatoes",time:"30 min",
+  ing:[["6 oz salmon fillet","salmon",170],["7 oz baby potatoes, halved","potato",200],["5 oz green beans","greenbean",150],["1 tsp olive oil","oil",0.33],["Lemon, dill, garlic, salt",null,0]],
+  steps:["Roast the potatoes with the oil at 425°F for 15 minutes.","Add the salmon and green beans to the pan with lemon, dill and salt. Roast 12 more minutes."]},
+ {name:"Lemon Garlic Shrimp & Couscous",time:"15 min",
+  ing:[["8 oz raw peeled shrimp","shrimp",227],["⅓ cup dry whole-wheat couscous","couscous",60],["1 zucchini, sliced","veg",200],["2 tsp olive oil","oil",0.67],["Garlic, lemon, red pepper flakes, parsley",null,0]],
+  steps:["Pour ½ cup boiling water over the couscous, cover, and let it sit 5 minutes.","Sauté the zucchini in the oil for 3 minutes. Add the shrimp, garlic and pepper flakes and cook 3–4 minutes until pink. Finish with lemon and parsley."]},
+ {name:"Baked Cod with Tomato–Olive Relish",time:"20 min",
+  ing:[["8 oz cod fillet","cod",227],["⅓ cup dry quick-cook farro","farro",60],["1 cup cherry tomatoes, halved","veg",150],["6 Kalamata olives, chopped","olives",6],["Side salad: 3 cups greens","veg",100],["1 tbsp olive oil (relish + salad)","oil",1],["Lemon, garlic, oregano",null,0]],
+  steps:["Cook the farro (about 10 minutes for quick-cook).","Top the cod with the tomatoes, olives, garlic, oregano and half the oil. Bake at 400°F for 12–15 minutes, until it flakes.","Dress the greens with the rest of the oil and lemon."]},
+ {name:"Grilled Trout & Quinoa",time:"20 min",
+  ing:[["6 oz rainbow trout fillet","trout",170],["⅓ cup dry quinoa","quinoa",60],["1 bunch asparagus (5 oz)","asparagus",150],["1 tsp olive oil","oil",0.33],["Lemon, garlic, salt",null,0]],
+  steps:["Simmer the quinoa in ⅔ cup water for 15 minutes.","Grill or pan-sear the trout skin-side down for 4 minutes, flip, and cook 2 more. Cook the asparagus alongside with the oil. Finish with lemon."]}
+];
+
+/* Red meat night (Sat), 1x per week */
+const RED=[
+ {name:"Grilled Sirloin, Sweet Potato & Greek Salad",time:"35 min",
+  ing:[["6 oz top sirloin","sirloin",170],["1 medium sweet potato (9 oz), cubed and roasted","sweetpot",250],["Greek salad: cucumber, tomato, red onion, peppers","veg",200],["1 oz feta","feta",1],["1 tbsp olive oil + red wine vinegar","oil",1]],
+  steps:["Roast the sweet potato at 425°F for 25 minutes.","Grill the steak to 130–135°F for medium-rare and rest 5 minutes.","Toss the salad with the oil, vinegar, oregano and feta."]},
+ {name:"Beef Kofta Pita",time:"25 min",
+  ing:[["6 oz 93% lean ground beef","beef93",170],["1 whole-wheat pita","pita",1],["½ cup nonfat Greek yogurt (tzatziki)","yogurt",0.5],["Tomato-cucumber salad","veg",200],["Onion, garlic, parsley, cumin, cinnamon",null,0]],
+  steps:["Mix the beef with grated onion, garlic, parsley, cumin, a pinch of cinnamon and salt. Shape 3 logs on skewers.","Grill 8–10 minutes, turning, until they reach 160°F.","Stuff the pita with the kofta, salad and tzatziki."]},
+ {name:"Rosemary Pork Tenderloin & Potatoes",time:"35 min",
+  ing:[["6 oz pork tenderloin","pork",170],["7 oz baby potatoes","potato",200],["7 oz broccoli","broccoli",200],["2 tsp olive oil","oil",0.67],["Rosemary, garlic, Dijon",null,0]],
+  steps:["Rub the pork with Dijon, rosemary, garlic and salt.","Roast it with the potatoes and broccoli (tossed in the oil) at 425°F for 20–25 minutes, until the pork reaches 145°F. Rest 5 minutes."]},
+ {name:"Flank Steak & White Bean Arugula Salad",time:"25 min",
+  ing:[["6 oz flank steak","flank",170],["½ can cannellini beans","cannellini",0.5],["Arugula + cherry tomatoes","veg",150],["1 tbsp olive oil + lemon","oil",1],["2 tbsp shaved parmesan","parm",10]],
+  steps:["Season the steak and grill it hot, 4–5 minutes per side. Rest 5 minutes and slice thin against the grain.","Toss the arugula, tomatoes and beans with the oil, lemon and salt. Top with the steak and parmesan."]}
+];
+
+const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const localDay=Math.floor(Date.UTC(now.getFullYear(),now.getMonth(),now.getDate())/864e5);
+const wIdx=Math.floor((localDay-3)/7); /* weeks start Sunday */
+const wKey="w"+wIdx;
+let prepPick=store.get("dq_prep",{});
+const prepIdx=()=>prepPick[wKey]!=null?prepPick[wKey]:((wIdx%PREP.length)+PREP.length)%PREP.length;
+const mod=(a,n)=>((a%n)+n)%n;
+const fishWed=FISH[mod(2*wIdx,FISH.length)],fishFri=FISH[mod(2*wIdx+1,FISH.length)],redSat=RED[mod(wIdx,RED.length)];
+function dinnerFor(d){
+  const p=PREP[prepIdx()];
+  if(d===3)return {type:"Fish",r:fishWed,m:macros(fishWed.ing.map(i=>[i[1],i[2]]))};
+  if(d===5)return {type:"Fish",r:fishFri,m:macros(fishFri.ing.map(i=>[i[1],i[2]]))};
+  if(d===6)return {type:"Red meat",r:redSat,m:macros(redSat.ing.map(i=>[i[1],i[2]]))};
+  return {type:"Prep",r:p,m:macros(p.ing.map(i=>[i[1],i[2]]),p.serv)};
+}
+const r0=v=>Math.round(v);
+const mline=m=>`${r0(m[0])} kcal · ${r0(m[1])}P · ${r0(m[2])}C · ${r0(m[3])}F`;
+const ingList=r=>`<ul class="ing">${r.ing.filter(i=>i[0]).map(i=>`<li>${esc(i[0])}</li>`).join("")}</ul>`;
+const stepList=r=>`<ol class="steps">${r.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>`;
+function bar(label,val,tgt,unit){
+  const pct=Math.min(100,val/tgt*100);
+  return `<div class="bar"><div class="bar-top"><span>${label}</span><span class="mono">${r0(val)} / ${tgt}${unit}</span></div><div class="track"><div class="fill" style="width:${pct}%"></div></div></div>`;
+}
+function renderFuel(){
+  const d=now.getDay(),din=dinnerFor(d);
+  const fixedM=FIXED.map(f=>macros(f.items));
+  const tot=[0,0,0,0,0];[...fixedM,din.m].forEach(m=>m.forEach((v,i)=>tot[i]+=v));
+  $("fTargets").innerHTML=[["Calories",TARGET.k,""],["Protein",TARGET.p,"g"],["Carbs",TARGET.c,"g"],["Fat",TARGET.f,"g"]].map(x=>`<div class="stat"><b>${x[1].toLocaleString()}${x[2]}</b><span>${x[0]}</span></div>`).join("");
+  const rows=FIXED.map((f,i)=>`<div class="meal"><div class="when">${f.when}</div><div class="nm"><b>${esc(f.name)}</b><span>${esc(f.detail)}</span><span class="mono">${mline(fixedM[i])}</span></div></div>`);
+  rows.splice(3,0,`<div class="meal dinner"><div class="when">Dinner</div><div class="nm"><b>${esc(din.r.name)}</b><span><span class="tag">${din.type}</span>${din.type==="Prep"?" Heat up a container.":" Cook fresh, "+esc(din.r.time)+"."}</span><span class="mono">${mline(din.m)}</span></div></div>`);
+  $("fToday").innerHTML=rows.join("");
+  $("fTotals").innerHTML=bar("Calories",tot[0],TARGET.k,"")+bar("Protein",tot[1],TARGET.p,"g")+bar("Carbs",tot[2],TARGET.c,"g")+bar("Fat",tot[3],TARGET.f,"g")+bar("Fiber",tot[4],TARGET.fi,"g+");
+  const gap=TARGET.p-tot[1];
+  $("fGap").textContent=gap>15?`About ${r0(gap)} g short on protein today. Add a second scoop of whey or another cup of Greek yogurt.`:"";
+  $("fGap").hidden=gap<=15;
+  /* week */
+  $("fWeek").innerHTML=DOW.map((n,i)=>{const x=dinnerFor(i);return `<div class="wk${i===d?" now":""}"><span class="dw">${n}</span><span class="dn">${esc(x.r.name)}</span><span class="tag">${x.type}</span></div>`}).join("");
+  /* prep picker + card */
+  const pi=prepIdx(),p=PREP[pi],pm=macros(p.ing.map(i=>[i[1],i[2]]),p.serv);
+  $("fPick").innerHTML=PREP.map((r,i)=>`<button aria-pressed="${i===pi}" data-i="${i}">${esc(["Salmon Cakes","Lentil Stew","Turkey Meatballs","Turkey Shawarma"][i])}<small>${r.tag}</small></button>`).join("");
+  $("fPick").querySelectorAll("button").forEach(b=>b.onclick=()=>{prepPick={[wKey]:+b.dataset.i};store.set("dq_prep",prepPick);renderFuel();renderFuelTeaser()});
+  $("fPrep").innerHTML=`<h3>${esc(p.name)}</h3><div class="note">${p.serv} servings · ${esc(p.time)} · Sun, Mon, Tue, Thu</div><div class="mono per">Per serving: ${mline(pm)}</div>${p.note?`<p class="warn">${esc(p.note)}</p>`:""}<div class="label">Ingredients</div>${ingList(p)}<div class="label">Steps</div>${stepList(p)}<p class="note">${esc(p.store)} Cooked Sunday, it's good through Thursday (4 days). If you'd rather play it safe, freeze Thursday's container and move it to the fridge Wednesday night.</p>`;
+  /* fresh nights */
+  const fresh=[["Wednesday · Fish",fishWed],["Friday · Fish",fishFri],["Saturday · Red meat",redSat]];
+  $("fFresh").innerHTML=fresh.map(([lab,r])=>`<details class="rec"><summary><span class="label">${lab}</span><b>${esc(r.name)}</b><span class="mono">${mline(macros(r.ing.map(i=>[i[1],i[2]])))} · ${esc(r.time)}</span></summary>${ingList(r)}${stepList(r)}</details>`).join("");
+  /* groceries */
+  const g=[
+   ["Daily staples (whole week)",["Old-fashioned oats (about 3½ cups)","Chia seeds","Brown sugar","1% milk, ½ gallon","Eggs, 14","Liquid egg whites, 32 oz carton","Whole-grain bread","Lightly salted almonds, 7 oz","Whey protein","Apples (or oranges/pears), 7","Plain nonfat Greek yogurt, 7 cups (two 32 oz tubs)","Berries, about 3½ cups (fresh or frozen)"]],
+   ["Prep: "+p.name,p.ing.filter(i=>i[0]).map(i=>i[0])],
+   ["Wednesday: "+fishWed.name,fishWed.ing.map(i=>i[0])],
+   ["Friday: "+fishFri.name,fishFri.ing.map(i=>i[0])],
+   ["Saturday: "+redSat.name,redSat.ing.map(i=>i[0])],
+   ["Pantry check",["Extra-virgin olive oil","Lemons","Garlic","Dried oregano, cumin, paprika","Salt and pepper"]]
+  ];
+  $("fGrocery").innerHTML=g.map(([h,l])=>`<div class="label">${esc(h)}</div><ul class="ing">${l.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`).join("");
+}
+function renderFuelTeaser(){const x=dinnerFor(now.getDay());$("fTeaser").textContent=`${x.r.name} (${x.type.toLowerCase()})`}
+
 /* ---------- Tabs ---------- */
 function tab(n){
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===n));
-  ["today","lift","dnd"].forEach(t=>$(t+"-p").hidden=t!==n);
+  ["today","body","lift","fuel","dnd"].forEach(t=>$(t+"-p").hidden=t!==n);
+  window.scrollTo({top:0});
 }
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>tab(b.dataset.tab));
-$("goLift").onclick=()=>tab("lift");$("goDnd").onclick=()=>tab("dnd");
-renderNext();renderLift();renderDnd();
+$("goLift").onclick=()=>tab("lift");$("goDnd").onclick=()=>tab("dnd");$("goBody").onclick=()=>tab("body");$("goFuel").onclick=()=>tab("fuel");
+renderNext();renderLift();renderDnd();renderFuel();renderFuelTeaser();
 </script>
 </body>
 </html>
